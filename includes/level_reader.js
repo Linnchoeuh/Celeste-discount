@@ -1,0 +1,6 @@
+function read()
+{
+
+}
+
+export{read};

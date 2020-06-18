@@ -1,10 +1,7 @@
-input
-{
-    background-color:blue;
-    color:red;
-    font-family:Calibri;
-    font-size:10vw;
-    padding-left:0.5vw;
-    width:80%;
-    height:80%;
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block; 
 }
