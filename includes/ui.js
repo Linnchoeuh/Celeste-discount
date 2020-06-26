@@ -3,6 +3,7 @@ var ctx;
 var canvasfullscreen = false;
 var mouseX = 0;
 var mouseY = 0;
+var fullscreenupscale;
 
 function ui_var_getter(vartarg, varcont)
 {
@@ -17,6 +18,9 @@ function ui_var_getter(vartarg, varcont)
         case "canvasfullscreen":
             canvasfullscreen = varcont
             break
+        case "fullscreenupscale":
+            fullscreenupscale = varcont
+            break
         case "mouseX":
             mouseX = varcont
             break
@@ -29,19 +33,24 @@ function ui_var_getter(vartarg, varcont)
 
 function upscale(initialscale)
 {
-    if(canvasfullscreen == true)
+    if(canvasfullscreen == true & fullscreenupscale == true)
     {
-        return initialscale*1.6 
+        return initialscale*(screen.height/675)
     }
     return initialscale
 }
 
+
+
 function invisible_mouse_collider(posX, posY, width, height)
 {
-    posX = upscale(posX);
-    posY = upscale(posY);
-    width = upscale(width);
-    height = upscale(height);
+    if(canvasfullscreen == true)
+    {
+        posX = posX*(screen.height/675);
+        posY = posY*(screen.height/675);
+        width = width*(screen.height/675);
+        height = height*(screen.height/675);
+    }
     if(devmode == true)
     {
         ctx.strokeStyle = "rgb(255,255,255)";
@@ -57,51 +66,26 @@ function invisible_mouse_collider(posX, posY, width, height)
     }
 }
 
-function twPleinEcran(_element)
+function twPleinEcran(elem)
 {
-    var monElement = _element||document.documentElement;
-    if (document.mozFullScreenEnabled) 
-    {
-        if (!document.mozFullScreenElement) 
-        {
-            monElement.mozRequestFullScreen();
-        } 
-        else 
-        {
+    if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+        if (elem.requestFullScreen) {
+            elem.requestFullScreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullScreen) {
+            elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+    } else {
+        if (document.cancelFullScreen) {
+            document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
-        }
-        
-    }
-    if (document.fullscreenElement)
-    {
-        if (!document.fullscreenElement)
-        {
-            monElement.requestFullscreen();
-        } 
-        else
-        {
-            document.exitFullscreen();
-        }
-    }
-    if (document.webkitFullscreenEnabled)
-    {
-        if (!document.webkitFullscreenElement)
-        {
-            monElement.webkitRequestFullscreen();
-        }
-        else
-        {
-            document.webkitExitFullscreen();
-        }
-    }
-    if (document.msFullscreenEnabled)
-    {
-        if (!document.msFullscreenElement)
-        {
-            monElement.msRequestFullscreen();
-        }
-        else
-        {
+        } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        } else if (document.msExitFullscreen) {
             document.msExitFullscreen();
         }
     }
