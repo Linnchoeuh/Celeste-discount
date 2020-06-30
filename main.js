@@ -3,7 +3,7 @@ ctx = canvas.getContext("2d"),
 width = 1200,
 height = 675;
 
-var keys_input = [0,0,0,0,0,0,0]
+var keys_input = [0,0,0,0,0,0,0,0]
 
 ctx.canvas.addEventListener('mousemove', function(event)
 {
@@ -52,6 +52,9 @@ document.addEventListener("keydown", function(event)
         case 80:
             keys_input.splice(6, 1, 1); //p
             break
+        case 67:
+            keys_input.splice(7, 1, 1); //c
+            break
     }
 });
 document.addEventListener("keyup", function(event)
@@ -80,6 +83,9 @@ document.addEventListener("keyup", function(event)
         case 80:
             keys_input.splice(6, 1, 0);
             break
+        case 67:
+            keys_input.splice(7, 1, 0); //c
+            break
     }
 });
 document.addEventListener("fullscreenchange", function ()
@@ -103,7 +109,7 @@ player_var_getter("ctx", ctx);
 
 var command = "false"; //command
 var push = 0;
-var devmode = false;
+var devmode = true;
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
@@ -351,7 +357,7 @@ function main()
         push += 1
         if(push > 60 | devmode == true)
         {
-            if(key_press == "C")
+            if(keys_input[7] == 1)
             {
                 ctx.fillStyle = "rgba(0,0,0,0.5)";
                 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -443,6 +449,7 @@ function main()
         ctx.strokeText(keynb, upscale(1152), upscale(75));
         ctx.strokeText("click : "+click, upscale(1096), upscale(100));
         ctx.strokeText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
+        ctx.strokeText(keys_input, upscale(1050), upscale(150));
     }
 }
 
