@@ -109,12 +109,12 @@ player_var_getter("ctx", ctx);
 
 var command = "false"; //command
 var push = 0;
-var devmode = true;
+var devmode = false;
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 2;
+var menu = 1;
 var mouseX = 0;
 var mouseY = 0;
 var keypressed = false;
