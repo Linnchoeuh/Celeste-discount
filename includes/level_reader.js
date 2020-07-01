@@ -9,6 +9,7 @@ ground_up.src = "graphics/map_content/ground_up.png";
 
 
 var ctx;
+var colliding = [0,0,0,0];
 
 function level_reader_var_getter(vartarg, varcont)
 {
@@ -59,13 +60,35 @@ class MapData
         }
     }
 
-    displayer()
+    displayer(pX,pY)
     {
+        colliding = [0,0,0,0];
         for(let i = 0; i < this.mapcontent.length; ++i)
         {
             var tempblock = this.mapcontent[i]
-            ctx.drawImage(tempblock[0], upscale(tempblock[2]), upscale(tempblock[3]), upscale(48)*1.01, upscale(48)*1.01);
-        }  
+            ctx.drawImage(tempblock[0], upscale(tempblock[2]), upscale(tempblock[3]), upscale(48), upscale(48)*1.01);
+            if(tempblock[1] > 0)
+            {    
+                if(pY+48 > tempblock[3] & pY < tempblock[3]+48 & pX+40 > tempblock[2] & pX < tempblock[2])
+                {
+                    colliding.splice(1, 1, 1);
+                }
+                else if(pY+48 > tempblock[3] & pY < tempblock[3]+48 & pX > tempblock[2] & pX < tempblock[2]+40)
+                {
+                    colliding.splice(2, 1, 1);
+                }
+                else if(pY+65 > tempblock[3] & pY < tempblock[3] & pX+35 > tempblock[2] & pX < tempblock[2]+35)
+                {
+                    colliding.splice(0, 1, 1);
+                }
+                if(pY+15 > tempblock[3] & pY-48 < tempblock[3] & pX+35 > tempblock[2] & pX < tempblock[2]+35)
+                {
+                    colliding.splice(3, 1, 1);
+                }
+            }
+
+        } 
+        return colliding
     }
 }
 

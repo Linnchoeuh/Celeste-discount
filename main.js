@@ -114,7 +114,7 @@ var devmode = true;
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 1;
+var menu = 2;
 var mouseX = 0;
 var mouseY = 0;
 var keypressed = false;
@@ -130,6 +130,7 @@ var levelid = 1;
 let map = new MapData(level[levelid])
 var start = true
 let player = new PlayerData()
+var collisions = [0,0,0,0]
 var camposX = 0;
 var camposY = 0;
 var frame = 0;
@@ -228,8 +229,9 @@ function main()
         }
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
-        map.displayer()
-        player.moving(keys_input)
+        collisions = map.displayer(player.playerX, player.playerY)
+        player.moving(keys_input, collisions)
+        player.gravity(keys_input, collisions)
         
         if(keys_input[6] == 1 & pkey == false | pause == true) //pause
         {
@@ -352,7 +354,7 @@ function main()
         transition_minus(transition)
 
     }
-    if(key_press == "C" | command == "true") //To enter some usefull command ingame
+    if(keys_input[7] == 1 | command == "true") //To enter some usefull command ingame
     {
         push += 1
         if(push > 60 | devmode == true)
@@ -441,6 +443,7 @@ function main()
         ctx.fillText("click : "+click, upscale(1096), upscale(100));
         ctx.fillText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
         ctx.fillText(keys_input, upscale(1050), upscale(150));
+        ctx.fillText(collisions, upscale(1130), upscale(175));
         ctx.strokeStyle = "rgb(0,0,0)";
         ctx.strokeText("x : "+mouseX, upscale(1125), upscale(25));
         ctx.strokeText("y : "+mouseY, upscale(1125), upscale(50));

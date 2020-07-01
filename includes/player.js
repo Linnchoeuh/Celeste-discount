@@ -57,10 +57,11 @@ class PlayerData
         this.moveright = 0;
         this.moveleft = 0;
         this.jump = 0;
+        this.jumplock = false;
         this.orientation = "right";
         this.playerX = 0;
         this.playerY = 0;
-        this.speed = 5;
+        this.speed = 6;
     }
 
     spawn(x,y)
@@ -69,20 +70,27 @@ class PlayerData
         this.playerY = y*48;
     }
 
-    moving(input)
+    moving(input, collisions)
     {
         if(input[3] == 1 | pause == true & input[3] == 1)
         {
-            ctx.drawImage(moving_tab[this.moveright], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
             this.orientation = "right";
-            if(pause == false)
-            {    
-                this.playerX += this.speed;
-                this.moveright++;
-                if(this.moveright > 5)
-                {
-                    this.moveright = 0;
+            if(collisions[1] == 0)
+            {
+                ctx.drawImage(moving_tab[this.moveright], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
+                if(pause == false)
+                {    
+                    this.playerX += this.speed;
+                    this.moveright++;
+                    if(this.moveright > 5)
+                    {
+                        this.moveright = 0;
+                    }
                 }
+            }
+            else
+            {
+                ctx.drawImage(initial_pose_tab[0], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
             }
         }
         else
@@ -91,16 +99,23 @@ class PlayerData
         }
         if(input[1] == 1 & input[3] == 0 | pause == true & input[1] == 1 & input[3] == 0)
         {
-            ctx.drawImage(moving_tab[this.moveleft+6], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
             this.orientation = "left";
-            if(pause == false)
+            if(collisions[2] == 0)    
             {
-                this.playerX -= this.speed;
-                this.moveleft++;
-                if(this.moveleft > 5)
+                ctx.drawImage(moving_tab[this.moveleft+6], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
+                if(pause == false)
                 {
-                    this.moveleft = 0;
+                    this.playerX -= this.speed;
+                    this.moveleft++;
+                    if(this.moveleft > 5)
+                    {
+                        this.moveleft = 0;
+                    }
                 }
+            }
+            else
+            {
+                ctx.drawImage(initial_pose_tab[13], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
             }
         }
         else
@@ -119,6 +134,54 @@ class PlayerData
             }
         }
     }
+
+    gravity(jumpinput, collisions)
+    {
+        if(pause == false)    
+        {
+            if(jumpinput[4] == 1 & this.jumplock == false & collisions[3] == 0)
+            {
+                if(this.jump == 0)
+                {
+                    this.jump = 12
+                }
+                else if(this.jump != 0 & this.jump > 5)    
+                {    
+                    this.jump -= 0.3;
+                }
+                else if(this.jump <= 5)
+                {
+                    this.jump -= 1;
+                }
+                if(this.jump < 0)
+                {
+                    this.jumplock = true;
+                }
+            }
+            else if(collisions[0] == 0 | this.jumplock == true & collisions[0] == 0 | collisions[3] == 1)
+            {
+                if(collisions[3] == 1)
+                {
+                    this.jump = -2
+                }
+                if(this.jump > -15)
+                {
+                    this.jump -= 1;
+                }
+            }
+            else
+            {
+                this.jump = 0;
+                this.playerY = 48 * (Math.round(this.playerY / 48))
+                if(jumpinput[4] == 0)
+                {    
+                    this.jumplock = false;
+                }
+            }
+            this.playerY -= this.jump;
+        }
+    }
+
 }
 
 console.log(initial_pose_tab)
