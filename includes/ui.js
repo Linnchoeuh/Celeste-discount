@@ -40,7 +40,14 @@ function upscale(initialscale)
     return initialscale
 }
 
-
+function gupscale(initialscale)
+{
+    if(canvasfullscreen == true & fullscreenupscale == true)
+    {
+        return initialscale*(screen.height/675)+1
+    }
+    return initialscale
+}
 
 function invisible_mouse_collider(posX, posY, width, height)
 {
@@ -91,4 +98,4 @@ function twPleinEcran(elem)
     }
 }
 
-export{upscale, ui_var_getter, twPleinEcran, invisible_mouse_collider};
+export{upscale, ui_var_getter, twPleinEcran, invisible_mouse_collider, gupscale};

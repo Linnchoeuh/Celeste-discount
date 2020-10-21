@@ -1,9 +1,12 @@
+import { offsetX_on } from "./level_reader.js";
 import {upscale} from "./ui.js";
 
 var initial_pose_tab = []
 var moving_tab = []
 var ctx;
 var pause;
+var space_pressed = false;
+var jumpframecount = 0;
 
 function player_var_getter(vartarg, varcont)
 {
@@ -61,127 +64,142 @@ class PlayerData
         this.orientation = "right";
         this.playerX = 0;
         this.playerY = 0;
-        this.speed = 6;
+        this.speedX = 0;
     }
 
     spawn(x,y)
     {
-        this.playerX = x*48;
-        this.playerY = y*48;
+        this.playerX = x*71;
+        this.playerY = y*71;
     }
 
-    moving(input, collisions)
+    velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, bestup, bestdown, bestleft, bestright)
     {
-        if(input[3] == 1 | pause == true & input[3] == 1)
-        {
-            this.orientation = "right";
-            if(collisions[1] == 0)
+        vx = Math.sqrt(vx**2)
+        vy *= -1
+        if(godmode == true)
+        {    
+            if(input[0] == 1)
             {
-                ctx.drawImage(moving_tab[this.moveright], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
-                if(pause == false)
-                {    
-                    this.playerX += this.speed;
-                    this.moveright++;
-                    if(this.moveright > 5)
-                    {
-                        this.moveright = 0;
-                    }
-                }
+                vy = 10
+            }
+            else if(input[2] == 1)
+            {
+                vy = -10
             }
             else
             {
-                ctx.drawImage(initial_pose_tab[0], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
+                vy = 0
+            }
+        }
+        if(this.playerX < -12)
+        {
+            this.playerX = -12
+        }
+        if(this.playerX > 1145)
+        {
+            this.playerX = 1145
+        }
+        if(input[3] == 1 & this.playerX < 1145 | input[1] == 1 & this.playerX > -12)
+        {
+            switch(vx)
+            {
+                case 0:
+                    vx = 2
+                    break
+                case 2:
+                    vx = 4
+                    break
+                case 4:
+                    vx = 8
+                    break
+                case 8:
+                    vx = 12
+                    break
+            }
+            if(input[1] == 1 & input[3] != 1)
+            {
+                vx *= -1
             }
         }
         else
         {
-            this.moveright = 0;
+            vx = 0
         }
-        if(input[1] == 1 & input[3] == 0 | pause == true & input[1] == 1 & input[3] == 0)
+        if(godmode == false)
         {
-            this.orientation = "left";
-            if(collisions[2] == 0)    
+            if(input[4] == 1 & vy != 20 & vy >= 0 & collisions[0] == 1 & space_pressed == false | vy == 50)
             {
-                ctx.drawImage(moving_tab[this.moveleft+6], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
-                if(pause == false)
+                space_pressed = true;
+                switch(vy)
                 {
-                    this.playerX -= this.speed;
-                    this.moveleft++;
-                    if(this.moveleft > 5)
-                    {
-                        this.moveleft = 0;
-                    }
+                    case 0:
+                        vy = 50;
+                        break
+                    case 50:
+                        vy = 20;
+                        break
                 }
             }
-            else
+            else if(jumpframecount < 13 & input[4] == 1)
             {
-                ctx.drawImage(initial_pose_tab[13], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
+                jumpframecount += 1;
             }
+            else if(collisions[0] == 1)
+            {
+                space_pressed = false;
+                jumpframecount = 0;
+                vy = 0;
+            }
+            else if(input[4] == 0 & space_pressed == true & collisions[0] == 0 | vy == 25 & jumpframecount == 10 & collisions[0] == 0 | vy < 0 & collisions[0] == 0 | collisions[0] == 0)
+            {
+                switch(vy)
+                {
+                    case -2:
+                        vy = -4;
+                        break
+                    case -4:
+                        vy = -8;
+                        break
+                    case -8:
+                        vy = -16;
+                        break
+                    case -16:
+                        vy = -20
+                        break
+                    case -20:
+                        break
+                    default:
+                        vy = -2;
+                        break
+                }
+            }
+        }
+        this.speedX = vx
+        this.speedY = vy
+        return [vx,-vy]
+    }
+    
+    player_animatic(input, offsetx, offsety, offsetX_on, offsetY_on)
+    {
+        if(offsetX_on == 0)
+        {
+            this.playerX = 576
         }
         else
         {
-            this.moveleft = 0;
+            this.playerX += this.speedX
         }
-        if(input[3] != 1 & input[1] != 1 & input[0] != 1 | pause == true & input[3] != 1 & input[1] != 1 & input[0] != 1)
+        if(offsetY_on == 0)
         {
-            if(this.orientation == "right")
-            {    
-                ctx.drawImage(initial_pose_tab[0], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
-            }
-            else
-            {
-                ctx.drawImage(initial_pose_tab[13], upscale(this.playerX), upscale(this.playerY), upscale(48), upscale(48));
-            }
+            this.playerY = 324
         }
-    }
-
-    gravity(jumpinput, collisions)
-    {
-        if(pause == false)    
+        else
         {
-            if(jumpinput[4] == 1 & this.jumplock == false & collisions[3] == 0)
-            {
-                if(this.jump == 0)
-                {
-                    this.jump = 12
-                }
-                else if(this.jump != 0 & this.jump > 5)    
-                {    
-                    this.jump -= 0.3;
-                }
-                else if(this.jump <= 5)
-                {
-                    this.jump -= 1;
-                }
-                if(this.jump < 0)
-                {
-                    this.jumplock = true;
-                }
-            }
-            else if(collisions[0] == 0 | this.jumplock == true & collisions[0] == 0 | collisions[3] == 1)
-            {
-                if(collisions[3] == 1)
-                {
-                    this.jump = -2
-                }
-                if(this.jump > -15)
-                {
-                    this.jump -= 1;
-                }
-            }
-            else
-            {
-                this.jump = 0;
-                this.playerY = 48 * (Math.round(this.playerY / 48))
-                if(jumpinput[4] == 0)
-                {    
-                    this.jumplock = false;
-                }
-            }
-            this.playerY -= this.jump;
+            this.playerY -= this.speedY
         }
+        ctx.drawImage(initial_pose_tab[0], upscale(this.playerX), upscale(this.playerY), upscale(71), upscale(71));
     }
-
 }
 
 console.log(initial_pose_tab)

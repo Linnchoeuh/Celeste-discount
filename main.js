@@ -46,8 +46,8 @@ document.addEventListener("keydown", function(event)
         case 32:
             keys_input.splice(4, 1, 1); //space
             break
-        case 8:
-            keys_input.splice(5, 1, 1); //back
+        case 16:
+            keys_input.splice(5, 1, 1); //shift
             break
         case 80:
             keys_input.splice(6, 1, 1); //p
@@ -77,7 +77,7 @@ document.addEventListener("keyup", function(event)
         case 32:
             keys_input.splice(4, 1, 0);
             break
-        case 8:
+        case 16:
             keys_input.splice(5, 1, 0);
             break
         case 80:
@@ -100,21 +100,23 @@ bg.src = "graphics/map_content/background.png";
 
 import {upscale, ui_var_getter, twPleinEcran} from "./includes/ui.js";
 import {animatic_var_getter, animatic_text, animatic_texture, transition_plus, transition_minus} from "./includes/animatic.js";
-import {MapData, level_reader_var_getter} from "./includes/level_reader.js";
+import {MapData, level_reader_var_getter, offsetX, offsetY, offsetX_on, offsetY_on, bestup, bestdown, bestleft, bestright} from "./includes/level_reader.js";
 import {PlayerData, player_var_getter} from "./includes/player.js";
 import * as levels from "./includes/levels.js"
+// import {cam_var_getter} from "./includes/camera.js";
 
 level_reader_var_getter("ctx", ctx);
 player_var_getter("ctx", ctx);
 
 var command = "false"; //command
 var push = 0;
-var devmode = false;
+var devmode = true;
+var godmode = false;
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 1;
+var menu = 2;
 var mouseX = 0;
 var mouseY = 0;
 var keypressed = false;
@@ -130,10 +132,9 @@ var levelid = 1;
 let map = new MapData(level[levelid])
 var start = true
 let player = new PlayerData()
-var collisions = [0,0,0,0]
-var camposX = 0;
-var camposY = 0;
-var frame = 0;
+// var collisions = [1,1,1,1,1,1,1,1]
+var vect = [0,0];
+var stock = [[1,1,1,1,1,1,1,1], 0, 0];
 
 var pause = false; //pause
 var pauseframe = 0;
@@ -141,6 +142,14 @@ var endpause = false;
 var pkey = false;
 
 //setting
+
+// switch(transition)
+// {
+//     case "false":
+//         break
+//     case "finish":
+//         break
+// }
 
 function main()
 {
@@ -183,178 +192,187 @@ function main()
     animatic_var_getter("click", click);
     animatic_var_getter("mousepressed", mousepressed);
     player_var_getter("pause", pause);
+    level_reader_var_getter("devmode", devmode);
+    // cam_var_getter("player", player)
 
     
     
     // if(menu == 0 | loading_animation == 0)
-    if(menu == 1) //Main menu
+    switch(menu) 
     {
-        ctx.fillStyle = "rgb(255,255,255)";
-        if(animatic_text("--Play--", 0, 460, 405, 285, 60, 520, 450, 48, 54, 58, 60) == true | transition == "finish" & selectedaction == "menu2") //play
-        {
-            if(transition == "false")
+        case 1: //Main menu
+            ctx.fillStyle = "rgb(255,255,255)";
+            if(animatic_text("--Play--", 0, 460, 405, 285, 60, 520, 450, 48, 54, 58, 60) == true | transition == "finish" & selectedaction == "menu2") //play
             {
-                transition = "true";
-                selectedaction = "menu2"
+                switch(transition)
+                {
+                    case "false":
+                        transition = "true";
+                        selectedaction = "menu2";
+                        break
+                    case "finish":
+                        menu = 2;
+                        transition = "false";
+                        selectedaction = "N/A";
+                        break
+                }
             }
-            if(transition == "finish")
+            if(animatic_text("--Setting--", 1, 460, 505, 285, 60, 487, 550, 48, 54, 58, 60, -0.7) == true | transition == "finish" & selectedaction == "menu3.1") //setting
             {
-                menu = 2;
-                transition = "false";
-                selectedaction = "N/A"
+                switch(transition)
+                {
+                    case "false":
+                        transition = "true";
+                        selectedaction = "menu3.1";
+                        break
+                    case "finish":
+                        menu = 3;
+                        transition = "false";
+                        selectedaction = "N/A";
+                        break
+                }
             }
-        }
-        if(animatic_text("--Setting--", 1, 460, 505, 285, 60, 487, 550, 48, 54, 58, 60, -0.7) == true | transition == "finish" & selectedaction == "menu3.1") //setting
-        {
-            if(transition == "false")
+            transition_minus(transition)
+            break
+        case 2: //Game 
+            if(start == true)
             {
-                transition = "true";
-                selectedaction = "menu3.1"
-            }
-            if(transition == "finish")
-            {
-                menu = 3;
-                transition = "false";
-                selectedaction = "N/A"
-            }
-        }
-        transition_minus(transition)
-    }
-    if(menu == 2) //Game
-    { 
-        if(start == true)
-        {
-            player.spawn(map.spawn[0], map.spawn[1])
-            start = false
-        }
-        ctx.fillStyle = "rgb(255,255,255)";
-        ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
-        collisions = map.displayer(player.playerX, player.playerY)
-        player.moving(keys_input, collisions)
-        player.gravity(keys_input, collisions)
-        
-        if(keys_input[6] == 1 & pkey == false | pause == true) //pause
-        {
-            if(pause == false & pkey == false)
-            {
-                pause = true;
-                keypressed = true;
-                pkey = true
-                endpause = false; 
-            }
-            player_var_getter("pause", pause);
-            var grd = ctx.createLinearGradient(-150, 0, upscale(3000), 0);
-            grd.addColorStop(0.1, "transparent");
-            grd.addColorStop(0, "black");
-            if(pauseframe < 10 & endpause == false)
-            {
-                pauseframe++;
-            }
-            ctx.fillStyle = "rgba(0,0,0,"+0.05*pauseframe+")";
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = grd;
-            ctx.fillRect(upscale(-200+(pauseframe*20)), 0, upscale(100+(pauseframe*20)), upscale(675));
-            if(endpause == false)    
-            {
-                ctx.font = "Bold "+upscale(125)+'px arial';
-                ctx.fillStyle = "rgb(255,255,255)";
-                ctx.fillText('Pause', upscale(425), upscale(100));
+                var spawnvalue = level[1]
+                player.spawn(spawnvalue[2],spawnvalue[3])
+                start = false
             }
             ctx.fillStyle = "rgb(255,255,255)";
-            
-            if(animatic_text("Resume", 3, 0, 145, 195, 40, -180+(pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4) == true) //resume
+            ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
+            vect = player.velocity(keys_input, vect[0], vect[1], godmode, stock[0], offsetX_on, offsetY_on, bestup, bestdown, bestleft, bestright)
+            stock = map.displayer(player.playerX, player.playerY, vect[0], vect[1]) 
+            player.playerX = stock[1]
+            player.playerY = stock[2]
+            player.player_animatic(keys_input, offsetX, offsetY, offsetX_on, offsetY_on)
+            if(keys_input[6] == 1 & pkey == false | pause == true) //pause
             {
-                endpause = true;
-            }
-            
-            if(animatic_text("Setting", 4, 0, 222, 175, 40, -180+(pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) == true | transition == "finish" & selectedaction == "menu4") //setting
-            {
-                if(transition == "false")
+                if(pause == false & pkey == false)
                 {
-                    transition = "true";
-                    selectedaction = "menu4"
-                }
-                if(transition == "finish")
-                {
-                    menu = 4;
-                    endpause = false;
                     pause = true;
-                    pauseframe = 10;
-                    transition = "false";
-                    selectedaction = "N/A"
-                }
-            }
-            
-            if(animatic_text(ablefullscrenn+" fullscreen", 5, 0, 295, 380, 40, -180+(pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4) == true) //fullscreen
-            {
-                twPleinEcran(canvas)
-            }
-
-            if(animatic_text("Back to menu", 6, 0, 370, 305, 40, -180+(pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) == true | transition == "finish" & selectedaction == "menu1") //back to menu
-            {
-                if(transition == "false")
-                {
-                    transition = "true";
-                    selectedaction = "menu1"
-                }
-                if(transition == "finish")
-                {
-                    menu = 1;
-                    endpause = false;
-                    pause = false;
-                    pauseframe = 0;
-                    transition = "false";
-                    selectedaction = "N/A"
-                }
-            }
-            
-            if(keys_input[6] == 1 & pkey == false | endpause == true)
-            {
-                endpause = true
-                grd.addColorStop(0.1, "transparent");
-                grd.addColorStop(0, "black");
-                ctx.fillStyle = grd;
-                pauseframe-- 
-                ctx.fillRect(upscale(-200-(pauseframe*20)), 0, upscale(100-(pauseframe*20)), upscale(675));
-                
-                if(pauseframe < 1)
-                {
-                    endpause = false;
-                    pause = false;
-                    pauseframe = 0;
+                    keypressed = true;
+                    pkey = true
+                    endpause = false; 
                 }
                 player_var_getter("pause", pause);
-            }
-        }
-        transition_minus(transition)
-    }
-    if(menu == 3 | menu == 4)
-    {
-        if(animatic_texture(return_arrow, 7, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) == true | keys_input[5] == 1 & keypressed == false | transition == "finish" & selectedaction == "menu3.2")
-        {
-            if(transition == "false")
-            {
-                transition = "true";
-                selectedaction = "menu3.2"
-            }
-            if(transition == "finish")
-            {
-                if(menu == 3)
+                var grd = ctx.createLinearGradient(-150, 0, upscale(3000), 0);
+                grd.addColorStop(0.1, "transparent");
+                grd.addColorStop(0, "black");
+                if(pauseframe < 10 & endpause == false)
                 {
-                    menu = 1
+                    pauseframe++;
                 }
-                else
+                ctx.fillStyle = "rgba(0,0,0,"+0.05*pauseframe+")";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = grd;
+                ctx.fillRect(upscale(-200+(pauseframe*20)), 0, upscale(100+(pauseframe*20)), upscale(675));
+                if(endpause == false)    
                 {
-                    menu = 2
+                    ctx.font = "Bold "+upscale(125)+'px arial';
+                    ctx.fillStyle = "rgb(255,255,255)";
+                    ctx.fillText('Pause', upscale(425), upscale(100));
                 }
-                transition = "false";
-                selectedaction = "N/A"
-            }       
-        }
-        transition_minus(transition)
+                ctx.fillStyle = "rgb(255,255,255)";
 
+                if(animatic_text("Resume", 3, 0, 145, 195, 40, -180+(pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4) == true) //resume
+                {
+                    endpause = true;
+                }
+
+                if(animatic_text("Setting", 4, 0, 222, 175, 40, -180+(pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) == true | transition == "finish" & selectedaction == "menu4") //setting
+                {
+                    switch(transition)
+                    {
+                        case "false":
+                            transition = "true";
+                            selectedaction = "menu4"
+                            break
+                        case "finish":
+                            menu = 4;
+                            endpause = false;
+                            pause = true;
+                            pauseframe = 10;
+                            transition = "false";
+                            selectedaction = "N/A"    
+                            break
+                    }
+                }
+
+                if(animatic_text(ablefullscrenn+" fullscreen", 5, 0, 295, 380, 40, -180+(pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4) == true) //fullscreen
+                {
+                    twPleinEcran(canvas)
+                }
+
+                if(animatic_text("Back to menu", 6, 0, 370, 305, 40, -180+(pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) == true | transition == "finish" & selectedaction == "menu1") //back to menu
+                {
+                    switch(transition)
+                    {
+                        case "false":
+                            transition = "true";
+                            selectedaction = "menu1"
+                            break
+                        case "finish":
+                            menu = 1;
+                            endpause = false;
+                            pause = false;
+                            pauseframe = 0;
+                            transition = "false";
+                            selectedaction = "N/A"
+                            break
+                    }
+                }
+
+                if(keys_input[6] == 1 & pkey == false | endpause == true)
+                {
+                    endpause = true
+                    grd.addColorStop(0.1, "transparent");
+                    grd.addColorStop(0, "black");
+                    ctx.fillStyle = grd;
+                    pauseframe-- 
+                    ctx.fillRect(upscale(-200-(pauseframe*20)), 0, upscale(100-(pauseframe*20)), upscale(675));
+
+                    if(pauseframe < 1)
+                    {
+                        endpause = false;
+                        pause = false;
+                        pauseframe = 0;
+                    }
+                    player_var_getter("pause", pause);
+                }
+            }
+            transition_minus(transition)
+            break
+        case 3 : case 4: //Setting
+            if(animatic_texture(return_arrow, 7, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) == true | keys_input[5] == 1 & keypressed == false | transition == "finish" & selectedaction == "menu3.2")
+            {
+                switch(transition)
+                {
+                    case "false":
+                        transition = "true";
+                        selectedaction = "menu3.2"
+                        break
+                    case "finish":
+                        switch(menu)
+                        {
+                            case 3:
+                                menu = 1
+                                break
+                            case 4:
+                                menu = 2
+                                break
+                        }
+                        transition = "false";
+                        selectedaction = "N/A"
+                        break
+                }   
+            }
+            transition_minus(transition)
+            break
     }
-    if(keys_input[7] == 1 | command == "true") //To enter some usefull command ingame
+    if(keys_input[7] == 1 | command == "true") //To enter some usefull commands ingame
     {
         push += 1
         if(push > 60 | devmode == true)
@@ -374,17 +392,51 @@ function main()
                 command = prompt("Enter a command:");
                 switch(command)
                 {
-                    case "devmode true":
-                        devmode = true
+                    case "devmode true": case "devmode enable":
+                        devmode = true;
                         break
-                    case "devmode enable":
-                        devmode = true
+                    case "devmode false": case "devmode disable":
+                        devmode = false;
                         break
-                    case "devmode false":
-                        devmode = false
+                    case "godmode true": case "godmode enable":
+                        godmode = true;
                         break
-                    case "devmode disable":
-                        devmode = false
+                    case "godmode false": case "godmode disable" :
+                        godmode = false;
+                        break
+                    case "reset":
+                        level_reader_var_getter("ctx", ctx);
+                        player_var_getter("ctx", ctx);
+
+                        command = "false"; //command
+                        push = 0;
+
+                        key_press = "N/A"; //ui and interactivity
+                        keynb = "N/A";
+                        click = false;
+                        menu = 1;
+                        mouseX = 0;
+                        mouseY = 0;
+                        keypressed = false;
+                        mousepressed = false;
+                        canvasfullscreen = false;
+                        ablefullscrenn = "enable";
+                        fullscreenupscale = true;
+                        transition = "false";
+                        selectedaction = "N/A"
+
+                        level = ["testlevel", levels.level1]; //game
+                        levelid = 1;
+                        map = new MapData(level[levelid])
+                        start = true
+                        player = new PlayerData()
+                        collisions = [0,0,0,0]
+                        frame = 0;
+
+                        pause = false; //pause
+                        pauseframe = 0;
+                        endpause = false;
+                        pkey = false;
                         break
                     default:
                         alert("invalid command")
@@ -442,8 +494,22 @@ function main()
         ctx.fillText(keynb, upscale(1152), upscale(75));
         ctx.fillText("click : "+click, upscale(1096), upscale(100));
         ctx.fillText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
-        ctx.fillText(keys_input, upscale(1050), upscale(150));
-        ctx.fillText(collisions, upscale(1130), upscale(175));
+        ctx.fillText(keys_input, upscale(1065), upscale(150));
+        ctx.fillText(stock[0], upscale(1065), upscale(175));
+        ctx.fillText(player.playerX, upscale(1090), upscale(200));
+        ctx.fillText("|", upscale(1138), upscale(200));
+        ctx.fillText(offsetX_on, upscale(1147), upscale(200));
+        ctx.fillText(player.playerY, upscale(1090), upscale(225));
+        ctx.fillText("|", upscale(1138), upscale(225));
+        ctx.fillText(offsetY_on, upscale(1147), upscale(225));
+        ctx.fillText(vect[0], upscale(1130), upscale(250));
+        ctx.fillText(vect[1], upscale(1130), upscale(275));
+        ctx.fillText(offsetX, upscale(1130), upscale(300));
+        ctx.fillText(offsetY, upscale(1130), upscale(325));
+        ctx.fillText(bestup, upscale(1100), upscale(350));
+        ctx.fillText(bestdown, upscale(1100), upscale(375));
+        ctx.fillText(bestleft, upscale(1100), upscale(400));
+        ctx.fillText(bestright, upscale(1100), upscale(425));
         ctx.strokeStyle = "rgb(0,0,0)";
         ctx.strokeText("x : "+mouseX, upscale(1125), upscale(25));
         ctx.strokeText("y : "+mouseY, upscale(1125), upscale(50));
@@ -452,7 +518,16 @@ function main()
         ctx.strokeText(keynb, upscale(1152), upscale(75));
         ctx.strokeText("click : "+click, upscale(1096), upscale(100));
         ctx.strokeText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
-        ctx.strokeText(keys_input, upscale(1050), upscale(150));
+        ctx.strokeText(keys_input, upscale(1065), upscale(150));
+        ctx.strokeText(stock[0], upscale(1065), upscale(175));
+        ctx.strokeText(player.playerX, upscale(1090), upscale(200));
+        ctx.strokeText("|", upscale(1138), upscale(200));
+        ctx.strokeText(offsetX_on, upscale(1147), upscale(200));
+        ctx.strokeText(player.playerY, upscale(1090), upscale(225));
+        ctx.strokeText("|", upscale(1138), upscale(225));
+        ctx.strokeText(offsetY_on, upscale(1147), upscale(225));
+        ctx.strokeText(vect[0], upscale(1130), upscale(250));
+        ctx.strokeText(vect[1], upscale(1130), upscale(275));
     }
 }
 
