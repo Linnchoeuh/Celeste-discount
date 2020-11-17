@@ -3,7 +3,7 @@ ctx = canvas.getContext("2d"),
 width = 1200,
 height = 675;
 
-var keys_input = [0,0,0,0,0,0,0,0]
+var keys_input = [0,0,0,0,0,0,0,0,0]
 
 ctx.canvas.addEventListener('mousemove', function(event)
 {
@@ -55,6 +55,9 @@ document.addEventListener("keydown", function(event)
         case 67:
             keys_input.splice(7, 1, 1); //c
             break
+        case 13:
+            keys_input.splice(8, 1, 1); //enter
+            break
     }
 });
 document.addEventListener("keyup", function(event)
@@ -86,6 +89,9 @@ document.addEventListener("keyup", function(event)
         case 67:
             keys_input.splice(7, 1, 0); //c
             break
+        case 13:
+            keys_input.splice(8, 1, 0); //enter
+            break            
     }
 });
 document.addEventListener("fullscreenchange", function ()
@@ -100,7 +106,7 @@ bg.src = "graphics/map_content/background.png";
 
 import {upscale, ui_var_getter, twPleinEcran} from "./includes/ui.js";
 import {animatic_var_getter, animatic_text, animatic_texture, transition_plus, transition_minus} from "./includes/animatic.js";
-import {MapData, level_reader_var_getter, offsetX, offsetY, offsetX_on, offsetY_on, bestup, bestdown, bestleft, bestright} from "./includes/level_reader.js";
+import {MapData, level_reader_var_getter} from "./includes/level_reader.js";
 import {PlayerData, player_var_getter} from "./includes/player.js";
 import * as levels from "./includes/levels.js"
 // import {cam_var_getter} from "./includes/camera.js";
@@ -127,12 +133,11 @@ var fullscreenupscale = true;
 var transition = "false";
 var selectedaction = "N/A"
 
-var level = ["testlevel", levels.level1]; //game
+var level = ["testlevel", levels.leveltest1, levels.leveltest2]; //game
 var levelid = 1;
 let map = new MapData(level[levelid])
 var start = true
 let player = new PlayerData()
-// var collisions = [1,1,1,1,1,1,1,1]
 var vect = [0,0];
 var stock = [[1,1,1,1,1,1,1,1], 0, 0];
 
@@ -142,14 +147,6 @@ var endpause = false;
 var pkey = false;
 
 //setting
-
-// switch(transition)
-// {
-//     case "false":
-//         break
-//     case "finish":
-//         break
-// }
 
 function main()
 {
@@ -193,11 +190,7 @@ function main()
     animatic_var_getter("mousepressed", mousepressed);
     player_var_getter("pause", pause);
     level_reader_var_getter("devmode", devmode);
-    // cam_var_getter("player", player)
-
     
-    
-    // if(menu == 0 | loading_animation == 0)
     switch(menu) 
     {
         case 1: //Main menu
@@ -237,17 +230,16 @@ function main()
         case 2: //Game 
             if(start == true)
             {
-                var spawnvalue = level[1]
-                player.spawn(spawnvalue[2],spawnvalue[3])
+                player.spawn(map.start(level[levelid]))
                 start = false
             }
             ctx.fillStyle = "rgb(255,255,255)";
             ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
-            vect = player.velocity(keys_input, vect[0], vect[1], godmode, stock[0], offsetX_on, offsetY_on, bestup, bestdown, bestleft, bestright)
-            stock = map.displayer(player.playerX, player.playerY, vect[0], vect[1]) 
+            vect = player.velocity(keys_input, vect[0], vect[1], godmode, map.collisions, map.offsetX_on, map.offsetY_on, map.bestdown[4])
+            stock = map.displayer(player.playerX, player.playerY, vect[0], vect[1], keys_input) 
             player.playerX = stock[1]
             player.playerY = stock[2]
-            player.player_animatic(keys_input, offsetX, offsetY, offsetX_on, offsetY_on)
+            player.player_animatic(keys_input, map.collisions, map.offsetX, map.offsetY, map.offsetX_on, map.offsetY_on)
             if(keys_input[6] == 1 & pkey == false | pause == true) //pause
             {
                 if(pause == false & pkey == false)
@@ -487,47 +479,97 @@ function main()
     {
         ctx.font = upscale(20)+'px arial';
         ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillText("x : "+mouseX, upscale(1125), upscale(25));
+        
+        ctx.fillText("x : "+mouseX, upscale(1125), upscale(25)); //mouse pos
         ctx.fillText("y : "+mouseY, upscale(1125), upscale(50));
-        ctx.fillText(key_press, upscale(1100), upscale(75));
+
+        ctx.fillText(key_press, upscale(1100), upscale(75)); //key pressed
         ctx.fillText("|", upscale(1141), upscale(75));
         ctx.fillText(keynb, upscale(1152), upscale(75));
-        ctx.fillText("click : "+click, upscale(1096), upscale(100));
-        ctx.fillText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
-        ctx.fillText(keys_input, upscale(1065), upscale(150));
-        ctx.fillText(stock[0], upscale(1065), upscale(175));
-        ctx.fillText(player.playerX, upscale(1090), upscale(200));
-        ctx.fillText("|", upscale(1138), upscale(200));
-        ctx.fillText(offsetX_on, upscale(1147), upscale(200));
-        ctx.fillText(player.playerY, upscale(1090), upscale(225));
-        ctx.fillText("|", upscale(1138), upscale(225));
-        ctx.fillText(offsetY_on, upscale(1147), upscale(225));
-        ctx.fillText(vect[0], upscale(1130), upscale(250));
-        ctx.fillText(vect[1], upscale(1130), upscale(275));
-        ctx.fillText(offsetX, upscale(1130), upscale(300));
-        ctx.fillText(offsetY, upscale(1130), upscale(325));
-        ctx.fillText(bestup, upscale(1100), upscale(350));
-        ctx.fillText(bestdown, upscale(1100), upscale(375));
-        ctx.fillText(bestleft, upscale(1100), upscale(400));
-        ctx.fillText(bestright, upscale(1100), upscale(425));
+
+        ctx.fillText("Click : "+click, upscale(1091), upscale(100)); //click
+
+        ctx.fillText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullsecreen
+
+        ctx.fillText("Inputs : "+keys_input, upscale(978), upscale(150)); //input
+
+        ctx.fillText("Collisions : "+stock[0], upscale(830), upscale(175)); //collisions
+
+        ctx.fillText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
+        ctx.fillText("|", upscale(1080), upscale(200));
+        ctx.fillText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
+
+        ctx.fillText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
+        ctx.fillText("|", upscale(1080), upscale(225));
+        ctx.fillText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
+
+        ctx.fillText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
+        ctx.fillText("|", upscale(1080), upscale(250));
+        ctx.fillText("VY : "+vect[1], upscale(1092), upscale(250));
+
+        ctx.fillText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
+        ctx.fillText("|", upscale(1080), upscale(275));
+        ctx.fillText("OY : "+map.offsetY, upscale(1092), upscale(275));
+
+        ctx.fillText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
+        ctx.fillText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
+
+        ctx.fillText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
+        ctx.fillText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
+
+        ctx.fillText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
+        ctx.fillText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
+
+        ctx.fillText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
+        ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
+
+        ctx.fillText(player.lastdirection+" "+player.dash+" "+player.dashcooldown, upscale(1015), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+        
+        
         ctx.strokeStyle = "rgb(0,0,0)";
-        ctx.strokeText("x : "+mouseX, upscale(1125), upscale(25));
+
+        ctx.strokeText("x : "+mouseX, upscale(1125), upscale(25)); //mouse pos
         ctx.strokeText("y : "+mouseY, upscale(1125), upscale(50));
-        ctx.strokeText(key_press, upscale(1100), upscale(75));
+
+        ctx.strokeText(key_press, upscale(1100), upscale(75)); //key pressed
         ctx.strokeText("|", upscale(1141), upscale(75));
         ctx.strokeText(keynb, upscale(1152), upscale(75));
-        ctx.strokeText("click : "+click, upscale(1096), upscale(100));
-        ctx.strokeText("fullscreen : "+canvasfullscreen, upscale(1050), upscale(125));
-        ctx.strokeText(keys_input, upscale(1065), upscale(150));
-        ctx.strokeText(stock[0], upscale(1065), upscale(175));
-        ctx.strokeText(player.playerX, upscale(1090), upscale(200));
-        ctx.strokeText("|", upscale(1138), upscale(200));
-        ctx.strokeText(offsetX_on, upscale(1147), upscale(200));
-        ctx.strokeText(player.playerY, upscale(1090), upscale(225));
-        ctx.strokeText("|", upscale(1138), upscale(225));
-        ctx.strokeText(offsetY_on, upscale(1147), upscale(225));
-        ctx.strokeText(vect[0], upscale(1130), upscale(250));
-        ctx.strokeText(vect[1], upscale(1130), upscale(275));
+
+        ctx.strokeText("Click : "+click, upscale(1091), upscale(100)); //click
+
+        ctx.strokeText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullsecreen
+
+        ctx.strokeText("Inputs : "+keys_input, upscale(978), upscale(150)); //input
+
+        ctx.strokeText("Collisions : "+stock[0], upscale(830), upscale(175)); //collisions
+
+        ctx.strokeText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
+        ctx.strokeText("|", upscale(1080), upscale(200));
+        ctx.strokeText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
+
+        ctx.strokeText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
+        ctx.strokeText("|", upscale(1080), upscale(225));
+        ctx.strokeText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
+
+        ctx.strokeText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
+        ctx.strokeText("|", upscale(1080), upscale(250));
+        ctx.strokeText("VY : "+vect[1], upscale(1092), upscale(250));
+
+        ctx.strokeText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
+        ctx.strokeText("|", upscale(1080), upscale(275));
+        ctx.strokeText("OY : "+map.offsetY, upscale(1092), upscale(275));
+
+        ctx.strokeText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
+        ctx.strokeText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
+
+        ctx.strokeText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
+        ctx.strokeText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
+
+        ctx.strokeText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
+        ctx.strokeText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
+
+        ctx.strokeText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
+        ctx.strokeText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
     }
 }
 
