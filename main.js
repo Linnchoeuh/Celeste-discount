@@ -116,7 +116,7 @@ player_var_getter("ctx", ctx);
 
 var command = "false"; //command
 var push = 0;
-var devmode = true;
+var devmode = false;
 var godmode = false;
 
 var key_press = "N/A"; //ui and interactivity
