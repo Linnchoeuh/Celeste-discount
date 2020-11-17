@@ -19,22 +19,6 @@ ground_down.src = "graphics/map_content/ground_down.png"
 
 var ctx;
 var devmode = false;
-// var player;
-// var mapcoordsX;
-// var mapcoordsY;
-// var colliding = [0,0,0,0,0,0,0,0];
-// var test = 0;
-// var mapposx = 0;
-// var mapposy = 0;
-// var offsetX;
-// var offsetY;
-// var offsetX_on;
-// var offsetY_on;
-var bestup = ["None",0];
-var bestdown = ["None",0];
-var bestleft = [0,"None"];
-var bestright = [0,"None"];
-var extradata;
 
 function level_reader_var_getter(vartarg, varcont)
 {
