@@ -13,35 +13,24 @@ var defauloffsetY = 0;
 
 import {upscale, invisible_mouse_collider} from "./ui.js";
 
-function animatic_var_getter(vartarg, varcont)
+function animatic_var_update(actx)
 {
-    switch(vartarg)
-    {
-        case "devmode":
-            devmode = varcont
-            break
-        case "ctx":
-            ctx = varcont
-            break
-        case "canvasfullscreen":
-            canvasfullscreen = varcont
-            break
-        case "mouseX":
-            mouseX = varcont
-            break
-        case "mouseY":
-            mouseY = varcont
-            break
-        case "click":
-            click = varcont
-            break
-        case "mousepressed":
-            mousepressed = varcont
-            break
-    }
-    
+    ctx = actx;
 }
 
+function animatic_var_update2(adevmode)
+{
+    devmode = adevmode;
+}
+
+function animatic_var_update3(acanvasfullscreen, amouseX, amouseY, aclick, amousepressed)
+{
+    canvasfullscreen = acanvasfullscreen;
+    mouseX = amouseX;
+    mouseY = amouseY;
+    click = aclick;
+    mousepressed = amousepressed;
+}
 
 function animatic_text(text, index, posX, posY, width, height, textX, textY, textscale1, textscale2, textscale3, textscale4, offsetX = 0, offsetY = 0)
 {
@@ -179,4 +168,4 @@ function transition_minus(transition)
     }
 }
 
-export{animatic_var_getter, animatic_text, animatic_texture, transition_plus, transition_minus}
+export{animatic_text, animatic_texture, transition_plus, transition_minus, animatic_var_update, animatic_var_update2, animatic_var_update3}

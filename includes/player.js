@@ -1,25 +1,8 @@
-// import { offsetX_on } from "./level_reader.js";
 import {upscale} from "./ui.js";
 
 var initial_pose_tab = []
 var moving_tab = []
-var ctx;
-var pause;
-var space_pressed = false;
-var jumpframecount = 0;
 
-function player_var_getter(vartarg, varcont)
-{
-    switch(vartarg)
-    {
-        case "ctx":
-            ctx = varcont;
-            break
-        case "pause":
-            pause = varcont;
-            break
-    }
-}
 
 function texture_loader(path)
 {
@@ -77,6 +60,19 @@ class PlayerData
         this.dashcooldown = 0
         this.dashbuttonrelease = true
         this.lastdirection = 1
+        
+        
+        this.jumpconststart = 55;
+        this.jumpconst = 20;
+        this.jumpcountmax = 14;
+        this.maxvelocity = 9
+        this.wallleavemax = 10
+
+    }
+
+    var_update(ctx)
+    {
+       this.ctx = ctx
     }
 
     spawn(coords)
@@ -85,148 +81,76 @@ class PlayerData
         this.playerY = coords[1]-1;
     }
 
-    velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, distanceground)
+    velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, distanceground, pause)
     {
         vy *= -1  
         if(godmode == false)
         {
-            if(input[3] == 1 & vx >= 0 & collisions[3] == 0 & this.walljump != 2 & this.walljump != -2 & this.wallleave >= 10) //moving right
-            {
-                this.lastdirection = 1
-                console.log("oui")
-                switch(Math.round(vx))
+            if(this.walljump != 2 & this.walljump != -2 & this.wallleave >= this.wallleavemax)
+            {   
+                this.speed = Math.round(1+this.maxvelocity - (this.maxvelocity / (Math.sqrt(vx**2)+1)))
+                if(input[3] == 1 & input[1] == 0 & vx >= 0 & collisions[3] == 0) //moving right
                 {
-                    case 0:
-                        vx = 1;
-                        break
-                    case 1:
-                        vx = 2;
-                        break
-                    case 2:
-                        vx = 3;
-                        break
-                    case 3:
-                        vx = 4;
-                        break
-                    case 4:
-                        vx = 6;
-                        break
-                    case 5:
-                        vx = 6;
-                        break
-                    case 6:
-                        vx = 8;
-                        break
-                    case 7:
-                        vx = 8;
-                        break
-                    case 8:
-                        vx = 10;
-                        break
-                    case 9:
-                        vx = 10;
-                        break
-                    case 10:
-                        vx = 12;
-                        break
-                    case 11:
-                        vx = 12;
-                        break
-                    case 12:
-                        vx = 12;
-                        break
-                }
-            }
-            else if(input[1] == 1 & vx <= 0 & input[3] == 0 & collisions[2] == 0 & this.walljump != 2 & this.walljump != -2 & this.wallleave >= 10) //moving left
-            {
-                this.lastdirection = 0
-                switch(Math.round(vx))
-                {
-                    case 0:
-                        vx = -1;
-                        break
-                    case -1:
-                        vx = -2;
-                        break
-                    case -2:
-                        vx = -3;
-                        break
-                    case -3:
-                        vx = -4;
-                        break
-                    case -4:
-                        vx = -6;
-                        break
-                    case -5:
-                        vx = -6;
-                        break
-                    case -6:
-                        vx = -8;
-                        break
-                    case -7:
-                        vx = -8;
-                        break
-                    case -8:
-                        vx = -10;
-                        break
-                    case -9:
-                        vx = -10;
-                        break
-                    case -10:
-                        vx = -12;
-                        break
-                    case -11:
-                        vx = -12;
-                        break
-                    case -12:
-                        vx = -12;
-                        break
-                }
-            }
-            else if(this.walljump != 2 & this.walljump != -2 & this.dash == false) //no move
-            {
-                if(vx > 0  | collisions[3] == 1)
-                {
-                    switch(collisions[0])
-                    {
-                        case 1:
-                            vx -= 8;
-                            break
-                        case 0:
-                            vx -= 0.3;
-                            break
-                    }
-                    if(collisions[0] == 0 & input[1] == 1 & input[3] == 0)
-                    {
-                        vx -= 2;
-                    }
-                    if(vx < 0)
-                    {
-                        vx = 0;
+                    this.lastdirection = 1
+                    if(vx <= this.maxvelocity)
+                    {   
+                        vx = this.speed
                     }
                 }
-                if(vx < 0 | collisions[2] == 1)
+                else if(input[1] == 1 & vx <= 0 & input[3] == 0 & collisions[2] == 0) //moving left
                 {
-                    switch(collisions[0])
-                    {
-                        case 1:
-                            vx += 4;
-                            break
-                        case 0:
-                            vx += 0.3;
-                            break
+                    this.lastdirection = 0
+                    if(vx >= -this.maxvelocity)
+                    {   
+                        vx = -this.speed
                     }
-                    if(collisions[0] == 0 & input[3] == 1)
+                }
+                else if(this.dash == false) //no move
+                {
+                    if(vx > 0  | collisions[3] == 1)
                     {
-                        vx += 2;
+                        switch(collisions[0])
+                        {
+                            case 1:
+                                vx -= 8;
+                                break
+                            case 0:
+                                vx -= 0.3;
+                                break
+                        }
+                        if(collisions[0] == 0 & input[1] == 1 & input[3] == 0)
+                        {
+                            vx -= 2;
+                        }
+                        if(vx < 0)
+                        {
+                            vx = 0;
+                        }
                     }
-                    if(vx > 0)
+                    if(vx < 0 | collisions[2] == 1)
                     {
-                        vx = 0;
+                        switch(collisions[0])
+                        {
+                            case 1:
+                                vx += 4;
+                                break
+                            case 0:
+                                vx += 0.3;
+                                break
+                        }
+                        if(collisions[0] == 0 & input[3] == 1)
+                        {
+                            vx += 2;
+                        }
+                        if(vx > 0)
+                        {
+                            vx = 0;
+                        }
                     }
                 }
             }
-            if(input[4] == 1 & collisions[1] == 0 & this.jumpcount <= 14 & vy >= 0) //jump
+            
+            if(input[4] == 1 & collisions[1] == 0 & this.jumpcount <= this.jumpcountmax & vy >= 0) //jump
             {
                 this.jump = true
                 switch(vy)
@@ -234,14 +158,14 @@ class PlayerData
                     case 0:
                         if(this.releasejump == true)
                         {
-                            vy = 55;
+                            vy = this.jumpconststart;
                         }
                         break
-                    case 55:
-                        vy = 20;
+                    case this.jumpconststart:
+                        vy = this.jumpconst;
                         break
-                    case 20:
-                        if(this.jumpcount >= 14)
+                    case this.jumpconst:
+                        if(this.jumpcount >= this.jumpcountmax)
                         {
                             this.jump = false
                             vy = 0;
@@ -252,12 +176,12 @@ class PlayerData
                 }
 
             }
-            else if(input[4] == 0 & this.jump == true & this.jumpcount <= 14 | collisions[1] == 1 & this.jump == true & this.jumpcount <= 14)
+            else if(input[4] == 0 & this.jump == true & this.jumpcount <= this.jumpcountmax | collisions[1] == 1 & this.jump == true & this.jumpcount <= this.jumpcountmax)
             {
                 this.jump = false;
                 vy = 0;
                 this.jumpcount = 15;
-                this.releasejump = false
+                this.releasejump = false;
             }
             if(collisions[0] == 0 & vy <= 0 | this.walljump == 2 | this.walljump == -2) //walljump
             {
@@ -279,7 +203,7 @@ class PlayerData
                 {
                     this.walljump = 0;
                     this.walljumpcheck = false;
-                    this.wallleave = 10;
+                    this.wallleave = this.wallleavemax;
                     if(vy == -5)
                     {
                         vy = 0;
@@ -294,6 +218,14 @@ class PlayerData
                     if(input[1] == 1 | input[3] == 1)
                     {
                         this.wallleave += 1;
+                        if(input[3] == 1)
+                        {
+                            this.lastdirection = 1;
+                        }
+                        else if(input[1] == 1)
+                        {
+                            this.lastdirection = 0;
+                        }
                     }
                     else
                     {
@@ -303,9 +235,9 @@ class PlayerData
                     {
                         this.walljumpcheck = true;
                     }
-                    if(this.walljumpcheck == true)
-                    {
-                        if(collisions[1] == 0)
+                    else if(this.walljumpcheck == true)
+                    {  
+                        if(collisions[0] == 0 & collisions[1] == 0)
                         {    
                             if(input[4] == 1 | this.walljump == 2 | this.walljump == -2)
                             {
@@ -314,14 +246,14 @@ class PlayerData
                                     this.walljump = 2;
                                     vx = 0;
                                     vy = 0;
-                                    this.jumpcount = 14;
+                                    this.jumpcount = this.jumpcountmax;
                                 }
                                 else if(this.walljump == -1)
                                 {
                                     this.walljump = -2;
                                     vx = 0;
                                     vy = 0;
-                                    this.jumpcount = 14;
+                                    this.jumpcount = this.jumpcountmax;
                                 }
                                 if(vx == 0 & vy == 0 | collisions[2] == 0 & this.walljump == 2 | collisions[3] == 0 & this.walljump == -2)
                                 {
@@ -329,25 +261,22 @@ class PlayerData
                                     switch(vy)
                                     {
                                         case 0:
-                                            vx = 10;
+                                            vx = 15;
                                             vy = 50;
                                             break
                                         case 50:
-                                            vy = 49;
+                                            vy = 40;
                                             break
-                                        case 49:
-                                            vy = 45;
+                                        case 40:
+                                            vy = 30;
                                             break
-                                        case 45:
-                                            vy = 35;
+                                        case 30:
+                                            vy = 25;
                                             break
-                                        case 35:
+                                        case 25:
                                             vy = 20;
                                             break
                                         case 20:
-                                            vy = 15;
-                                            break
-                                        case 15:
                                             vy = 10;
                                             break
                                         case 10:
@@ -358,7 +287,7 @@ class PlayerData
                                             }
                                             this.walljump = 0;
                                             this.walljumpcheck = false;
-                                            this.wallleave = 10;
+                                            this.wallleave = this.wallleavemax;
                                             break
                                     }
                                     if(this.walljump == 2)
@@ -372,7 +301,7 @@ class PlayerData
                                     vy = 0;
                                     this.walljump = 0;
                                     this.walljumpcheck = false;
-                                    this.wallleave = 10;
+                                    this.wallleave = this.wallleavemax;
                                 }
                             }
                         }
@@ -381,24 +310,33 @@ class PlayerData
                             vy = 0;
                             this.walljump = 0;
                             this.walljumpcheck = false;
-                            this.wallleave = 10;
+                            this.wallleave = this.wallleavemax;
                         }
                     }
+                }
+                else if(this.walljump != 1 & this.walljump != -1)
+                {
+                    if(vy > 0)
+                    {
+                        vy = 0;
+                    }
+                    this.walljumpcheck = false;
+                    this.wallleave = this.wallleavemax;
+                    this.jump = false;
                 }
             }
             if(this.dashbuttonrelease == false & input[5] == 0)
             {
                 this.dashbuttonrelease = true
             }
-            if(input[5] == 1 & collisions[3] == 0 & collisions[2] == 0 & this.dashcooldown <= 0 & this.dashbuttonrelease == true | this.dash == true & this.dashcooldown <= 0 & this.dashbuttonrelease == true)
+            if(input[5] == 1 & collisions[3] == 0 & collisions[2] == 0 & this.dashcooldown <= 0 & this.dashbuttonrelease == true | this.dash == true & this.dashcooldown <= 0 & this.dashbuttonrelease == true) //dash
             {
                 if(this.dash == false)
                 {
                     this.dash = true
                     vx = 151;
                 }
-                vx = Math.sqrt(vx**2)
-                switch(vx)
+                switch(Math.sqrt(vx**2))
                 {
                     case 151:
                         vx = 150;
@@ -408,15 +346,13 @@ class PlayerData
                         break
                     case 149:
                         vx = 0;
+                        vy = 0;
                         this.dash = false;
                         this.dashcooldown = 30;
                         this.dashbuttonrelease = false
                         break
                 }
-                if(this.lastdirection == 0)
-                {
-                    vx *= -1
-                }
+                vx = -vx*(1-(2*this.lastdirection))
             }
             else if(this.dash == true)
             {
@@ -453,11 +389,12 @@ class PlayerData
             {
                 vy = 0;
                 this.jumpcount = 0;
-                this.wallleave = 10;
-                if(input[4] == 0)
-                {
-                    this.releasejump = true
-                }
+                this.wallleave = this.wallleavemax;
+                
+            }
+            if(input[4] == 0)
+            {
+                this.releasejump = true
             }
             
         }
@@ -557,13 +494,10 @@ class PlayerData
         return [vx,-vy]
     }
     
-    player_animatic(input, collisions, offsetx, offsety, offsetX_on, offsetY_on)
+    player_animatic(input, collisions, offsetx, offsety, offsetX_on, offsetY_on, camsmoother, pause)
     {
-        
-        ctx.drawImage(initial_pose_tab[0], upscale(this.playerX), upscale(this.playerY), upscale(71), upscale(71));
+        this.ctx.drawImage(initial_pose_tab[0], upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
     }
 }
 
-// console.log(initial_pose_tab)
-// console.log(moving_tab)
-export{PlayerData, player_var_getter}
+export{PlayerData}
