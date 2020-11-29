@@ -104,20 +104,18 @@ return_arrow.src = "graphics/ui/return_arrow.png";
 var bg = new Image();
 bg.src = "graphics/map_content/background.png";
 
-import {upscale, ui_var_getter, twPleinEcran} from "./includes/ui.js";
-import {animatic_var_getter, animatic_text, animatic_texture, transition_plus, transition_minus} from "./includes/animatic.js";
-import {MapData, level_reader_var_getter} from "./includes/level_reader.js";
-import {PlayerData, player_var_getter} from "./includes/player.js";
+import {upscale, twPleinEcran, ui_var_updater, ui_var_updater2, ui_var_updater3} from "./includes/ui.js";
+import {animatic_text, animatic_texture, transition_plus, transition_minus, animatic_var_update, animatic_var_update2, animatic_var_update3} from "./includes/animatic.js";
+import {MapData} from "./includes/level_reader.js";
+import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js"
-// import {cam_var_getter} from "./includes/camera.js";
-
-level_reader_var_getter("ctx", ctx);
-player_var_getter("ctx", ctx);
 
 var command = "false"; //command
 var push = 0;
-var devmode = false;
+var devmode = true;
 var godmode = false;
+var frametime = 0;
+var camsmootherenable = true;
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
@@ -148,8 +146,17 @@ var pkey = false;
 
 //setting
 
+map.var_update(ctx)
+map.var_update2(devmode)
+player.var_update(ctx)
+animatic_var_update(ctx)
+animatic_var_update2(devmode)
+ui_var_updater(ctx)
+ui_var_updater2(devmode)
+
 function main()
 {
+    frametime = Date.now()
     requestAnimationFrame(main);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(canvasfullscreen == true)
@@ -175,21 +182,8 @@ function main()
     ctx.webkitImageSmoothingEnabled = false;
     ctx.msImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
-    ui_var_getter("canvasfullscreen", canvasfullscreen);
-    ui_var_getter("mouseX", mouseX);
-    ui_var_getter("mouseY", mouseY);
-    ui_var_getter("devmode", devmode);
-    ui_var_getter("ctx", ctx);
-    ui_var_getter("fullscreenupscale", fullscreenupscale);
-    animatic_var_getter("canvasfullscreen", canvasfullscreen);
-    animatic_var_getter("mouseX", mouseX);
-    animatic_var_getter("mouseY", mouseY);
-    animatic_var_getter("devmode", devmode);
-    animatic_var_getter("ctx", ctx);
-    animatic_var_getter("click", click);
-    animatic_var_getter("mousepressed", mousepressed);
-    player_var_getter("pause", pause);
-    level_reader_var_getter("devmode", devmode);
+    ui_var_updater3(canvasfullscreen, fullscreenupscale, mouseX, mouseY)
+    animatic_var_update3(canvasfullscreen, mouseX, mouseY, click, mousepressed)
     
     switch(menu) 
     {
@@ -235,11 +229,11 @@ function main()
             }
             ctx.fillStyle = "rgb(255,255,255)";
             ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
-            vect = player.velocity(keys_input, vect[0], vect[1], godmode, map.collisions, map.offsetX_on, map.offsetY_on, map.bestdown[4])
-            stock = map.displayer(player.playerX, player.playerY, vect[0], vect[1], keys_input) 
-            player.playerX = stock[1]
-            player.playerY = stock[2]
-            player.player_animatic(keys_input, map.collisions, map.offsetX, map.offsetY, map.offsetX_on, map.offsetY_on)
+            vect = player.velocity(keys_input, vect[0], vect[1], godmode, map.collisions, map.offsetX_on, map.offsetY_on, map.bestdown[4], pause);
+            stock = map.displayer(player.playerX, player.playerY, vect[0], vect[1], camsmootherenable, pause);
+            player.playerX = stock[1];
+            player.playerY = stock[2];
+            player.player_animatic(keys_input, map.collisions, map.offsetX, map.offsetY, map.offsetX_on, map.offsetY_on, map.camsmoother, pause);
             if(keys_input[6] == 1 & pkey == false | pause == true) //pause
             {
                 if(pause == false & pkey == false)
@@ -249,7 +243,6 @@ function main()
                     pkey = true
                     endpause = false; 
                 }
-                player_var_getter("pause", pause);
                 var grd = ctx.createLinearGradient(-150, 0, upscale(3000), 0);
                 grd.addColorStop(0.1, "transparent");
                 grd.addColorStop(0, "black");
@@ -332,7 +325,6 @@ function main()
                         pause = false;
                         pauseframe = 0;
                     }
-                    player_var_getter("pause", pause);
                 }
             }
             transition_minus(transition)
@@ -386,9 +378,15 @@ function main()
                 {
                     case "devmode true": case "devmode enable":
                         devmode = true;
+                        map.var_update2(devmode)
+                        animatic_var_update2(devmode)
+                        ui_var_updater2(devmode)
                         break
                     case "devmode false": case "devmode disable":
                         devmode = false;
+                        map.var_update2(devmode)
+                        animatic_var_update2(devmode)
+                        ui_var_updater2(devmode)
                         break
                     case "godmode true": case "godmode enable":
                         godmode = true;
@@ -397,8 +395,6 @@ function main()
                         godmode = false;
                         break
                     case "reset":
-                        level_reader_var_getter("ctx", ctx);
-                        player_var_getter("ctx", ctx);
 
                         command = "false"; //command
                         push = 0;
@@ -453,6 +449,7 @@ function main()
         mousepressed = false
     }
     for(let i = 0; i < keys_input.length; ++i)
+    {    
         if(keys_input[i] == 0)
         {
             keypressed = false
@@ -467,17 +464,16 @@ function main()
             }
             break
         }
+    }
     if(transition == "true")
     {
         transition = transition_plus();
     }
     
-    
-    
-    
+    ctx.font = upscale(20)+'px arial';
+    frametime = (Date.now()-frametime)
     if(devmode == true)
     {
-        ctx.font = upscale(20)+'px arial';
         ctx.fillStyle = "rgb(255,255,255)";
         
         ctx.fillText("x : "+mouseX, upscale(1125), upscale(25)); //mouse pos
@@ -489,11 +485,11 @@ function main()
 
         ctx.fillText("Click : "+click, upscale(1091), upscale(100)); //click
 
-        ctx.fillText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullsecreen
+        ctx.fillText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullscreen
 
         ctx.fillText("Inputs : "+keys_input, upscale(978), upscale(150)); //input
 
-        ctx.fillText("Collisions : "+stock[0], upscale(830), upscale(175)); //collisions
+        ctx.fillText("Collisions : "+stock[0], upscale(963), upscale(175)); //collisions
 
         ctx.fillText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
         ctx.fillText("|", upscale(1080), upscale(200));
@@ -523,7 +519,10 @@ function main()
         ctx.fillText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
         ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
 
-        ctx.fillText(player.lastdirection+" "+player.dash+" "+player.dashcooldown, upscale(1015), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+        
+        
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillText(map.maxk, upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
         
         
         ctx.strokeStyle = "rgb(0,0,0)";
@@ -537,11 +536,11 @@ function main()
 
         ctx.strokeText("Click : "+click, upscale(1091), upscale(100)); //click
 
-        ctx.strokeText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullsecreen
+        ctx.strokeText("Fullscreen : "+canvasfullscreen, upscale(1043), upscale(125)); //fullscreen
 
         ctx.strokeText("Inputs : "+keys_input, upscale(978), upscale(150)); //input
 
-        ctx.strokeText("Collisions : "+stock[0], upscale(830), upscale(175)); //collisions
+        ctx.strokeText("Collisions : "+stock[0], upscale(963), upscale(175)); //collisions
 
         ctx.strokeText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
         ctx.strokeText("|", upscale(1080), upscale(200));
@@ -570,7 +569,13 @@ function main()
 
         ctx.strokeText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
         ctx.strokeText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
+
+        
     }
+    ctx.fillStyle = "rgb(0,255,0)";
+    ctx.fillText(Math.round(1000/frametime)+" FPS "+frametime+" ms", upscale(20), upscale(25));
+    ctx.strokeStyle = "rgb(0,100,0)";
+    ctx.strokeText(Math.round(1000/frametime)+" FPS "+frametime+" ms", upscale(20), upscale(25));
 }
 
 
