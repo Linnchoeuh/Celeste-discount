@@ -112,7 +112,7 @@ import * as levels from "./includes/levels.js"
 
 var command = "false"; //command
 var push = 0;
-var devmode = true;
+var devmode = false;
 var godmode = false;
 var frametime = 0;
 var camsmootherenable = true;
