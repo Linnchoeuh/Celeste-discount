@@ -32,8 +32,8 @@ class PlayerData
         this.dashcount = 0;
         this.dashcooldown = 0;
         this.dashbuttonrelease = true; //Oblige le joueur a relacher la touche du dash entre chaque dash
-        this.dashspeed = 7; //Permet d'ajuster la vitesse du dash par frame
-        this.dashduration = 50; //Permet d'ajuster durée en nombre de frame du dash
+        this.dashspeed = 71; //Permet d'ajuster la vitesse du dash par frame
+        this.dashduration = 5; //Permet d'ajuster durée en nombre de frame du dash
         this.dashcooldownmax = 30; //Permet d'empècher de dash a l'infini
         this.dashend = 0; //choisir la vitesse du joeur a la fin du dash
         
@@ -331,6 +331,7 @@ class PlayerData
                         else
                         {
                             vx = this.dashspeed*this.lastdirection
+                            vy = 0;
                         }    
                     }
                 }
