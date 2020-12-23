@@ -112,7 +112,7 @@ import * as levels from "./includes/levels.js"
 
 var command = "false"; //command
 var push = 0;
-var devmode = false;
+var devmode = true;
 var godmode = false;
 var frametime = 0;
 var camsmootherenable = true;
@@ -419,7 +419,6 @@ function main()
                         start = true
                         player = new PlayerData()
                         collisions = [0,0,0,0]
-                        frame = 0;
 
                         pause = false; //pause
                         pauseframe = 0;
@@ -522,7 +521,7 @@ function main()
         
         
         ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillText(map.maxk, upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+        ctx.fillText(player.dashbuttonrelease+"     "+player.jump+"   "+player.ground_slideposition, upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
         
         
         ctx.strokeStyle = "rgb(0,0,0)";

@@ -236,7 +236,6 @@ class MapData
         this.spawn = [file[2], file[3]];
         this.level_data_textures = file.splice(4, file.length);
         this.data_temp = []
-        console.log(this.level_data_textures)
         for (let i = 0; i < this.maplimit[1]+1; i++)
         {
             this.data_temp.push([])
@@ -256,7 +255,6 @@ class MapData
                 valueexist = false
                 for (let l = 0; l < this.data_temp[i].length; l++)
                 {
-                    // console.log("Sous liste : "+i+" | ocurrence : "+l+" | k = "+k)
                     if(this.data_temp[i][l][2] == k)
                     {
                         valueexist = true
@@ -325,244 +323,247 @@ class MapData
 
     displayer(px, py, vx, vy, camsmootherenable, pause)
     {
-        this.collisions = [0,0,0,0,0,0,0,0] //colldown,collup,collleft,collright,precolldoxn,precollup,precollleft,precollright,
-        
-        //DETECTION DES COLLISIONS
-        // up collisions
-        this.stock = collider_up(this.offsetY_on, py, this.bestup, this.offsetY, vy, this.maplimit)
-        this.offsetY_on = this.stock[0];
-        py = this.stock[1];
-        this.offsetY = this.stock[2];
-        vy = this.stock[3];
-        this.collisions.splice(1, 1, this.stock[4]);
-        
-        // down collisions
-        this.stock = collider_down(this.offsetY_on, py, this.bestdown, this.offsetY, vy, this.maplimit)
-        this.offsetY_on = this.stock[0];
-        py = this.stock[1];
-        this.offsetY = this.stock[2];
-        vy = this.stock[3];
-        this.collisions.splice(0, 1, this.stock[4]);
-        
-        // left collisions
-        this.stock = collider_left(this.offsetX_on, px, this.bestleft, this.offsetX, vx)
-        this.offsetX_on = this.stock[0]
-        px = this.stock[1]
-        this.offsetX = this.stock[2]
-        vx = this.stock[3]
-        this.collisions.splice(2, 1, this.stock[4]);
-        
-        // right collisions
-        this.stock = collider_right(this.offsetX_on, px, this.bestright, this.offsetX, vx, this.maplimit)
-        this.offsetX_on = this.stock[0];
-        px = this.stock[1];
-        this.offsetX = this.stock[2];
-        vx = this.stock[3];
-        this.collisions.splice(3, 1, this.stock[4]);
-
-        if(this.collisions[0] == 1)
-        {
-            this.offsetX = Math.round(this.offsetX)
-        }
-        if(px > 576 & this.offsetX_on == -1 | this.offsetX_on == 0 | px < 576 & this.offsetX_on == 1) //Camera X
-        { 
-            if(this.offsetX >= 0 & this.offsetX <= this.maplimit[0]*71-1129) // X offset
-            {
-                this.offsetX += vx
-                this.offsetX_on = 0
-                px = 576
-                if(this.offsetX < 1) //left
-                {
-                    this.offsetX_on = -1
-                    px += vx+this.offsetX
-                }
-                else if(this.offsetX > this.maplimit[0]*71-1130) //right
-                {
-                    this.offsetX_on = 1
-                    this.stock = collider_right(this.offsetX_on, px, this.bestright, this.offsetX, vx, this.maplimit)
-                    this.offsetX_on = this.stock[0];
-                    px = this.stock[1];
-                    this.offsetX = this.stock[2];
-                    vx = this.stock[3];
-                    this.collisions.splice(3, 1, this.stock[4]);
-                }
-            }
-            if(this.offsetX < 0) //replacer camera si elle sort du cadre
-            {
-                this.offsetX = 0
-            }
-            else if(this.offsetX > this.maplimit[0]*71-1129)
-            {
-                this.offsetX = this.maplimit[0]*71-1129
-            }
-        }
-
-        if(py > 324 & this.offsetY_on == -1 | this.offsetY_on == 0 | py < 324 & this.offsetY_on == 1) //Camera Y
+        if(pause == false)    
         {    
-            if(this.offsetY >= 0 & this.offsetY <= this.maplimit[1]*71-604) // Y offset
-            {
-                this.offsetY += vy
-                this.offsetY_on = 0
-                py = 324
-                if(this.offsetY < 1) //up
-                {
-                    this.offsetY_on = -1
-                    py = 324+vy
-                }
-                else if(this.offsetY > this.maplimit[1]*71-603) //down
-                {
-                    this.offsetY_on = 1
-                    py = 324+vy
-                }
-            }
-            if(this.offsetY < 0) //replacer camera si elle sort du cadre
-            {
-                this.offsetY = 0
-            }
-            else if(this.offsetY > this.maplimit[1]*71-604)
-            {
-                this.offsetY = this.maplimit[1]*71-604
-            }
-        }
-        
-        // block the player moving when he reach a border of the canvas
-        if(px < -20)
-        {
-            px = -21;
-            this.collisions.splice(2, 1, 1);
-        }
-        if(px > 1147)
-        {
-            px = 1148;
-            this.collisions.splice(3, 1, 1);
-        }
-        if(py > 603)
-        {
-            py = 604;
-            this.collisions.splice(0, 1, 1);
-        }
-        if(py < 1)
-        {
-            py = 0;
-            this.collisions.splice(1, 1, 1);
-        }
+            this.collisions = [0,0,0,0,0,0,0,0] //colldown,collup,collleft,collright,precolldoxn,precollup,precollleft,precollright,
+            
+            //DETECTION DES COLLISIONS
+            // up collisions
+            this.stock = collider_up(this.offsetY_on, py, this.bestup, this.offsetY, vy, this.maplimit)
+            this.offsetY_on = this.stock[0];
+            py = this.stock[1];
+            this.offsetY = this.stock[2];
+            vy = this.stock[3];
+            this.collisions.splice(1, 1, this.stock[4]);
+            
+            // down collisions
+            this.stock = collider_down(this.offsetY_on, py, this.bestdown, this.offsetY, vy, this.maplimit)
+            this.offsetY_on = this.stock[0];
+            py = this.stock[1];
+            this.offsetY = this.stock[2];
+            vy = this.stock[3];
+            this.collisions.splice(0, 1, this.stock[4]);
+            
+            // left collisions
+            this.stock = collider_left(this.offsetX_on, px, this.bestleft, this.offsetX, vx)
+            this.offsetX_on = this.stock[0]
+            px = this.stock[1]
+            this.offsetX = this.stock[2]
+            vx = this.stock[3]
+            this.collisions.splice(2, 1, this.stock[4]);
+            
+            // right collisions
+            this.stock = collider_right(this.offsetX_on, px, this.bestright, this.offsetX, vx, this.maplimit)
+            this.offsetX_on = this.stock[0];
+            px = this.stock[1];
+            this.offsetX = this.stock[2];
+            vx = this.stock[3];
+            this.collisions.splice(3, 1, this.stock[4]);
 
-        this.bestup = [false,false,false,false] //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
-        this.bestdown = [false,false,false,false] // ordre px,py;ox,oy
-        this.bestleft = [false,false,false,false]
-        this.bestright = [false,false,false,false]
-
-        this.cache_data = [this.level_data_textures_len-1, py+65, py-65, px-49, px+49]
-        for (let i = Math.round((py+this.offsetY)/71-1)*(this.maplimit[1]+1); i < Math.round((py+this.offsetY)/71+2)*(this.maplimit[1]+1); i++) //Collisions horizontales
-        {
-            if(i > 0 & i < this.cache_data[0])
+            if(this.collisions[0] == 1)
             {
-                this.maxi = i
+                this.offsetX = Math.round(this.offsetX)
             }
-            else if(i < 0)
-            {
-                this.maxi = 0;
-            }
-            else
-            {
-                this.maxi = this.cache_data[0];
-            }
-            if(this.level_data_textures[this.maxi] != 0 & this.level_data_textures[this.maxi][1] == true)
-            {
-                if(this.level_data_textures[this.maxi][3]-this.offsetY <= this.cache_data[1] & this.level_data_textures[this.maxi][3]-this.offsetY >= this.cache_data[2]) //x
+            if(px > 576 & this.offsetX_on == -1 | this.offsetX_on == 0 | px < 576 & this.offsetX_on == 1) //Camera X
+            { 
+                if(this.offsetX >= 0 & this.offsetX <= this.maplimit[0]*71-1129) // X offset
                 {
-                    if(this.bestleft[0] < this.level_data_textures[this.maxi][2]-this.offsetX & this.cache_data[3] > this.level_data_textures[this.maxi][2]-this.offsetX |
-                         this.bestleft[0] == false & this.cache_data[3] > this.level_data_textures[this.maxi][2]-this.offsetX) //left
+                    this.offsetX += vx
+                    this.offsetX_on = 0
+                    px = 576
+                    if(this.offsetX < 1) //left
                     {
-                        this.collisions.splice(6, 1, 1);
-                        this.bestleft = [this.level_data_textures[this.maxi][2]-this.offsetX, this.level_data_textures[this.maxi][3]-this.offsetY,
-                                         this.level_data_textures[this.maxi][2]-526, this.level_data_textures[this.maxi][3]-py]
+                        this.offsetX_on = -1
+                        px += vx+this.offsetX
                     }
-                    if(this.bestright[0] > this.level_data_textures[this.maxi][2]-this.offsetX & this.cache_data[4] < this.level_data_textures[this.maxi][2]-this.offsetX |
-                         this.bestright[0] == false & this.cache_data[4] < this.level_data_textures[this.maxi][2]-this.offsetX) //right
+                    else if(this.offsetX > this.maplimit[0]*71-1130) //right
                     {
-                        this.collisions.splice(7, 1, 1);
-                        this.bestright = [this.level_data_textures[this.maxi][2]-this.offsetX, this.level_data_textures[this.maxi][3]-this.offsetY,
-                                         this.level_data_textures[this.maxi][2]-626, this.level_data_textures[this.maxi][3]-py]
+                        this.offsetX_on = 1
+                        this.stock = collider_right(this.offsetX_on, px, this.bestright, this.offsetX, vx, this.maplimit)
+                        this.offsetX_on = this.stock[0];
+                        px = this.stock[1];
+                        this.offsetX = this.stock[2];
+                        vx = this.stock[3];
+                        this.collisions.splice(3, 1, this.stock[4]);
                     }
                 }
-            }
-        }
-        this.cache_data = [this.level_data_textures_len-1, this.maplimit[0]+1, Math.round((px+this.offsetX)/71-1), Math.round((px+this.offsetX)/71+2), this.offsetX+49, this.offsetX-49, py+35, py-35]
-        for (let i = 0; i < this.maplimit[1]+1; i++) //Collisions verticales
-        {
-            for (let k = this.cache_data[2]+this.cache_data[1]*i; k < this.cache_data[3]+this.cache_data[1]*i; k++)
-            {  
-                if(k > 0 & k < this.cache_data[0])
+                if(this.offsetX < 0) //replacer camera si elle sort du cadre
                 {
-                    this.maxk = k
+                    this.offsetX = 0
                 }
-                else if(k < 0)
+                else if(this.offsetX > this.maplimit[0]*71-1129)
                 {
-                    this.maxk = 0;
+                    this.offsetX = this.maplimit[0]*71-1129
+                }
+            }
+
+            if(py > 324 & this.offsetY_on == -1 | this.offsetY_on == 0 | py < 324 & this.offsetY_on == 1) //Camera Y
+            {    
+                if(this.offsetY >= 0 & this.offsetY <= this.maplimit[1]*71-604) // Y offset
+                {
+                    this.offsetY += vy
+                    this.offsetY_on = 0
+                    py = 324
+                    if(this.offsetY < 1) //up
+                    {
+                        this.offsetY_on = -1
+                        py = 324+vy
+                    }
+                    else if(this.offsetY > this.maplimit[1]*71-603) //down
+                    {
+                        this.offsetY_on = 1
+                        py = 324+vy
+                    }
+                }
+                if(this.offsetY < 0) //replacer camera si elle sort du cadre
+                {
+                    this.offsetY = 0
+                }
+                else if(this.offsetY > this.maplimit[1]*71-604)
+                {
+                    this.offsetY = this.maplimit[1]*71-604
+                }
+            }
+            
+            // block the player moving when he reach a border of the canvas
+            if(px < -20)
+            {
+                px = -21;
+                this.collisions.splice(2, 1, 1);
+            }
+            if(px > 1147)
+            {
+                px = 1148;
+                this.collisions.splice(3, 1, 1);
+            }
+            if(py > 603)
+            {
+                py = 604;
+                this.collisions.splice(0, 1, 1);
+            }
+            if(py < 1)
+            {
+                py = 0;
+                this.collisions.splice(1, 1, 1);
+            }
+
+            this.bestup = [false,false,false,false] //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
+            this.bestdown = [false,false,false,false] // ordre px,py;ox,oy
+            this.bestleft = [false,false,false,false]
+            this.bestright = [false,false,false,false]
+
+            this.cache_data = [this.level_data_textures_len-1, py+65, py-65, px-49, px+49]
+            for (let i = Math.round((py+this.offsetY)/71-1)*(this.maplimit[1]+1); i < Math.round((py+this.offsetY)/71+2)*(this.maplimit[1]+1); i++) //Collisions horizontales
+            {
+                if(i > 0 & i < this.cache_data[0])
+                {
+                    this.maxi = i
+                }
+                else if(i < 0)
+                {
+                    this.maxi = 0;
                 }
                 else
                 {
-                    this.maxk = this.cache_data[0];
+                    this.maxi = this.cache_data[0];
                 }
-                if(this.level_data_textures[this.maxk] != 0 & this.level_data_textures[this.maxk][1] == true)
+                if(this.level_data_textures[this.maxi] != 0 & this.level_data_textures[this.maxi][1] == true)
                 {
-                    if(this.level_data_textures[this.maxk][2]-this.cache_data[4] <= px & this.level_data_textures[this.maxk][2]-this.cache_data[5] >= px) //y 
+                    if(this.level_data_textures[this.maxi][3]-this.offsetY <= this.cache_data[1] & this.level_data_textures[this.maxi][3]-this.offsetY >= this.cache_data[2]) //x
                     {
-                        if(this.bestdown[1] > this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY |
-                             this.bestdown[1] == false & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY) //down
+                        if(this.bestleft[0] < this.level_data_textures[this.maxi][2]-this.offsetX & this.cache_data[3] > this.level_data_textures[this.maxi][2]-this.offsetX |
+                            this.bestleft[0] == false & this.cache_data[3] > this.level_data_textures[this.maxi][2]-this.offsetX) //left
                         {
-                            this.collisions.splice(4, 1, 1);
-                            this.bestdown = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
-                                             this.level_data_textures[this.maxk][2], this.level_data_textures[this.maxk][3]-395, (this.level_data_textures[this.maxk][3])-this.offsetY-py-71]
+                            this.collisions.splice(6, 1, 1);
+                            this.bestleft = [this.level_data_textures[this.maxi][2]-this.offsetX, this.level_data_textures[this.maxi][3]-this.offsetY,
+                                            this.level_data_textures[this.maxi][2]-526, this.level_data_textures[this.maxi][3]-py]
                         }
-                        if(this.bestup[1] < this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY |
-                             this.bestup[1] == false & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY) //up
+                        if(this.bestright[0] > this.level_data_textures[this.maxi][2]-this.offsetX & this.cache_data[4] < this.level_data_textures[this.maxi][2]-this.offsetX |
+                            this.bestright[0] == false & this.cache_data[4] < this.level_data_textures[this.maxi][2]-this.offsetX) //right
                         {
-                            this.collisions.splice(5, 1, 1);
-                            this.bestup = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
-                                             this.level_data_textures[this.maxk][2], this.level_data_textures[this.maxk][3]-253]
-                        } 
+                            this.collisions.splice(7, 1, 1);
+                            this.bestright = [this.level_data_textures[this.maxi][2]-this.offsetX, this.level_data_textures[this.maxi][3]-this.offsetY,
+                                            this.level_data_textures[this.maxi][2]-626, this.level_data_textures[this.maxi][3]-py]
+                        }
                     }
                 }
             }
-        }
+            this.cache_data = [this.level_data_textures_len-1, this.maplimit[0]+1, Math.round((px+this.offsetX)/71-1), Math.round((px+this.offsetX)/71+2), this.offsetX+49, this.offsetX-49, py, py]
+            for (let i = 0; i < this.maplimit[1]+1; i++) //Collisions verticales
+            {
+                for (let k = this.cache_data[2]+this.cache_data[1]*i; k < this.cache_data[3]+this.cache_data[1]*i; k++)
+                {  
+                    if(k > 0 & k < this.cache_data[0])
+                    {
+                        this.maxk = k
+                    }
+                    else if(k < 0)
+                    {
+                        this.maxk = 0;
+                    }
+                    else
+                    {
+                        this.maxk = this.cache_data[0];
+                    }
+                    if(this.level_data_textures[this.maxk] != 0 & this.level_data_textures[this.maxk][1] == true)
+                    {
+                        if(this.level_data_textures[this.maxk][2]-this.cache_data[4] <= px & this.level_data_textures[this.maxk][2]-this.cache_data[5] >= px) //y 
+                        {
+                            if(this.bestdown[1] > this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY |
+                                this.bestdown[1] == false & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY) //down
+                            {
+                                this.collisions.splice(4, 1, 1);
+                                this.bestdown = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
+                                                this.level_data_textures[this.maxk][2], this.level_data_textures[this.maxk][3]-395, (this.level_data_textures[this.maxk][3])-this.offsetY-py-71]
+                            }
+                            if(this.bestup[1] < this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY |
+                                this.bestup[1] == false & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY) //up
+                            {
+                                this.collisions.splice(5, 1, 1);
+                                this.bestup = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
+                                                this.level_data_textures[this.maxk][2], this.level_data_textures[this.maxk][3]-253]
+                            } 
+                        }
+                    }
+                }
+            }
 
-        if(camsmootherenable == true) //smooth the camera
-        {    
-            this.camsmoother = [Math.round(this.offsetX-((this.previousoffset[0][0]+this.previousoffset[1][0]+this.previousoffset[2][0]+this.previousoffset[3][0]+
-                                                            this.previousoffset[4][0]+this.previousoffset[5][0]+this.previousoffset[6][0]+this.previousoffset[7][0])/8))
-                                ,Math.round(this.offsetY-((this.previousoffset[0][1]+this.previousoffset[1][1]+this.previousoffset[2][1]+this.previousoffset[3][1]+
-                                                            this.previousoffset[4][1]+this.previousoffset[5][1]+this.previousoffset[6][1]+this.previousoffset[7][1]+
-                                                            this.previousoffset[8][1]+this.previousoffset[9][1]+this.previousoffset[10][1]+this.previousoffset[11][1]+
-                                                            this.previousoffset[12][1]+this.previousoffset[13][1]+this.previousoffset[14][1]+this.previousoffset[15][1])/16))]
-                                
-            this.previousoffset.splice(15, 1, this.previousoffset[14]);
-            this.previousoffset.splice(14, 1, this.previousoffset[13]);
-            this.previousoffset.splice(13, 1, this.previousoffset[12]);
-            this.previousoffset.splice(12, 1, this.previousoffset[11]);
-            this.previousoffset.splice(11, 1, this.previousoffset[10]);
-            this.previousoffset.splice(10, 1, this.previousoffset[9]);
-            this.previousoffset.splice(9, 1, this.previousoffset[8]);
-            this.previousoffset.splice(8, 1, this.previousoffset[7]);
-            this.previousoffset.splice(7, 1, this.previousoffset[6]);
-            this.previousoffset.splice(6, 1, this.previousoffset[5]);
-            this.previousoffset.splice(5, 1, this.previousoffset[4]);
-            this.previousoffset.splice(4, 1, this.previousoffset[3]);
-            this.previousoffset.splice(3, 1, this.previousoffset[2]);
-            this.previousoffset.splice(2, 1, this.previousoffset[1]);
-            this.previousoffset.splice(1, 1, this.previousoffset[0]);
-            this.previousoffset.splice(0, 1, [this.offsetX,this.offsetY]);
+            if(camsmootherenable == true) //smooth the camera
+            {    
+                this.camsmoother = [Math.round(this.offsetX-((this.previousoffset[0][0]+this.previousoffset[1][0]+this.previousoffset[2][0]+this.previousoffset[3][0]+
+                                                                this.previousoffset[4][0]+this.previousoffset[5][0]+this.previousoffset[6][0]+this.previousoffset[7][0])/8))
+                                    ,Math.round(this.offsetY-((this.previousoffset[0][1]+this.previousoffset[1][1]+this.previousoffset[2][1]+this.previousoffset[3][1]+
+                                                                this.previousoffset[4][1]+this.previousoffset[5][1]+this.previousoffset[6][1]+this.previousoffset[7][1]+
+                                                                this.previousoffset[8][1]+this.previousoffset[9][1]+this.previousoffset[10][1]+this.previousoffset[11][1]+
+                                                                this.previousoffset[12][1]+this.previousoffset[13][1]+this.previousoffset[14][1]+this.previousoffset[15][1])/16))]
+                                    
+                this.previousoffset.splice(15, 1, this.previousoffset[14]);
+                this.previousoffset.splice(14, 1, this.previousoffset[13]);
+                this.previousoffset.splice(13, 1, this.previousoffset[12]);
+                this.previousoffset.splice(12, 1, this.previousoffset[11]);
+                this.previousoffset.splice(11, 1, this.previousoffset[10]);
+                this.previousoffset.splice(10, 1, this.previousoffset[9]);
+                this.previousoffset.splice(9, 1, this.previousoffset[8]);
+                this.previousoffset.splice(8, 1, this.previousoffset[7]);
+                this.previousoffset.splice(7, 1, this.previousoffset[6]);
+                this.previousoffset.splice(6, 1, this.previousoffset[5]);
+                this.previousoffset.splice(5, 1, this.previousoffset[4]);
+                this.previousoffset.splice(4, 1, this.previousoffset[3]);
+                this.previousoffset.splice(3, 1, this.previousoffset[2]);
+                this.previousoffset.splice(2, 1, this.previousoffset[1]);
+                this.previousoffset.splice(1, 1, this.previousoffset[0]);
+                this.previousoffset.splice(0, 1, [this.offsetX,this.offsetY]);
+            }
+            else
+            {
+                this.camsmoother = [0, 0]
+            }
+            this.offsetsmoothX = Math.round(this.offsetX)-this.camsmoother[0];
+            this.offsetsmoothY = Math.round(this.offsetY)-this.camsmoother[1];
+            this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1]
         }
-        else
-        {
-            this.camsmoother = [0, 0]
-        }
-        this.offsetsmoothX = Math.round(this.offsetX)-this.camsmoother[0];
-        this.offsetsmoothY = Math.round(this.offsetY)-this.camsmoother[1];
         this.ctx.font = upscale(15)+'px arial';
         this.ctx.fillStyle = "rgb(255,255,255)";
-        this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1]
         for (let i = Math.round(this.offsetsmoothY/71)-1; i < Math.round(this.offsetsmoothY/71)+10; i++) //Affichage des textures
         {
             if(i <= this.maplimit[1])
