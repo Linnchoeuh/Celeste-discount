@@ -143,6 +143,9 @@ var pause = false; //pause
 var pauseframe = 0;
 var endpause = false;
 var pkey = false;
+var date = Date.now()
+var previousdate = 0
+var fps = 0
 
 //setting
 
@@ -158,6 +161,9 @@ function main()
 {
     frametime = Date.now()
     requestAnimationFrame(main);
+    fps = 1000/(date - previousdate)
+    previousdate = date
+    date = Date.now()
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(canvasfullscreen == true)
     {
@@ -572,9 +578,9 @@ function main()
         
     }
     ctx.fillStyle = "rgb(0,255,0)";
-    ctx.fillText(Math.round(1000/frametime)+" FPS "+frametime+" ms", upscale(20), upscale(25));
+    ctx.fillText(Math.round(fps)+" FPS ", upscale(20), upscale(25));
     ctx.strokeStyle = "rgb(0,100,0)";
-    ctx.strokeText(Math.round(1000/frametime)+" FPS "+frametime+" ms", upscale(20), upscale(25));
+    ctx.strokeText(Math.round(fps)+" FPS ", upscale(20), upscale(25));
 }
 
 
