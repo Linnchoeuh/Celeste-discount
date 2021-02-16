@@ -208,14 +208,7 @@ function main()
 {
     requestAnimationFrame(main);
     
-    frameaverageaccumulation++
-    if(frameaverageaccumulation >= 5)
-    {
-        date = Date.now();
-        fps = 5000/(date-frametime);
-        frametime = date;
-        frameaverageaccumulation = 0;
-    }
+    
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(firstgameframe === true)
     {
@@ -365,6 +358,14 @@ function main()
                 player.previousplayerX+playerinterpoX*nbofframewithoutphysics, player.previousplayerY+playerinterpoY*nbofframewithoutphysics, dt);
             
             nbofframewithoutphysics++
+            frameaverageaccumulation++
+            if(frameaverageaccumulation >= 5)
+            {
+                date = Date.now();
+                fps = 5000/(date-frametime);
+                frametime = date;
+                frameaverageaccumulation = 0;
+            }
             if(pause === false)
             {
                 ctx.font = "Bold "+upscale(25)+'px arial';
