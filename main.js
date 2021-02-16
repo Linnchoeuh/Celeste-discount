@@ -176,7 +176,7 @@ var smoothinterpoX = 0;
 var smoothinterpoY = 0;
 var nbofframewithoutphysics = 1;
 var previousvect = [0,0]
-
+const constante = 0;
 //Optimisation
 var firstgameframe = false
 
