@@ -14,9 +14,12 @@ class PlayerData
     {
         this.playerX = 0;
         this.playerY = 0;
+        this.previousplayerX = 0;
+        this.previousplayerY = 0;
         this.moveright = 0;
         this.moveleft = 0;
         this.jump = false;
+        this.jumpavaiblelity = true
         this.releasejump = false;
         this.jumpcount = 0;
         this.left = true;
@@ -41,6 +44,7 @@ class PlayerData
         this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
         this.maxcurrentvelocity; //La fameuse
         this.jumpforce = 35; //Puissance du saut
+        this.jumptolerance = -10 //Permet de sauter un peu après ne plus avoir toucher le block cette valeur tend vers les négatifs et a pour valeur max 0
         this.maxgroundvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est au sol
         this.maxaerialvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est en chute libre
         this.aerialmoving = 0.5; //Pour pouvoir se diriger dans les airs, si la valeure est trop élevé on peut faire des walljump sur un seul mur mdr
@@ -108,11 +112,11 @@ class PlayerData
     velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, distanceground, pause)
     {
         vy = -vy;
-        if(pause == false)
+        if(pause === false)
         {     
             this.ground_slideposition = 0;
             this.jump_animation_postion = 0;
-            if(godmode == false)
+            if(godmode === false)
             {
                 if(this.wallleave >= this.wallleavemax) //moving
                 {   
@@ -138,8 +142,8 @@ class PlayerData
                     }
                     
                     
-                    this.speed = Math.round(1+this.maxcurrentvelocity - (this.maxcurrentvelocity / (Math.sqrt(vx**2)+1)))
-                    if(input[3] == 1 & input[1] == 0 & vx >= 0 & collisions[3] == 0) //moving right
+                    this.speed = (Math.round(1+this.maxcurrentvelocity - (this.maxcurrentvelocity / (Math.sqrt(vx**2)+1))))
+                    if(input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0) //moving right
                     {
                         this.lastdirection = 1
                         if(vx <= this.maxcurrentvelocity)
@@ -159,7 +163,7 @@ class PlayerData
                             }
                         }
                     }
-                    else if(input[1] == 1 & vx <= 0 & input[3] == 0 & collisions[2] == 0) //moving left
+                    else if(input[1] === 1 & vx <= 0 & input[3] === 0 & collisions[2] === 0) //moving left
                     { 
                         this.lastdirection = -1
                         if(vx >= -this.maxcurrentvelocity)
@@ -179,52 +183,52 @@ class PlayerData
                             }
                         }
                     }
-                    else if(this.dashcount == 0) //no move
+                    else if(this.dashcount === 0) //no move
                     {
-                        if(vx > 0 | collisions[3] == 1) //Ralenti si le perso allait a droite
+                        if(vx > 0 | collisions[3] === 1) //Ralenti si le perso allait a droite
                         {
                             switch(collisions[0])
                             {
                                 case 1:
                                     vx -= this.groundfriction;
-                                    if(input[1] == 1)
+                                    if(input[1] === 1 & collisions[3] === false)
                                     {
                                         this.ground_slideposition = -1
                                     }
                                     break
                                 case 0:
                                     vx -= this.airfriction;
-                                    if(input[1] == 1)
+                                    if(input[1] === 1)
                                     {
                                         vx -= this.aerialmoving
                                     }
                                     break
                             }
-                            if(vx < 0 | collisions[3] == 1)
+                            if(vx < 0 | collisions[3] === 1)
                             {
                                 vx = 0;
                             }
                         }
-                        else if(vx < 0 | collisions[2] == 1) //Ralenti si le perso allait a gauche
+                        else if(vx < 0 | collisions[2] === 1) //Ralenti si le perso allait a gauche
                         {
                             switch(collisions[0])
                             {
                                 case 1:
                                     vx += this.groundfriction;
-                                    if(input[3] == 1)
+                                    if(input[3] === 1 & collisions[2] === false)
                                     {
                                         this.ground_slideposition = 1
                                     }
                                     break
                                 case 0:
                                     vx += this.airfriction;
-                                    if(input[3] == 1)
+                                    if(input[3] === 1)
                                     {
                                         vx += this.aerialmoving
                                     }
                                     break
                             }
-                            if(vx > 0 | collisions[2] == 1)
+                            if(vx > 0 | collisions[2] === 1)
                             {
                                 vx = 0;
                             }
@@ -232,24 +236,25 @@ class PlayerData
                     }
                 }
                 
-                if(input[4] == 1 & collisions[1] == 0 & vy >= -20 & this.walljump == 0 & this.releasejump == true & this.jump == true) //jump
+                if(input[4] === 1 & collisions[1] === 0 & this.walljump === 0 & this.releasejump === true & this.jump === true | vy >= this.jumptolerance & this.releasejump === true & input[4] === 1 & this.walljump === 0 & this.jumpavaiblelity === true) //jump
                 {
                     vy = this.jumpforce;
                     this.releasejump = false;
                     this.jump_animation_postion = 1;
+                    this.jumpavaiblelity = false
                 }
                 else if(vy > 0)
                 {
                     this.jump_animation_postion = 2;
                 }
 
-                if(collisions[0] == 0 & vy <= 0 | this.lastactwalljump == true) //walljump
+                if(collisions[0] === 0 & vy <= 0 | this.lastactwalljump === true) //walljump
                 {
-                    if(collisions[2] == 1 & distanceground > 71) //left
+                    if(collisions[2] === 1 & distanceground > 71 | collisions[2] === 1 & distanceground === false) //left
                     {
                         this.walljump = -1;
                     }
-                    else if(collisions[3] == 1 & distanceground > 71) //right
+                    else if(collisions[3] === 1 & distanceground > 71 | collisions[3] === 1 & distanceground === false) //right
                     {
                         this.walljump = 1;
                     }
@@ -261,19 +266,19 @@ class PlayerData
                     }
                     if(this.walljump != 0)
                     {
-                        if(this.walljump == 1 | this.walljump == -1)
+                        if(this.walljump === 1 | this.walljump === -1)
                         {
                             vy = -this.walljumpslide;
                             this.jump = false;
                         }
-                        if(input[1] == 1 | input[3] == 1)
+                        if(input[1] === 1 | input[3] === 1)
                         {
                             this.wallleave += 1;
-                            if(input[3] == 1)
+                            if(input[3] === 1)
                             {
                                 this.lastdirection = 1;
                             }
-                            else if(input[1] == 1)
+                            else if(input[1] === 1)
                             {
                                 this.lastdirection = -1;
                             }
@@ -282,11 +287,11 @@ class PlayerData
                         {
                             this.wallleave = 0;
                         }
-                        if(input[4] == 0 & this.walljumpcheck == false) //block the walljump if the spacebar was not released when the player touch the wall
+                        if(input[4] === 0 & this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
                         {
                             this.walljumpcheck = true;
                         }
-                        else if(this.walljumpcheck == true & collisions[0] == 0 & collisions[1] == 0 & input[4] == 1)
+                        else if(this.walljumpcheck === true & collisions[0] === 0 & collisions[1] === 0 & input[4] === 1)
                         {
                             vx = -this.walljump*this.walljumpx;
                             vy = this.walljumpy;
@@ -308,20 +313,20 @@ class PlayerData
                     }
                 }
                 
-                if(this.dashbuttonrelease == false & input[5] == 0) // dash
+                if(this.dashbuttonrelease === false & input[5] === 0) // dash
                 {
                     this.dashbuttonrelease = true
                 }
-                if(this.dashcooldown == 0 & this.lastactwalljump == false)
+                if(this.dashcooldown === 0 & this.lastactwalljump === false)
                 {    
-                    if(input[5] == 1 & this.dashbuttonrelease == true | this.dashcount != 0)
+                    if(input[5] === 1 & this.dashbuttonrelease === true | this.dashcount != 0)
                     {
-                        if(this.dashcount == 0)
+                        if(this.dashcount === 0)
                         {
                             this.dashbuttonrelease = false;
                         }
                         this.dashcount += 1
-                        if(this.dashcount >= this.dashduration | collisions[2] == 1 & vx < 0 | collisions[3] == 1 & vx > 0)
+                        if(this.dashcount >= this.dashduration | collisions[2] === 1 & vx < 0 | collisions[3] === 1 & vx > 0)
                         {
                             vx = this.dashend*this.lastdirection;
                             vy = 0;
@@ -340,9 +345,9 @@ class PlayerData
                     this.dashcooldown -= 1
                 }
                 
-                if(collisions[0] == 0 & this.walljump == 0 & this.dashcount == 0) //gravity
+                if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
                 {
-                    if(collisions[1] == 1 | input[4] == 0 & this.jump == true)
+                    if(collisions[1] === 1 | input[4] === 0 & this.jump === true)
                     {
                         vy = 0;
                         this.jump = false;
@@ -352,15 +357,17 @@ class PlayerData
                         vy -= 2;
                     }
                 }
-                if(collisions[0] == 1 & this.jump == false)
+
+                if(collisions[0] === 1 & this.jump === false)
                 {
                     vy = 0;
                     this.wallleave = this.wallleavemax;
                     this.jump = true;
                     this.lastactwalljump = false;
+                    this.jumpavaiblelity = true
                     
                 }
-                if(input[4] == 0)
+                if(input[4] === 0)
                 {
                     this.releasejump = true
                 }
@@ -368,13 +375,13 @@ class PlayerData
             }
             else //movement in godmode
             {    
-                if(input[8] == 1)
+                if(input[8] === 1)
                 {
-                    if(input[0] == 1 & collisions[1] == 0 & input[2] == 0) //up
+                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
                     {
                         vy = 1;
                     }
-                    else if(input[2] == 1 & collisions[0] == 0) //down
+                    else if(input[2] === 1 & collisions[0] === 0) //down
                     {
                         vy = -1;
                     }
@@ -382,11 +389,11 @@ class PlayerData
                     {
                         vy = 0;
                     }
-                    if(input[3] == 1 & collisions[3] == 0) //right
+                    if(input[3] === 1 & collisions[3] === 0) //right
                     {
                         vx = 1;
                     }
-                    else if(input[1] == 1 & collisions[2] == 0 & input[3] == 0) //left
+                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
                     {
                         vx = -1;
                     }
@@ -395,13 +402,13 @@ class PlayerData
                         vx = 0;
                     }
                 }
-                else if(input[5] == 1)
+                else if(input[5] === 1)
                 {
-                    if(input[0] == 1 & collisions[1] == 0 & input[2] == 0) //up
+                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
                     {
                         vy = 25;
                     }
-                    else if(input[2] == 1 & collisions[0] == 0) //down
+                    else if(input[2] === 1 & collisions[0] === 0) //down
                     {
                         vy = -25;
                     }
@@ -409,11 +416,11 @@ class PlayerData
                     {
                         vy = 0;
                     }
-                    if(input[3] == 1 & collisions[3] == 0) //right
+                    if(input[3] === 1 & collisions[3] === 0) //right
                     {
                         vx = 25;
                     }
-                    else if(input[1] == 1 & collisions[2] == 0 & input[3] == 0) //left
+                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
                     {
                         vx = -25;
                     }
@@ -424,11 +431,11 @@ class PlayerData
                 }
                 else
                 {    
-                    if(input[0] == 1 & collisions[1] == 0 & input[2] == 0) //up
+                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
                     {
                         vy = 10;
                     }
-                    else if(input[2] == 1 & collisions[0] == 0) //down
+                    else if(input[2] === 1 & collisions[0] === 0) //down
                     {
                         vy = -10;
                     }
@@ -436,11 +443,11 @@ class PlayerData
                     {
                         vy = 0;
                     }
-                    if(input[3] == 1 & collisions[3] == 0) //right
+                    if(input[3] === 1 & collisions[3] === 0) //right
                     {
                         vx = 10;
                     }
-                    else if(input[1] == 1 & collisions[2] == 0 & input[3] == 0) //left
+                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
                     {
                         vx = -10;
                     }
@@ -463,153 +470,154 @@ class PlayerData
         return [vx,-vy]
     }
     
-    player_animatic(input, collisions, offsetx, offsety, offsetX_on, offsetY_on, camsmoother, pause)
+    display(collisions, camsmoother, pause, px, py, dt)
     {
-        if(this.walljump == 1)
+        
+        switch(this.walljump)
         {
-            this.ctx.drawImage(this.wall_slide, 0, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-        }
-        else if(this.walljump == -1)
-        {
-            this.ctx.drawImage(this.wall_slide, 24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-        }
-        else
-        {
-            switch(this.lastdirection)
-            {
-                case 1:
-                    if(this.dashcount == 0)
-                    { 
-                        if(collisions[0] == 1)
-                        {    
-                            if(this.animationmoving == true & collisions[3] == 0 & this.ground_slideposition == 0)
-                            {       
-                                this.movingleftframe = 0;
-                                this.ctx.drawImage(this.moving, this.movingrightframetiminglist[this.movingrightframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
-                                {
-                                    this.movingrightframe += 1
+            case 1:
+                this.ctx.drawImage(this.wall_slide, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                break
+            case -1:
+                this.ctx.drawImage(this.wall_slide, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                break
+            case 0:
+                switch(this.lastdirection)
+                {
+                    case 1:
+                        if(this.dashcount === 0)
+                        { 
+                            if(collisions[0] === 1)
+                            {    
+                                if(this.animationmoving === true & collisions[3] === 0 & this.ground_slideposition === 0)
+                                {       
+                                    this.movingleftframe = 0;
+                                    this.ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.movingrightframe += 1/dt
+                                    }
+                                    if(this.movingrightframe >= this.movingframetiminglistlen)
+                                    {
+                                        this.movingrightframe = 0;
+                                    }
                                 }
-                                if(this.movingrightframe >= this.movingframetiminglistlen)
+                                else if(this.ground_slideposition === -1)
+                                {
+                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                }
+                                else
                                 {
                                     this.movingrightframe = 0;
+                                    this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
                                 }
-                            }
-                            else if(this.ground_slideposition == -1)
-                            {
-                                this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
                             }
                             else
                             {
-                                this.movingrightframe = 0;
-                                this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
+                                if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
+                                {
+                                    this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.fallingframe += 1/dt
+                                    }
+                                    if(this.fallingframe >= this.fallingframetiminglistlen)
+                                    {
+                                        this.fallingframe = 0;
+                                    }
+                                }
+                                else if(this.jump_animation_postion === 1)
+                                {
+                                    this.jumpframe = 0;
+                                    this.ctx.drawImage(this.jump_animation, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                }
+                                else if(this.jump_animation_postion === 2)
+                                {
+                                    this.ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.jumpframe += 1/dt
+                                    }
+                                    if(this.jumpframe >= this.jumpframetiminglistlen)
+                                    {
+                                        this.jumpframe = 0;
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            if(this.verticaldirection == -1 & this.jump_animation_postion == 0)
-                            {
-                                this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[this.fallingframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
-                                {
-                                    this.fallingframe += 1
-                                }
-                                if(this.fallingframe >= this.fallingframetiminglistlen)
-                                {
-                                    this.fallingframe = 0;
-                                }
-                            }
-                            else if(this.jump_animation_postion == 1)
-                            {
-                                this.jumpframe = 0;
-                                this.ctx.drawImage(this.jump_animation, 0, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                            }
-                            else if(this.jump_animation_postion == 2)
-                            {
-                                this.ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[this.jumpframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
-                                {
-                                    this.jumpframe += 1
-                                }
-                                if(this.jumpframe >= this.jumpframetiminglistlen)
-                                {
-                                    this.jumpframe = 0;
-                                }
-                            }
+                            this.ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
                         }
-                    }
-                    else
-                    {
-                        this.ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                    }
-                    break
-                case -1:
-                    if(this.dashcount == 0)
-                    {    
-                        if(collisions[0] == 1)
-                        {
-                            if(this.animationmoving == true & collisions[2] == 0 & this.ground_slideposition == 0)
+                        break
+                    case -1:
+                        if(this.dashcount === 0)
+                        {    
+                            if(collisions[0] === 1)
                             {
-                                this.movingrightframe = 0;
-                                this.ctx.drawImage(this.moving, this.movingleftframetiminglist[this.movingleftframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
+                                if(this.animationmoving === true & collisions[2] === 0 & this.ground_slideposition === 0)
                                 {
-                                    this.movingleftframe += 1
+                                    this.movingrightframe = 0;
+                                    this.ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.movingleftframe += 1/dt
+                                    }
+                                    if(this.movingleftframe >= this.movingframetiminglistlen)
+                                    {
+                                        this.movingleftframe = 0;
+                                    }
                                 }
-                                if(this.movingleftframe >= this.movingframetiminglistlen)
+                                else if(this.ground_slideposition === 1)
+                                {
+                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                }
+                                else
                                 {
                                     this.movingleftframe = 0;
+                                    this.ctx.drawImage(this.initial_pose, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
                                 }
-                            }
-                            else if(this.ground_slideposition == 1)
-                            {
-                                this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
                             }
                             else
                             {
-                                this.movingleftframe = 0;
-                                this.ctx.drawImage(this.initial_pose, 0, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
+                                if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
+                                {
+                                    this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.fallingframe += 1/dt
+                                    }
+                                    if(this.fallingframe >= this.fallingframetiminglistlen)
+                                    {
+                                        this.fallingframe = 0;
+                                    }
+                                }
+                                else if(this.jump_animation_postion === 1)
+                                {
+                                    this.jumpframe = 0;
+                                    this.ctx.drawImage(this.jump_animation, 72, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                }
+                                else if(this.jump_animation_postion === 2)
+                                {
+                                    this.ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    if(pause === false)
+                                    {
+                                        this.jumpframe += 1/dt
+                                    }
+                                    if(this.jumpframe >= this.jumpframetiminglistlen)
+                                    {
+                                        this.jumpframe = 0;
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            if(this.verticaldirection == -1 & this.jump_animation_postion == 0)
-                            {
-                                this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[this.fallingframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
-                                {
-                                    this.fallingframe += 1
-                                }
-                                if(this.fallingframe >= this.fallingframetiminglistlen)
-                                {
-                                    this.fallingframe = 0;
-                                }
-                            }
-                            else if(this.jump_animation_postion == 1)
-                            {
-                                this.jumpframe = 0;
-                                this.ctx.drawImage(this.jump_animation, 72, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                            }
-                            else if(this.jump_animation_postion == 2)
-                            {
-                                this.ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[this.jumpframe]*24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                                if(pause == false)
-                                {
-                                    this.jumpframe += 1
-                                }
-                                if(this.jumpframe >= this.jumpframetiminglistlen)
-                                {
-                                    this.jumpframe = 0;
-                                }
-                            }
+                            this.ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
                         }
-                    }
-                    else
-                    {
-                        this.ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, upscale(this.playerX+camsmoother[0]), upscale(this.playerY+camsmoother[1]), upscale(71), upscale(71));
-                    }
-                    break
-            }
+                        break
+                }
+                break
         }
     }
 }

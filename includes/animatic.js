@@ -6,7 +6,7 @@ var mouseY = 0;
 var set = 0;
 var click = false;
 var mousepressed = false;
-var index_list = [0,0,0,0,0,0,0,0,0]
+var index_list = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 var defauloffsetX = 1.5;
 var defauloffsetY = 0;
 
@@ -67,16 +67,19 @@ function animatic_text(text, index, posX, posY, width, height, textX, textY, tex
         {
             case 2:
                 ctx.font = "Bold "+upscale(textscale3)+'px arial';
+                ctx.imageSmoothingEnabled = false;
                 ctx.fillText(text, upscale(textX-((textscale3-textscale1)*(defauloffsetX-offsetX))), upscale(textY+((textscale3-textscale1)*(defauloffsetY+offsetY))));
                 index_list.splice(index, 1, 1);
                 break
             case 1:
                 ctx.font = "Bold "+upscale(textscale2)+'px arial';
+                ctx.imageSmoothingEnabled = false;
                 ctx.fillText(text, upscale(textX-((textscale2-textscale1)*(defauloffsetX-offsetX))), upscale(textY+((textscale2-textscale1)*(defauloffsetY+offsetY))));
                 index_list.splice(index, 1, 0);
                 break
             case 0:
                 ctx.font = "Bold "+upscale(textscale1)+'px arial';
+                ctx.imageSmoothingEnabled = false;
                 ctx.fillText(text, upscale(textX), upscale(textY));
                 break
         }
@@ -95,14 +98,17 @@ function animatic_texture(texture, index, posX, posY, width, height, textureX, t
         switch(index_list[index])
         {
             case 0:
+                ctx.imageSmoothingEnabled = false;
                 ctx.drawImage(texture, upscale(textureX-((texturescale2-texturescale1[0])*(defauloffsetX-offsetX))), upscale(textureY+((texturescale2-texturescale1[1])*(defauloffsetY+offsetY))), upscale(texturescale2*ratio), upscale(texturescale2));
                 index_list.splice(index, 1, 1);
                 break
             case 1:
+                ctx.imageSmoothingEnabled = false;
                 ctx.drawImage(texture, upscale(textureX-((texturescale3-texturescale1[0])*(defauloffsetX-offsetX))), upscale(textureY+((texturescale3-texturescale1[1])*(defauloffsetY+offsetY))), upscale(texturescale3*ratio), upscale(texturescale3));
                 index_list.splice(index, 1, 2);
                 break
             case 2:
+                ctx.imageSmoothingEnabled = false;
                 ctx.drawImage(texture, upscale(textureX-(((texturescale4*ratio)-texturescale1[0])*(defauloffsetX-offsetX))), upscale(textureY+((texturescale4-texturescale1[1])*(defauloffsetY+offsetY))), upscale(texturescale4*ratio), upscale(texturescale4));
                 if(text_show != "")
                 {

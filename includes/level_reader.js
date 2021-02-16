@@ -217,16 +217,19 @@ class MapData
         this.tempcontentmap = []
         this.offsetY = 0;
         this.offsetX = 0;
+        this.previousoffsetX = 0;
+        this.previousoffsetY = 0;
         this.offsetX_on = 0
         this.offsetY_on = 0
         this.collisions = [0,0,0,0,0,0,0,0]
         this.stock = []
         this.bestup = [false,false,false,false] //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
-        this.bestdown = [false,false,false,false] // ordre px,py;ox,oy
+        this.bestdown = [false,false,false,false,false] // ordre px,py;ox,oy
         this.bestleft = [false,false,false,false]
         this.bestright = [false,false,false,false]
         this.previousoffset = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]
         this.camsmoother = [0, 0]
+        this.previouscamsmoother = [0,0]
 
     }
 
@@ -236,16 +239,24 @@ class MapData
         this.spawn = [file[2], file[3]];
         this.level_data_textures = file.splice(4, file.length);
         this.data_temp = []
+        console.log(this.level_data_textures.length)
         for (let i = 0; i < this.maplimit[1]+1; i++)
         {
             this.data_temp.push([])
         }
         for (let i = 0; i <= this.level_data_textures.length-1; i++)
         {
-            this.data_temp[this.level_data_textures[i][3]].push(this.level_data_textures[i])
+            try
+            {
+                this.data_temp[this.level_data_textures[i][3]].push(this.level_data_textures[i])
+            }
+            catch
+            {
+                console.log("Failed to get the block "+this.level_data_textures[i])
+            }
         }
         console.log(this.data_temp)
-        this.level_data_textures = []
+        this.level_data_textures = [0]
         var valueexist = false
         console.log(this.data_temp.length)
         for (let i = 0; i < this.data_temp.length; i++)
@@ -321,7 +332,7 @@ class MapData
         this.devmode = devmode
     }    
 
-    displayer(px, py, vx, vy, camsmootherenable, pause)
+    collider(px, py, vx, vy, pause)
     {
         if(pause == false)    
         {    
@@ -374,7 +385,12 @@ class MapData
                     if(this.offsetX < 1) //left
                     {
                         this.offsetX_on = -1
-                        px += vx+this.offsetX
+                        this.stock = collider_left(this.offsetX_on, px, this.bestleft, this.offsetX, vx)
+                        this.offsetX_on = this.stock[0]
+                        px = this.stock[1]
+                        this.offsetX = this.stock[2]
+                        vx = this.stock[3]
+                        this.collisions.splice(2, 1, this.stock[4]);
                     }
                     else if(this.offsetX > this.maplimit[0]*71-1130) //right
                     {
@@ -448,12 +464,12 @@ class MapData
             }
 
             this.bestup = [false,false,false,false] //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
-            this.bestdown = [false,false,false,false] // ordre px,py;ox,oy
+            this.bestdown = [false,false,false,false,false] // ordre px,py;ox,oy
             this.bestleft = [false,false,false,false]
             this.bestright = [false,false,false,false]
 
             this.cache_data = [this.level_data_textures_len-1, py+65, py-65, px-49, px+49]
-            for (let i = Math.round((py+this.offsetY)/71-1)*(this.maplimit[1]+1); i < Math.round((py+this.offsetY)/71+2)*(this.maplimit[1]+1); i++) //Collisions horizontales
+            for (let i = Math.round((py+this.offsetY)/71-1)*(this.maplimit[0]+1); i < Math.round((py+this.offsetY)/71+2)*(this.maplimit[0]+1); i++) //Collisions horizontales
             {
                 if(i > 0 & i < this.cache_data[0])
                 {
@@ -488,6 +504,7 @@ class MapData
                     }
                 }
             }
+            
             this.cache_data = [this.level_data_textures_len-1, this.maplimit[0]+1, Math.round((px+this.offsetX)/71-1), Math.round((px+this.offsetX)/71+2), this.offsetX+49, this.offsetX-49, py, py]
             for (let i = 0; i < this.maplimit[1]+1; i++) //Collisions verticales
             {
@@ -527,39 +544,16 @@ class MapData
                     }
                 }
             }
+        }
+        return [px, py]
+    }
 
-            if(camsmootherenable == true) //smooth the camera
-            {    
-                this.camsmoother = [Math.round(this.offsetX-((this.previousoffset[0][0]+this.previousoffset[1][0]+this.previousoffset[2][0]+this.previousoffset[3][0]+
-                                                                this.previousoffset[4][0]+this.previousoffset[5][0]+this.previousoffset[6][0]+this.previousoffset[7][0])/8))
-                                    ,Math.round(this.offsetY-((this.previousoffset[0][1]+this.previousoffset[1][1]+this.previousoffset[2][1]+this.previousoffset[3][1]+
-                                                                this.previousoffset[4][1]+this.previousoffset[5][1]+this.previousoffset[6][1]+this.previousoffset[7][1]+
-                                                                this.previousoffset[8][1]+this.previousoffset[9][1]+this.previousoffset[10][1]+this.previousoffset[11][1]+
-                                                                this.previousoffset[12][1]+this.previousoffset[13][1]+this.previousoffset[14][1]+this.previousoffset[15][1])/16))]
-                                    
-                this.previousoffset.splice(15, 1, this.previousoffset[14]);
-                this.previousoffset.splice(14, 1, this.previousoffset[13]);
-                this.previousoffset.splice(13, 1, this.previousoffset[12]);
-                this.previousoffset.splice(12, 1, this.previousoffset[11]);
-                this.previousoffset.splice(11, 1, this.previousoffset[10]);
-                this.previousoffset.splice(10, 1, this.previousoffset[9]);
-                this.previousoffset.splice(9, 1, this.previousoffset[8]);
-                this.previousoffset.splice(8, 1, this.previousoffset[7]);
-                this.previousoffset.splice(7, 1, this.previousoffset[6]);
-                this.previousoffset.splice(6, 1, this.previousoffset[5]);
-                this.previousoffset.splice(5, 1, this.previousoffset[4]);
-                this.previousoffset.splice(4, 1, this.previousoffset[3]);
-                this.previousoffset.splice(3, 1, this.previousoffset[2]);
-                this.previousoffset.splice(2, 1, this.previousoffset[1]);
-                this.previousoffset.splice(1, 1, this.previousoffset[0]);
-                this.previousoffset.splice(0, 1, [this.offsetX,this.offsetY]);
-            }
-            else
-            {
-                this.camsmoother = [0, 0]
-            }
-            this.offsetsmoothX = Math.round(this.offsetX)-this.camsmoother[0];
-            this.offsetsmoothY = Math.round(this.offsetY)-this.camsmoother[1];
+    display(px, py, pause, offsetX, offsetY, smoothX, smoothY)
+    {
+        if(pause == false)    
+        {
+            this.offsetsmoothX = Math.round(offsetX)-smoothX;
+            this.offsetsmoothY = Math.round(offsetY)-smoothY;
             this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1]
         }
         this.ctx.font = upscale(15)+'px arial';
@@ -574,7 +568,7 @@ class MapData
             {
                 this.maxi = this.maplimit[1];
             }
-            for (let k = this.cache_data[0]+(this.cache_data[1]*this.maxi)-1; k < Math.round(this.offsetsmoothX/71)+(this.cache_data[1]*this.maxi)+18; k++)
+            for (let k = this.cache_data[0]+(this.cache_data[1]*this.maxi)-1; k < Math.round(this.offsetsmoothX/71)+(this.cache_data[1]*this.maxi)+19; k++)
             {
                 if(k > 0 & k < this.level_data_textures_len-1)
                 {
@@ -605,6 +599,7 @@ class MapData
                     }                   
                 }
             }
+            
         }
 
 
@@ -613,35 +608,78 @@ class MapData
             if(this.collisions[5] == 1)
             {
                 this.ctx.fillStyle = "rgb(255,0,0)";
-                this.ctx.fillRect(upscale(this.bestup[0]), upscale(this.bestup[1]+66),upscale(71),upscale(5));
+                this.ctx.fillRect(upscale(this.bestup[0]+smoothX), upscale(this.bestup[1]+smoothY+66),upscale(71),upscale(5));
             }
-            
+
             if(this.collisions[4] == 1)
             {
                 this.ctx.fillStyle = "rgb(0,255,0)";
-                this.ctx.fillRect(upscale(this.bestdown[0]), upscale(this.bestdown[1]),upscale(71),upscale(5));
+                this.ctx.fillRect(upscale(this.bestdown[0]+smoothX), upscale(this.bestdown[1]+smoothY),upscale(71),upscale(5));
             }
-            
+
             if(this.collisions[6] == 1) //Left blue
             {
                 this.ctx.fillStyle = "rgb(0,0,255)";
-                this.ctx.fillRect(upscale(this.bestleft[0]+66), upscale(this.bestleft[1]),upscale(5),upscale(71));
+                this.ctx.fillRect(upscale(this.bestleft[0]+smoothX+66), upscale(this.bestleft[1]+smoothY),upscale(5),upscale(71));
             }
-            
+
             if(this.collisions[7] == 1) //Right yellow
             {
                 this.ctx.fillStyle = "rgb(255,255,0)";
-                this.ctx.fillRect(upscale(this.bestright[0]), upscale(this.bestright[1]),upscale(5),upscale(71));
+                this.ctx.fillRect(upscale(this.bestright[0]+smoothX), upscale(this.bestright[1]+smoothY),upscale(5),upscale(71));
             }
             this.ctx.lineWidth="2"
             this.ctx.strokeStyle = "rgb(0,0,0)";
-            this.ctx.strokeRect(upscale(px), upscale(py),upscale(71),upscale(71));
+            this.ctx.strokeRect(upscale(px+smoothX), upscale(py+smoothY),upscale(71),upscale(71));
             this.ctx.strokeStyle = "rgb(150,150,150)";
-            this.ctx.strokeRect(upscale(px+22), upscale(py),upscale(28),upscale(71));
+            this.ctx.strokeRect(upscale(px+smoothX+22), upscale(py+smoothY),upscale(28),upscale(71));
+            this.ctx.fillStyle = "rgb(255,255,255)";
+            this.ctx.fillText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", upscale(px+smoothX+50), upscale(py+smoothY+20));
+            this.ctx.strokeStyle = "rgb(0,0,0)";
             this.ctx.lineWidth="1"
+            this.ctx.strokeText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", upscale(px+smoothX+50), upscale(py+smoothY+20));
+            
         }
-        return [this.collisions, px, py]
     }
+
+    fcamsmoother(camsmootherenable, pause)
+    {
+        if(pause == false)    
+        {     
+            if(camsmootherenable == true) //smooth the camera
+            {    
+                this.previouscamsmoother = this.camsmoother
+                this.camsmoother = [Math.round(this.offsetX-((this.previousoffset[0][0]+this.previousoffset[1][0]+this.previousoffset[2][0]+this.previousoffset[3][0]+
+                                                                this.previousoffset[4][0]+this.previousoffset[5][0]+this.previousoffset[6][0]+this.previousoffset[7][0])/8))
+                                    ,Math.round(this.offsetY-((this.previousoffset[0][1]+this.previousoffset[1][1]+this.previousoffset[2][1]+this.previousoffset[3][1]+
+                                                                this.previousoffset[4][1]+this.previousoffset[5][1]+this.previousoffset[6][1]+this.previousoffset[7][1]+
+                                                                this.previousoffset[8][1]+this.previousoffset[9][1]+this.previousoffset[10][1]+this.previousoffset[11][1]+
+                                                                this.previousoffset[12][1]+this.previousoffset[13][1]+this.previousoffset[14][1]+this.previousoffset[15][1])/16))]
+                                    
+                this.previousoffset.splice(15, 1, this.previousoffset[14]);
+                this.previousoffset.splice(14, 1, this.previousoffset[13]);
+                this.previousoffset.splice(13, 1, this.previousoffset[12]);
+                this.previousoffset.splice(12, 1, this.previousoffset[11]);
+                this.previousoffset.splice(11, 1, this.previousoffset[10]);
+                this.previousoffset.splice(10, 1, this.previousoffset[9]);
+                this.previousoffset.splice(9, 1, this.previousoffset[8]);
+                this.previousoffset.splice(8, 1, this.previousoffset[7]);
+                this.previousoffset.splice(7, 1, this.previousoffset[6]);
+                this.previousoffset.splice(6, 1, this.previousoffset[5]);
+                this.previousoffset.splice(5, 1, this.previousoffset[4]);
+                this.previousoffset.splice(4, 1, this.previousoffset[3]);
+                this.previousoffset.splice(3, 1, this.previousoffset[2]);
+                this.previousoffset.splice(2, 1, this.previousoffset[1]);
+                this.previousoffset.splice(1, 1, this.previousoffset[0]);
+                this.previousoffset.splice(0, 1, [this.offsetX, this.offsetY]);
+            }
+            else
+            {
+                this.previouscamsmoother = [0,0]
+                this.camsmoother = [0, 0]
+            }
+        }
+    }    
 }
 
 export{MapData}
