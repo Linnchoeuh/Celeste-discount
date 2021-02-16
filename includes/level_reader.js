@@ -505,7 +505,7 @@ class MapData
                 }
             }
             
-            this.cache_data = [this.level_data_textures_len-1, this.maplimit[0]+1, Math.round((px+this.offsetX)/71-1), Math.round((px+this.offsetX)/71+2), this.offsetX+49, this.offsetX-49, py, py]
+            this.cache_data = [this.level_data_textures_len-1, this.maplimit[0]+1, Math.round((px+this.offsetX)/71+0.8), Math.round((px+this.offsetX)/71+2.2), this.offsetX+49, this.offsetX-49]
             for (let i = 0; i < this.maplimit[1]+1; i++) //Collisions verticales
             {
                 for (let k = this.cache_data[2]+this.cache_data[1]*i; k < this.cache_data[3]+this.cache_data[1]*i; k++)
@@ -526,15 +526,15 @@ class MapData
                     {
                         if(this.level_data_textures[this.maxk][2]-this.cache_data[4] <= px & this.level_data_textures[this.maxk][2]-this.cache_data[5] >= px) //y 
                         {
-                            if(this.bestdown[1] > this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY |
-                                this.bestdown[1] == false & this.cache_data[6] < this.level_data_textures[this.maxk][3]-this.offsetY) //down
+                            if(this.bestdown[1] > this.level_data_textures[this.maxk][3]-this.offsetY & py < this.level_data_textures[this.maxk][3]-this.offsetY |
+                                this.bestdown[1] == false & py < this.level_data_textures[this.maxk][3]-this.offsetY) //down
                             {
                                 this.collisions.splice(4, 1, 1);
                                 this.bestdown = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
                                                 this.level_data_textures[this.maxk][2], this.level_data_textures[this.maxk][3]-395, (this.level_data_textures[this.maxk][3])-this.offsetY-py-71]
                             }
-                            if(this.bestup[1] < this.level_data_textures[this.maxk][3]-this.offsetY & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY |
-                                this.bestup[1] == false & this.cache_data[7] > this.level_data_textures[this.maxk][3]-this.offsetY) //up
+                            if(this.bestup[1] < this.level_data_textures[this.maxk][3]-this.offsetY & py > this.level_data_textures[this.maxk][3]-this.offsetY |
+                                this.bestup[1] == false & py > this.level_data_textures[this.maxk][3]-this.offsetY) //up
                             {
                                 this.collisions.splice(5, 1, 1);
                                 this.bestup = [this.level_data_textures[this.maxk][2]-this.offsetX, this.level_data_textures[this.maxk][3]-this.offsetY,
