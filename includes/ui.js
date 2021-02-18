@@ -5,29 +5,6 @@ var mouseX = 0;
 var mouseY = 0;
 var fullscreenupscale;
 
-function ui_var_getter(vartarg, varcont)
-{
-    switch(vartarg)
-    {
-        case "devmode":
-            devmode = varcont
-            break
-        case "canvasfullscreen":
-            canvasfullscreen = varcont
-            break
-        case "fullscreenupscale":
-            fullscreenupscale = varcont
-            break
-        case "mouseX":
-            mouseX = varcont
-            break
-        case "mouseY":
-            mouseY = varcont
-            break
-    }
-    
-}
-
 function ui_var_updater(actx)
 {
     ctx = actx;

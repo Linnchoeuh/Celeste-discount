@@ -16,8 +16,8 @@ class PlayerData
         this.playerY = 0;
         this.previousplayerX = 0;
         this.previousplayerY = 0;
-        this.moveright = 0;
-        this.moveleft = 0;
+        // this.moveright = 0;
+        // this.moveleft = 0;
         this.jump = false;
         this.jumpavaiblelity = true
         this.releasejump = false;
@@ -32,40 +32,44 @@ class PlayerData
         this.cachedata;
         this.lastactwalljump = false;
         
-        this.dashcount = 0;
-        this.dashcooldown = 0;
+        this.dashcount = 0; //(Ne pas toucher)
+        this.dashcooldown = 0; //(Ne pas toucher)
         this.dashbuttonrelease = true; //Oblige le joueur a relacher la touche du dash entre chaque dash
-        this.dashspeed = 71; //Permet d'ajuster la vitesse du dash par frame
-        this.dashduration = 5; //Permet d'ajuster durée en nombre de frame du dash
-        this.dashcooldownmax = 30; //Permet d'empècher de dash a l'infini
-        this.dashend = 0; //choisir la vitesse du joeur a la fin du dash
+        this.dashspeed = 71; //Permet d'ajuster la vitesse du dash par frame (valeures admises [0;+inf[)
+        this.dashduration = 5; //Permet d'ajuster durée en nombre de frame du dash (valeures admises [0;+inf[)
+        this.dashcooldownmax = 30; //Permet d'empècher de dash a l'infini (valeures admises [0;+inf[)
+        this.dashend = 0; //choisir la vitesse du joeur a la fin du dash (valeures admises [0;70])
         
 
         this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
-        this.maxcurrentvelocity; //La fameuse
-        this.jumpforce = 35; //Puissance du saut
-        this.jumptolerance = -10 //Permet de sauter un peu après ne plus avoir toucher le block cette valeur tend vers les négatifs et a pour valeur max 0
-        this.maxgroundvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est au sol
-        this.maxaerialvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est en chute libre
-        this.aerialmoving = 0.5; //Pour pouvoir se diriger dans les airs, si la valeure est trop élevé on peut faire des walljump sur un seul mur mdr
-        
-        
-        this.wallleavemax = 5; //Nombre de frame requise pour quitter un mur lorsque qu'on est en position pour faire un walljump
-        this.wallleave = this.wallleavemax+1;
-        this.walljumpx = 15;
-        this.walljumpy = 35;
-        this.walljumpslide = 5;
+        this.maxcurrentvelocity; //La fameuse (Ne pas toucher)
+        this.jumpforce = 35; //Puissance du saut (valeures admises ]0;+inf[)
+        this.jumptolerance = -10 //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
+        this.jumpattenuation = 0 // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
+                                    // (valeures admises [1;+inf[) plus la valeure est vers l'inf plus le ralentissement sera prononcé
 
-        this.groundfriction = 2; //Ralentissement de la vitesse joueur lorsqu'il est au sol
-        this.airfriction = 0.2; //Ralentissement de la vitesse joueur lorsqu'il est en l'air
+        this.maxgroundvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est au sol (valeures admises [0;70]) 0 équivaut a pas déplacment au sol
+        this.maxaerialvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est en chute libre (valeures admises [0;70]) 0 équivaut a pas déplacment en l'air
+        this.aerialmoving = 0.5; //Pour pouvoir se diriger dans les airs, si la valeure est trop élevé on peut faire des walljump sur un seul mur mdr 
+                                //(valeures admises [0;+inf[) 0 équivaut a pas déplacment en l'air
+        
+        this.wallleavemax = 5; //Nombre de frame requise pour quitter un mur lorsque qu'on est en position pour faire un walljump (valeures admises ]0;+inf[)
+        this.wallleave = this.wallleavemax+1; //(Ne pas toucher)
+        this.walljumpx = 15; //(valeures admises [0;70]) 0 équivaut a pas déplacment horizontal
+        this.walljumpy = 35; //(valeures admises [0;70]) 0 équivaut a pas déplacment vertical
+        this.walljumpslide = 5; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
+
+        this.groundfriction = 2; //Ralentissement de la vitesse joueur lorsqu'il est au sol (valeures admises ]0;+inf[)
+        this.airfriction = 0.2; //Ralentissement de la vitesse joueur lorsqu'il est en l'air (valeures admises ]0;+inf[)
         
         
-        this.gravity = 2; //Permet d'ajuster la vitesse de chute du joueur
-        this.maxgravityspeed = 20; //Permet de donner une vitesse de chute max (ne jamais dépasser 70px/frame)
+        this.gravity = 2; //Permet d'ajuster la vitesse de chute du joueur (valeures admises ]0;70])
+        this.maxgravityspeed = 20; //Permet de donner une vitesse de chute max (ne jamais dépasser 70px/frame) (valeures admises ]0;70])
+
+
 
         //Variables d'animations du joueur
         this.initial_pose = texture_loader("graphics/player/initial_pose/initial_pose.png")
-        
         
         this.animationmoving = false
         this.moving = texture_loader("graphics/player/moving/moving.png")
@@ -86,7 +90,6 @@ class PlayerData
         this.ground_slideposition = 0
         this.ground_slide = texture_loader("graphics/player/ground_slide/ground_slide.png")
 
-        
         this.jumpframe = 0;
         this.jump_animation_postion = 0;
         this.jumprightframetiminglist = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2];
@@ -96,11 +99,28 @@ class PlayerData
 
         this.dashaanimation = texture_loader("graphics/player/dash/dash.png")
 
-    }
+        // collisions[0] = en dessous
+        // collisions[1] = au dessus
+        // collisions[2] = a ca gauche
+        // collisions[3] = a ca droite
+        // collisions[4] = pré en dessous
+        // collisions[5] = pré au dessus
+        // collisions[6] = pré a ca gauche
+        // collisions[7] = pré a ca droite
 
-    var_update(ctx)
-    {
-       this.ctx = ctx
+        // input[0] = z
+        // input[1] = q
+        // input[2] = s
+        // input[3] = d
+        // input[4] = space
+        // input[5] = maj
+        // input[6] = p  (reservé)
+        // input[7] = c  (reservé)
+        // input[8] = enter
+        // input [9] = escape (reservé)
+
+
+
     }
 
     spawn(coords)
@@ -191,7 +211,7 @@ class PlayerData
                             {
                                 case 1:
                                     vx -= this.groundfriction;
-                                    if(input[1] === 1 & collisions[3] === false)
+                                    if(input[1] === 1 & collisions[3] === 0)
                                     {
                                         this.ground_slideposition = -1
                                     }
@@ -215,7 +235,7 @@ class PlayerData
                             {
                                 case 1:
                                     vx += this.groundfriction;
-                                    if(input[3] === 1 & collisions[2] === false)
+                                    if(input[3] === 1 & collisions[2] === 0)
                                     {
                                         this.ground_slideposition = 1
                                     }
@@ -242,12 +262,17 @@ class PlayerData
                     this.releasejump = false;
                     this.jump_animation_postion = 1;
                     this.jumpavaiblelity = false
+                    this.walljumpcheck = false;
                 }
                 else if(vy > 0)
                 {
                     this.jump_animation_postion = 2;
                 }
 
+                if(input[4] === 0 & this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
+                {
+                    this.walljumpcheck = true;
+                }
                 if(collisions[0] === 0 & vy <= 0 | this.lastactwalljump === true) //walljump
                 {
                     if(collisions[2] === 1 & distanceground > 71 | collisions[2] === 1 & distanceground === false) //left
@@ -261,7 +286,6 @@ class PlayerData
                     else //nothing
                     {
                         this.walljump = 0;
-                        this.walljumpcheck = false;
                         this.wallleave = this.wallleavemax;
                     }
                     if(this.walljump != 0)
@@ -287,11 +311,8 @@ class PlayerData
                         {
                             this.wallleave = 0;
                         }
-                        if(input[4] === 0 & this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
-                        {
-                            this.walljumpcheck = true;
-                        }
-                        else if(this.walljumpcheck === true & collisions[0] === 0 & collisions[1] === 0 & input[4] === 1)
+                        
+                        if(this.walljumpcheck === true & collisions[0] === 0 & collisions[1] === 0 & input[4] === 1)
                         {
                             vx = -this.walljump*this.walljumpx;
                             vy = this.walljumpy;
@@ -307,7 +328,6 @@ class PlayerData
                     }
                     else if(this.walljump != 1 & this.walljump != -1)
                     {
-                        this.walljumpcheck = false;
                         this.wallleave = this.wallleavemax;
                         this.jump = false;
                     }
@@ -345,6 +365,23 @@ class PlayerData
                     this.dashcooldown -= 1
                 }
                 
+                // if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
+                // {
+                //     if(input[4] === 0 & this.jump === true & vy > 1)
+                //     {
+                //         vy /= this.jumpattenuation
+                //     }
+                //     else if(collisions[1] === 1)
+                //     {
+                //         vy = 0;
+                //         this.jump = false;
+                //     }
+                //     if(-this.maxgravityspeed < vy)
+                //     {
+                //         vy -= 2;
+                //     }
+                // }
+
                 if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
                 {
                     if(collisions[1] === 1 | input[4] === 0 & this.jump === true)
