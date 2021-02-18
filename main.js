@@ -2,6 +2,12 @@
 //Map editor
 //New map assets
 //Rework collisions
+//adapting ui animation for variable framerate 
+
+//DID:
+//Cap 30fps
+//Double click for fullscreen
+//reworked button system + add a new animated button type
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d", {alpha : false});
