@@ -2,12 +2,14 @@
 //Map editor
 //New map assets
 //Rework collisions
-//adapting ui animation for variable framerate 
+//adapting ui animation for variable framerate
+//Particles
 
 //DID:
 //Cap 30fps
 //Double click for fullscreen
 //reworked button system + add a new animated button type
+//map displaying optimisation
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d", {alpha : false});
@@ -134,7 +136,8 @@ import {upscale, twPleinEcran, ui_var_updater, ui_var_updater2, ui_var_updater3}
 import {Animatic, Transition} from "./includes/animatic.js";
 import {MapData} from "./includes/level_reader.js";
 import {PlayerData} from "./includes/player.js";
-import * as levels from "./includes/levels.js"
+import * as levels from "./includes/levels.js";
+import {MapEditor} from "./includes/map_editor.js"
 
 
 var command = "false"; //command
@@ -147,10 +150,14 @@ var camsmootherenable = true;
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 1;
+var menu = 7;
 var lastmenu = -1;
 var mouseX = 0;
 var mouseY = 0;
+var mapmousetranslationX = mouseX;
+var mapmousetranslationY = mouseY;
+var previousmouseX = mouseX;
+var previousmouseY = mouseY;
 var keypressed = false;
 var mousepressed = false;
 var doubleclickfullscreenmousepressed = false;
@@ -175,6 +182,7 @@ var levelid = 3;
 let map = new MapData(level[levelid])
 var start = true
 let player = new PlayerData()
+let mapeditor = new MapEditor(ctx)
 var vect = [0, 0];
 var stock = [0, 0];
 
@@ -197,8 +205,12 @@ var smoothinterpoX = 0;
 var smoothinterpoY = 0;
 var nbofframewithoutphysics = 1;
 
+//mapeditor
+var map_move_speed = 20;
+var edition_mode = 0;
+
 //Optimisation
-var firstgameframe = false
+var firstgameframe = false;
 
 //pause
 var pause = false; 
@@ -208,6 +220,7 @@ var pkey = false;
 
 // Buttons
 var TransitionObject = new Transition(ctx);
+var animaticmousevalue = [0, 0]
 var button1 = new Animatic(ctx);
 var button2 = new Animatic(ctx);
 var button3 = new Animatic(ctx);
@@ -266,6 +279,27 @@ function main()
     button7.click = button8.click = 
     button9.click = click
     
+    if(canvasfullscreen)
+    {
+        animaticmousevalue = [mouseX*(canvas.width / screen.width), mouseY*(canvas.height / screen.height)]
+    }
+    else
+    {
+        animaticmousevalue = [mouseX, mouseY]
+    }
+    
+    button1.mouseX = button2.mouseX = 
+    button3.mouseX = button4.mouseX = 
+    button5.mouseX = button6.mouseX = 
+    button7.mouseX = button8.mouseX = 
+    button9.mouseX = animaticmousevalue[0]
+
+    button1.mouseY = button2.mouseY = 
+    button3.mouseY = button4.mouseY = 
+    button5.mouseY = button6.mouseY = 
+    button7.mouseY = button8.mouseY = 
+    button9.mouseY = animaticmousevalue[1]
+    
     if(cap30fps & menu === 2)
     {
         gfpsframetiming = Date.now()
@@ -276,7 +310,7 @@ function main()
     {
         gfpsintervaltiming = 0;
     }
-    if(doubleclicktiming+200 < Date.now())
+    if(doubleclicktiming+150 < Date.now())
     {
         firstclick = false
     }
@@ -422,6 +456,7 @@ function main()
                 {
                     previousgfpsframetiming = gfpsframetiming = Date.now()
                     gfpsintervaltiming = 0;
+                    start = true;
                     lastmenu = 2
                 }
                 ctx.webkitImageSmoothingEnabled = false;
@@ -563,12 +598,14 @@ function main()
 
                     if(button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu1") //back to menu
                     {
-                        console.log("oui")
                         switch(transition)
                         {
                             case "false":
                                 transition = "true";
                                 selectedaction = "menu1"
+                                ctx.webkitImageSmoothingEnabled = true;
+                                ctx.msImageSmoothingEnabled = true;
+                                ctx.imageSmoothingEnabled = true;
                                 break
                             case "finish":
                                 menu = 1;
@@ -600,7 +637,7 @@ function main()
                 }
                 // TransitionObject.minus(transition)
                 break
-            case 3 : case 4: //Setting
+            case 3 : case 4: case 8://Setting
                 if(lastmenu != 3)
                 {
                     lastmenu = 3
@@ -621,6 +658,10 @@ function main()
                                     break
                                 case 4:
                                     menu = 2
+                                    break
+                                case 8:
+                                    lastmenu = menu = 7
+                                    
                                     break
                             }
                             transition = "false";
@@ -814,7 +855,7 @@ function main()
                 if(button3.text_type1("Load", 0, 400, 320, 100, 20, 475, 80, 85, 90, 95, 3.6, 0.4)) //load a file
                 {
                     openFileOption()
-                    console.log(document.getElementById('fileItem').files[0])
+                    // console.log(document.getElementById('fileItem').files[0])
                     button1.click = button2.click = 
                     button3.click = button4.click = 
                     button5.click = button6.click = 
@@ -875,7 +916,7 @@ function main()
                     if(isNaN(map_pack[3][0][0][1]))
                     {
                         alert("Invalid value.")
-                        map_pack[3][0][0][2] = previousmappropertiesvalue;
+                        map_pack[3][0][0][1] = previousmappropertiesvalue;
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
@@ -895,21 +936,315 @@ function main()
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button5.text_type2("Create", 0, 470, 1200, 205, 250, 650, 225, "rgb(255,255,255)", 5))
+                if(button5.text_type2("Create", 0, 470, 1200, 205, 250, 650, 225, "rgb(255,255,255)", 5) | transition === "finish" & selectedaction === "menu7")
                 {
                     switch(transition)
                     {
                         case "false":
                             transition = "true";
-                            selectedaction = "menu6"
+                            selectedaction = "menu7"
                             break
                         case "finish":
-                            menu = 6;
+                            menu = 7;
                             transition = "false";
                             selectedaction = "N/A"
                             break
                     }
                 }
+                break
+            case 7:
+                if(lastmenu != 7)
+                {
+                    map_pack = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]]
+                    start = true
+                    pause = false
+                    edition_mode = 0;
+                    lastmenu = 7
+                    
+                }
+                ctx.webkitImageSmoothingEnabled = false;
+                ctx.msImageSmoothingEnabled = false;
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
+                if(start)
+                {
+                    // mapeditor.load(map_pack)
+                    mapeditor.load(level[levelid])
+                    start = false
+                }
+                mapeditor.display()
+
+                if(pause === false)
+                {
+                    if(button1.texture_type2(1160, 10, mapeditor.add_block_icon, "Add"))
+                    {
+                        edition_mode = 0;
+                        mousepressed = false;
+                    }
+                    if(button2.texture_type2(1160, 50, mapeditor.modification_icon, "Modifications"))
+                    {
+                        edition_mode = 1;
+                        mousepressed = false;
+                    }
+                    if(button3.texture_type2(1160, 90, mapeditor.remove_block_icon, "Delete"))
+                    {
+                        edition_mode = 2;
+                        mousepressed = false;
+                    }
+                    ctx.font = "Bold "+upscale(25)+'px arial';
+                    ctx.fillStyle = "rgba(255,255,255,0.7)";
+                    switch(edition_mode)
+                    {
+                        case 0:
+                            ctx.fillText("Add", upscale(10), upscale(30)); //Text in the top left
+                            if(button4.texture_type2(1160, 170, mapeditor.add_block_icon, "Add blocks"))
+                            {
+                                edition_mode = 0;
+                            }
+                            if(button5.texture_type2(1160, 210, mapeditor.add_water_icon, "Add water"))
+                            {
+                                edition_mode = 0;
+                            }
+                            if(button6.texture_type2(1160, 250, mapeditor.add_ennemy_icon, "Add ennemies"))
+                            {
+                                edition_mode = 0;
+                            }
+                            if(button7.texture_type2(1160, 290, mapeditor.add_interactive_block_icon, "Add interactive blocks"))
+                            {
+                                edition_mode = 0;
+                            }
+                            if(button8.texture_type2(1160, 330, mapeditor.add_decoration_icon, "Add decorations"))
+                            {
+                                edition_mode = 0;
+                            }
+                            break
+                        
+                        case 1:
+                            ctx.fillText("Modifications", upscale(10), upscale(30)); //Text in the top left
+                            if(button4.texture_type2(1160, 170, mapeditor.move_block_icon, "Move objects"))
+                            {
+                                edition_mode = 1;
+                            }
+                            if(button5.texture_type2(1160, 210, mapeditor.move_decoration_icon, "Move decorations"))
+                            {
+                                edition_mode = 1;
+                            }
+                            if(button6.texture_type2(1160, 250, mapeditor.modification_icon, "Modify properties"))
+                            {
+                                edition_mode = 1;
+                            }
+                            break
+                        
+                        case 2:
+                            ctx.fillText("Delete", upscale(10), upscale(30)); //Text in the top left
+                            if(button4.texture_type2(1160, 170, mapeditor.remove_block_icon, "Remove blocks"))
+                            {
+                                edition_mode = 2;
+                            }
+                            if(button5.texture_type2(1160, 210, mapeditor.remove_decoration_icon, "Remove decorations"))
+                            {
+                                edition_mode = 2;
+                            }
+                            break
+
+                    }
+                    
+                    if(keys_input[5] === 1)
+                    {
+                        map_move_speed = 0;
+                        if(click === true)
+                        {
+                            if(mousepressed === false)
+                            {
+                                mapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+mapeditor.offsetX;
+                                mapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+mapeditor.offsetY;
+                                mousepressed = true;
+                            }
+                            if(mapeditor.offsetX >= mapeditor.maplimit[0]*71 & animaticmousevalue[0]-previousmouseX <= 0)
+                            {
+                                mapeditor.offsetX = mapeditor.maplimit[0]*71
+                                mapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+mapeditor.offsetX;
+                            }
+                            else if(mapeditor.offsetX <= -1129 & animaticmousevalue[0]-previousmouseX >= 0)
+                            {
+                                mapeditor.offsetX = -1129
+                                mapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+mapeditor.offsetX;
+                            }
+                            else
+                            {
+                                mapeditor.offsetX = Math.round(mapmousetranslationX-(animaticmousevalue[0]*(1200/canvas.width)))
+                            }
+
+                            if(mapeditor.offsetY >= mapeditor.maplimit[1]*71 & animaticmousevalue[1]-previousmouseY <= 0)
+                            {
+                                mapeditor.offsetY = mapeditor.maplimit[1]*71
+                                mapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+mapeditor.offsetY;
+                            }
+                            else if(mapeditor.offsetY <= -604 & animaticmousevalue[1]-previousmouseY >= 0)
+                            {
+                                mapeditor.offsetY = -604
+                                mapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+mapeditor.offsetY;
+                            }
+                            else
+                            {
+                                mapeditor.offsetY = Math.round(mapmousetranslationY-(animaticmousevalue[1]*(675/(canvas.height))))
+                            }
+
+                        }
+
+                    }
+                    else
+                    {
+                        map_move_speed = Math.round(20/dt);
+                    }
+                    if(keys_input[0] === 1 & mapeditor.offsetY > -604)
+                    {
+                        mapeditor.offsetY -= map_move_speed;
+                        if(mapeditor.offsetY < -604)
+                        {
+                            mapeditor.offsetY = -604;
+                        }
+                    }
+                    if(keys_input[2] === 1 & mapeditor.offsetY < ((mapeditor.maplimit[1])*71))
+                    {
+                        mapeditor.offsetY += map_move_speed;
+                        if(mapeditor.offsetY > ((mapeditor.maplimit[1])*71))
+                        {
+                            mapeditor.offsetY = ((mapeditor.maplimit[1])*71);
+                        }
+                    }
+                    if(keys_input[3] === 1 & mapeditor.offsetX < ((mapeditor.maplimit[0])*71))
+                    {
+                        mapeditor.offsetX += map_move_speed;
+                        if(mapeditor.offsetX > ((mapeditor.maplimit[0])*71))
+                        {
+                            mapeditor.offsetX = ((mapeditor.maplimit[0])*71);
+                        }
+                    }
+                    if(keys_input[1] === 1)
+                    {
+                        mapeditor.offsetX -= map_move_speed;
+                        if(mapeditor.offsetX < -1129)
+                        {
+                            mapeditor.offsetX = -1129;
+                        }
+                    }
+                }
+                
+
+                if(pause === false)
+                {
+                    ctx.font = "Bold "+upscale(25)+'px arial';
+                    ctx.fillStyle = "rgba(255,255,255,0.7)";
+                    ctx.fillText("Press P to show the menu", upscale(875), upscale(640)); //mouse pos
+                    ctx.fillText("Press H to get the control ", upscale(875), upscale(665)); //mouse pos
+                }
+                if(keys_input[6] === 1 & pkey === false | pause) //pause
+                {
+                    if(pause === false & pkey === false)
+                    {
+                        pause = true;
+                        keypressed = true;
+                        pkey = true
+                        endpause = false; 
+                    }
+                    var grd = ctx.createLinearGradient(-150, 0, upscale(3000), 0);
+                    grd.addColorStop(0.1, "transparent");
+                    grd.addColorStop(0, "black");
+                    if(pauseframe < 10 & endpause === false)
+                    {
+                        pauseframe++;
+                    }
+                    ctx.fillStyle = "rgba(0,0,0,"+0.05*pauseframe+")";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.fillStyle = grd;
+                    ctx.fillRect(upscale(-200+(pauseframe*20)), 0, upscale(100+(pauseframe*20)), upscale(675));
+                    if(endpause === false)    
+                    {
+                        ctx.font = "Bold "+upscale(125)+'px arial';
+                        ctx.fillStyle = "rgb(255,255,255)";
+                        ctx.fillText('Pause', upscale(425), upscale(100));
+                    }
+                    ctx.fillStyle = "rgb(255,255,255)";
+
+                    if(button1.text_type1("Resume", 0, 145, 195, 40, -180+(pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
+                    {
+                        endpause = true;
+                    }
+
+                    if(button2.text_type1("Setting", 0, 222, 175, 40, -180+(pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | transition === "finish" & selectedaction === "menu8") //setting
+                    {
+                        switch(transition)
+                        {                        
+                            case "false":
+                                transition = "true";
+                                selectedaction = "menu8"
+                                break
+                            case "finish":
+                                menu = 8;
+                                endpause = false;
+                                pause = true;
+                                pauseframe = 10;
+                                transition = "false";
+                                selectedaction = "N/A"    
+                                break
+                        }
+                    }
+
+                    if(button3.text_type1(ablefullscrenn+" fullscreen", 0, 295, 380, 40, -180+(pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
+                    {
+                        firstgameframe = true;
+                        twPleinEcran(canvas)
+                        if(canvasfullscreen)
+                        {
+                            canvasfullscreen = false
+                        }
+                        else
+                        {
+                            canvasfullscreen = true
+                        }
+                    }
+
+                    if(button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu1") //back to menu
+                    {
+                        switch(transition)
+                        {
+                            case "false":
+                                transition = "true";
+                                selectedaction = "menu1"
+                                ctx.webkitImageSmoothingEnabled = true;
+                                ctx.msImageSmoothingEnabled = true;
+                                ctx.imageSmoothingEnabled = true;
+                                break
+                            case "finish":
+                                menu = 1;
+                                endpause = false;
+                                pause = false;
+                                pauseframe = 0;
+                                transition = "false";
+                                selectedaction = "N/A"
+                                break
+                        }
+                    }
+
+                    if(keys_input[6] === 1 & pkey === false | endpause)
+                    {
+                        endpause = true
+                        grd.addColorStop(0.1, "transparent");
+                        grd.addColorStop(0, "black");
+                        ctx.fillStyle = grd;
+                        pauseframe--
+                        ctx.fillRect(upscale(-200-(pauseframe*20)), 0, upscale(100-(pauseframe*20)), upscale(675));
+
+                        if(pauseframe < 1)
+                        {
+                            endpause = false;
+                            pause = false;
+                            pauseframe = 0;
+                        }
+                    }
+                }
+                
                 break
         }
         if(keys_input[7] === 1 | command === "true") //To enter some usefull commands ingame
@@ -1022,44 +1357,44 @@ function main()
         }
         else
         {
-            push = 0
+            push = 0;
         }
         if(click)
         {
-            mousepressed = true
-            doubleclickfullscreenmousepressed = true
+            mousepressed = true;
+            doubleclickfullscreenmousepressed = true;
         }
         else
         {
-            mousepressed = false
-            doubleclickfullscreenmousepressed = false
+            mousepressed = false;
+            doubleclickfullscreenmousepressed = false;
         }
         button1.mousepressed = button2.mousepressed = 
         button3.mousepressed = button4.mousepressed = 
         button5.mousepressed = button6.mousepressed = 
         button7.mousepressed = button8.mousepressed = 
-        button9.mousepressed = mousepressed
+        button9.mousepressed = mousepressed;
         for(let i = 0; i < keys_input.length; ++i)
         {    
             if(keys_input[i] === 0)
             {
-                keypressed = false
-                pkey = false
+                keypressed = false;
+                pkey = false;
             }
             else
             {
-                keypressed = true
+                keypressed = true;
                 if(keys_input[6] === 1)
                 {
-                    pkey = true
+                    pkey = true;
                 }
                 break
             }
         }
-        TransitionObject.minus(transition)
+        TransitionObject.minus(transition);
         if(transition === "true")
         {
-            transition = TransitionObject.plus()
+            transition = TransitionObject.plus();
         }
         ctx.font = upscale(20)+'px arial';
 
@@ -1080,39 +1415,6 @@ function main()
 
             ctx.fillText("Inputs : "+keys_input, upscale(945), upscale(150)); //input
 
-            ctx.fillText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions
-
-            ctx.fillText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
-            ctx.fillText("|", upscale(1080), upscale(200));
-            ctx.fillText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
-
-            ctx.fillText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
-            ctx.fillText("|", upscale(1080), upscale(225));
-            ctx.fillText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
-
-            ctx.fillText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
-            ctx.fillText("|", upscale(1080), upscale(250));
-            ctx.fillText("VY : "+vect[1], upscale(1092), upscale(250));
-
-            ctx.fillText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
-            ctx.fillText("|", upscale(1080), upscale(275));
-            ctx.fillText("OY : "+map.offsetY, upscale(1092), upscale(275));
-
-            ctx.fillText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
-            ctx.fillText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
-
-            ctx.fillText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
-            ctx.fillText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
-
-            ctx.fillText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
-            ctx.fillText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
-
-            ctx.fillText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
-            ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
-
-
-            ctx.fillText(player.ground_slideposition+"  "+gfpsintervaltiming+"    " , upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
-
 
             ctx.strokeStyle = "rgb(0,0,0)";
 
@@ -1129,36 +1431,92 @@ function main()
 
             ctx.strokeText("Inputs : "+keys_input, upscale(945), upscale(150)); //input
 
-            ctx.strokeText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions
+            if(menu === 2)
+            {
+                ctx.fillStyle = "rgb(255,255,255)";
 
-            ctx.strokeText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
-            ctx.strokeText("|", upscale(1080), upscale(200));
-            ctx.strokeText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
+                ctx.fillText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions
 
-            ctx.strokeText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
-            ctx.strokeText("|", upscale(1080), upscale(225));
-            ctx.strokeText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
+                ctx.fillText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
+                ctx.fillText("|", upscale(1080), upscale(200));
+                ctx.fillText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
 
-            ctx.strokeText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
-            ctx.strokeText("|", upscale(1080), upscale(250));
-            ctx.strokeText("VY : "+vect[1], upscale(1092), upscale(250));
+                ctx.fillText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
+                ctx.fillText("|", upscale(1080), upscale(225));
+                ctx.fillText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
 
-            ctx.strokeText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
-            ctx.strokeText("|", upscale(1080), upscale(275));
-            ctx.strokeText("OY : "+map.offsetY, upscale(1092), upscale(275));
+                ctx.fillText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
+                ctx.fillText("|", upscale(1080), upscale(250));
+                ctx.fillText("VY : "+vect[1], upscale(1092), upscale(250));
 
-            ctx.strokeText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
-            ctx.strokeText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
+                ctx.fillText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
+                ctx.fillText("|", upscale(1080), upscale(275));
+                ctx.fillText("OY : "+map.offsetY, upscale(1092), upscale(275));
 
-            ctx.strokeText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
-            ctx.strokeText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
+                ctx.fillText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
+                ctx.fillText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
 
-            ctx.strokeText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
-            ctx.strokeText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
+                ctx.fillText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
+                ctx.fillText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
 
-            ctx.strokeText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
-            ctx.strokeText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
+                ctx.fillText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
+                ctx.fillText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
 
+                ctx.fillText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
+                ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
+
+
+                ctx.fillText(edition_mode, upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+
+
+                ctx.strokeText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions
+
+                ctx.strokeText("PX : "+Math.round(player.playerX), upscale(985), upscale(200)); //px
+                ctx.strokeText("|", upscale(1080), upscale(200));
+                ctx.strokeText("OffOnX : "+map.offsetX_on, upscale(1092), upscale(200));
+
+                ctx.strokeText("PY : "+Math.round(player.playerY), upscale(985), upscale(225)); //py
+                ctx.strokeText("|", upscale(1080), upscale(225));
+                ctx.strokeText("OffOnY : "+map.offsetY_on, upscale(1092), upscale(225));
+
+                ctx.strokeText("VX : "+Math.round(vect[0]), upscale(985), upscale(250)); //vect
+                ctx.strokeText("|", upscale(1080), upscale(250));
+                ctx.strokeText("VY : "+vect[1], upscale(1092), upscale(250));
+
+                ctx.strokeText("OX : "+Math.round(map.offsetX), upscale(985), upscale(275)); //offset
+                ctx.strokeText("|", upscale(1080), upscale(275));
+                ctx.strokeText("OY : "+map.offsetY, upscale(1092), upscale(275));
+
+                ctx.strokeText("BU : ["+map.bestup[0]+"]px ; ["+map.bestup[1]+"]py", upscale(970), upscale(300));
+                ctx.strokeText("["+map.bestup[2]+"]ox ; ["+map.bestup[3]+"]oy", upscale(1015), upscale(325));
+
+                ctx.strokeText("BD : ["+map.bestdown[0]+"]px ; ["+map.bestdown[1]+"]py", upscale(970), upscale(350));
+                ctx.strokeText("["+map.bestdown[2]+"]ox ; ["+map.bestdown[3]+"]oy", upscale(1015), upscale(375));
+
+                ctx.strokeText("BL : ["+map.bestleft[0]+"]px ; ["+map.bestleft[1]+"]py", upscale(970), upscale(400));
+                ctx.strokeText("["+map.bestleft[2]+"]ox ; ["+map.bestleft[3]+"]oy", upscale(1015), upscale(425));
+
+                ctx.strokeText("BR : ["+map.bestright[0]+"]px ; ["+map.bestright[1]+"]py", upscale(970), upscale(450));
+                ctx.strokeText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
+            }
+            if(menu === 7)
+            {
+                ctx.fillStyle = "rgb(255,255,255)";
+                
+                ctx.fillText("OX : "+Math.round(mapeditor.offsetX), upscale(985), upscale(275)); //offset
+                ctx.fillText("|", upscale(1080), upscale(275));
+                ctx.fillText("OY : "+mapeditor.offsetY, upscale(1092), upscale(275));
+
+
+                ctx.fillText(player.ground_slideposition+"  "+gfpsintervaltiming+"    " , upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+
+
+                ctx.strokeStyle = "rgb(0,0,0)";
+                
+                ctx.strokeText("OX : "+Math.round(mapeditor.offsetX), upscale(985), upscale(275)); //offset
+                ctx.strokeText("|", upscale(1080), upscale(275));
+                ctx.strokeText("OY : "+mapeditor.offsetY, upscale(1092), upscale(275));
+            }
 
         }
         if(showfps)
@@ -1170,6 +1528,8 @@ function main()
             ctx.strokeText(Math.round(fps)+" GFPS "+Number.parseFloat(dt).toPrecision(3)+" DT", upscale(20), upscale(25));
             ctx.strokeText(pfpslog+" PFPS ", upscale(20), upscale(50));
         }
+        previousmouseX = animaticmousevalue[0];
+        previousmouseY = animaticmousevalue[1];
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.font = "Bold "+upscale(25)+'px arial';
         ctx.fillText("pre 0.6", upscale(20), upscale(650));

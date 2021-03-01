@@ -37,9 +37,9 @@ function gupscale(initialscale)
 {
     if(canvasfullscreen == true)
     {
-        return initialscale*(canvas.height/675)+1
+        return Math.round(initialscale*(canvas.height/675)+1)
     }
-    return initialscale
+    return Math.round(initialscale)
 }
 
 function invisible_mouse_collider(posX, posY, width, height)

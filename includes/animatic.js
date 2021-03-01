@@ -12,6 +12,9 @@ class Animatic
 
         this.defauloffset_text_type1 = [1.5, 0]
         this.defauloffset_texture_type1 = [0.5, -0.5]
+
+        this.mouseX = 0
+        this.mouseY = 0
     }
 
     text_type1(text, posX, posY, width, height, textX, textY, textscale1, textscale2, textscale3, textscale4, offsetX = 0, offsetY = 0)
@@ -187,6 +190,64 @@ class Animatic
                 case 0:
                     this.ctx.drawImage(texture, upscale(textureX), upscale(textureY), upscale(texturescale1[0]), upscale(texturescale1[1]));
                     break
+            }
+        }
+        return false
+    }
+
+    texture_type2(posX, posY, texture, text, texture_offsetX = 5, texture_offsetY = 5, texture_scaleX = 20, texture_scaleY = 20) //Map editor button
+    {
+        if(invisible_mouse_collider(posX, posY, 30, 30) == true)
+        {
+            this.ctx.fillStyle = "rgba(100,100,100,0.4)";
+            this.ctx.strokeStyle = "rgb(255,255,255)";
+        }
+        else
+        {
+            this.ctx.fillStyle = "rgba(0,0,0,0.4)";
+            this.ctx.strokeStyle = "rgb(255,255,255)";
+        }
+            
+        this.ctx.beginPath();
+        this.ctx.moveTo(upscale(posX), upscale(posY+5));
+        this.ctx.lineTo(upscale(posX+5),upscale(posY));
+        this.ctx.lineTo(upscale(posX+25), upscale(posY));
+        this.ctx.lineTo(upscale(posX+30), upscale(posY+5));
+        this.ctx.lineTo(upscale(posX+30), upscale(posY+25));
+        this.ctx.lineTo(upscale(posX+25), upscale(posY+30));
+        this.ctx.lineTo(upscale(posX+5), upscale(posY+30));
+        this.ctx.lineTo(upscale(posX), upscale(posY+25));
+        this.ctx.closePath();
+        this.ctx.fill();
+        this.ctx.lineWidth=upscale(2);
+        this.ctx.stroke();
+        this.ctx.lineWidth=1;
+        this.ctx.drawImage(texture, upscale(posX+texture_offsetX), upscale(posY+texture_offsetY), upscale(texture_scaleX), upscale(texture_scaleY))
+        
+        if(invisible_mouse_collider(posX, posY, 30, 30))
+        {
+            this.ctx.fillStyle = "rgb(0,0,0)";
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.mouseX-upscale(text.length*9+15), this.mouseY+upscale(-10));
+            this.ctx.lineTo(this.mouseX-upscale(text.length*9+10),this.mouseY+upscale(-15));
+            this.ctx.lineTo(this.mouseX+upscale(-10), this.mouseY+upscale(-15));
+            this.ctx.lineTo(this.mouseX+upscale(-5), this.mouseY+upscale(-10));
+            this.ctx.lineTo(this.mouseX+upscale(-5), this.mouseY+upscale(2));
+            this.ctx.lineTo(this.mouseX+upscale(-10), this.mouseY+upscale(7));
+            this.ctx.lineTo(this.mouseX-upscale(text.length*9+10), this.mouseY+upscale(7));
+            this.ctx.lineTo(this.mouseX-upscale(text.length*9+15), this.mouseY+upscale(2));
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.lineWidth=upscale(2);
+            this.ctx.stroke();
+            this.ctx.lineWidth=1;
+            this.ctx.fillStyle = "rgb(255,255,255)";
+            this.ctx.font = upscale(15)+'px Lucida Console';
+            this.ctx.fillText(text, this.mouseX-upscale(text.length*9+10), this.mouseY);
+            if(this.click & this.mousepressed === false)
+            {
+                this.animation_state = 0;
+                return true
             }
         }
         return false

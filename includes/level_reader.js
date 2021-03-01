@@ -212,32 +212,31 @@ class MapData
         this.maplimit = [0, 0];
         this.spawn = [0, 0];
         this.level_data = []
-        this.temp = 0
-        this.ttemp = 0
-        this.tempcontentmap = []
         this.offsetY = 0;
         this.offsetX = 0;
         this.previousoffsetX = 0;
         this.previousoffsetY = 0;
-        this.offsetX_on = 0
-        this.offsetY_on = 0
-        this.collisions = [0,0,0,0,0,0,0,0]
-        this.stock = []
-        this.bestup = [false,false,false,false] //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
-        this.bestdown = [false,false,false,false,false] // ordre px,py;ox,oy
-        this.bestleft = [false,false,false,false]
-        this.bestright = [false,false,false,false]
-        this.previousoffset = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]
-        this.camsmoother = [0, 0]
-        this.previouscamsmoother = [0,0]
+        this.offsetX_on = 0;
+        this.offsetY_on = 0;
+        this.cache_data = 0;
+        this.collisions = [0,0,0,0,0,0,0,0];
+        this.stock = [];
+        this.bestup = [false,false,false,false]; //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
+        this.bestdown = [false,false,false,false,false]; // ordre px,py;ox,oy
+        this.bestleft = [false,false,false,false];
+        this.bestright = [false,false,false,false];
+        this.previousoffset = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]];
+        this.camsmoother = [0, 0];
+        this.previouscamsmoother = [0,0];
 
     }
 
     start(file)
-    {
+    {   
+
         this.maplimit = [file[0], file[1]];
         this.spawn = [file[2], file[3]];
-        this.level_data_textures = file.splice(4, file.length);
+        this.level_data_textures = file.slice(4, file.length);
         this.data_temp = []
         console.log(this.level_data_textures.length)
         for (let i = 0; i < this.maplimit[1]+1; i++)
@@ -554,7 +553,7 @@ class MapData
         {
             this.offsetsmoothX = Math.round(offsetX)-smoothX;
             this.offsetsmoothY = Math.round(offsetY)-smoothY;
-            this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1]
+            this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1, Math.round(this.offsetsmoothY/71), 0, gupscale(71)]
         }
         this.ctx.font = upscale(15)+'px arial';
         this.ctx.fillStyle = "rgb(255,255,255)";
@@ -568,6 +567,7 @@ class MapData
             {
                 this.maxi = this.maplimit[1];
             }
+            this.cache_data[3] = upscale(this.maxi*71-this.offsetsmoothY)
             for (let k = this.cache_data[0]+(this.cache_data[1]*this.maxi)-1; k < Math.round(this.offsetsmoothX/71)+(this.cache_data[1]*this.maxi)+19; k++)
             {
                 if(k > 0 & k < this.level_data_textures_len-1)
@@ -587,15 +587,15 @@ class MapData
                     switch(this.level_data_textures[k][0][0]) // selection des textures
                     {
                         case 0:
-                            this.ctx.drawImage(testblock, upscale(this.level_data_textures[k][2]-this.offsetsmoothX), upscale(this.level_data_textures[k][3]-this.offsetsmoothY), gupscale(71), gupscale(71)); //testblock
+                            this.ctx.drawImage(testblock, upscale(this.level_data_textures[k][2]-this.offsetsmoothX), this.cache_data[3], this.cache_data[4], this.cache_data[4]); //testblock
                             break
                         case 1:
-                            this.ctx.drawImage(ground_list[this.level_data_textures[k][0][1]], upscale(this.level_data_textures[k][2]-this.offsetsmoothX), upscale(this.level_data_textures[k][3]-this.offsetsmoothY), gupscale(71), gupscale(71))
+                            this.ctx.drawImage(ground_list[this.level_data_textures[k][0][1]], upscale(this.level_data_textures[k][2]-this.offsetsmoothX), this.cache_data[3], this.cache_data[4], this.cache_data[4])
                             break
                     }
                     if(this.devmode == true) //Affichage position de chaque block
                     {
-                        this.ctx.fillText("["+this.level_data_textures[k][2]/71+" : "+this.level_data_textures[k][3]/71+"]", upscale(this.level_data_textures[k][2]-this.offsetsmoothX+5), upscale(this.level_data_textures[k][3]-this.offsetsmoothY+20));
+                        this.ctx.fillText("["+this.level_data_textures[k][2]/71+" : "+this.level_data_textures[k][3]/71+"]", upscale(this.level_data_textures[k][2]-this.offsetsmoothX+5), this.cache_data[3]+20);
                     }                   
                 }
             }
@@ -608,25 +608,25 @@ class MapData
             if(this.collisions[5] == 1)
             {
                 this.ctx.fillStyle = "rgb(255,0,0)";
-                this.ctx.fillRect(upscale(this.bestup[0]+smoothX), upscale(this.bestup[1]+smoothY+66),upscale(71),upscale(5));
+                this.ctx.fillRect(upscale(this.bestup[0]+smoothX), upscale(this.bestup[1]+smoothY+66),this.cache_data[4],upscale(5));
             }
 
             if(this.collisions[4] == 1)
             {
                 this.ctx.fillStyle = "rgb(0,255,0)";
-                this.ctx.fillRect(upscale(this.bestdown[0]+smoothX), upscale(this.bestdown[1]+smoothY),upscale(71),upscale(5));
+                this.ctx.fillRect(upscale(this.bestdown[0]+smoothX), upscale(this.bestdown[1]+smoothY),this.cache_data[4],upscale(5));
             }
 
             if(this.collisions[6] == 1) //Left blue
             {
                 this.ctx.fillStyle = "rgb(0,0,255)";
-                this.ctx.fillRect(upscale(this.bestleft[0]+smoothX+66), upscale(this.bestleft[1]+smoothY),upscale(5),upscale(71));
+                this.ctx.fillRect(upscale(this.bestleft[0]+smoothX+66), upscale(this.bestleft[1]+smoothY),upscale(5),this.cache_data[4]);
             }
 
             if(this.collisions[7] == 1) //Right yellow
             {
                 this.ctx.fillStyle = "rgb(255,255,0)";
-                this.ctx.fillRect(upscale(this.bestright[0]+smoothX), upscale(this.bestright[1]+smoothY),upscale(5),upscale(71));
+                this.ctx.fillRect(upscale(this.bestright[0]+smoothX), upscale(this.bestright[1]+smoothY),upscale(5),this.cache_data[4]);
             }
             this.ctx.lineWidth="2"
             this.ctx.strokeStyle = "rgb(0,0,0)";
