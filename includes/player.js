@@ -1,11 +1,11 @@
-import {upscale} from "./ui.js";
+import {upscale} from "./tools.js";
 
 
 function texture_loader(path)
 {
     var texture = new Image();
-    texture.src = path
-    return texture
+    texture.src = path;
+    return texture;
 }
 
 class PlayerData
@@ -16,10 +16,8 @@ class PlayerData
         this.playerY = 0;
         this.previousplayerX = 0;
         this.previousplayerY = 0;
-        // this.moveright = 0;
-        // this.moveleft = 0;
         this.jump = false;
-        this.jumpavaiblelity = true
+        this.jumpavaiblelity = true;
         this.releasejump = false;
         this.jumpcount = 0;
         this.left = true;
@@ -44,8 +42,8 @@ class PlayerData
         this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
         this.maxcurrentvelocity; //La fameuse (Ne pas toucher)
         this.jumpforce = 35; //Puissance du saut (valeures admises ]0;+inf[)
-        this.jumptolerance = -10 //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
-        this.jumpattenuation = 0 // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
+        this.jumptolerance = -10; //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
+        this.jumpattenuation = 0; // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
                                     // (valeures admises [1;+inf[) plus la valeure est vers l'inf plus le ralentissement sera prononcé
 
         this.maxgroundvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est au sol (valeures admises [0;70]) 0 équivaut a pas déplacment au sol
@@ -69,35 +67,35 @@ class PlayerData
 
 
         //Variables d'animations du joueur
-        this.initial_pose = texture_loader("graphics/player/initial_pose/initial_pose.png")
+        this.initial_pose = texture_loader("graphics/player/initial_pose/initial_pose.png");
         
-        this.animationmoving = false
-        this.moving = texture_loader("graphics/player/moving/moving.png")
+        this.animationmoving = false;
+        this.moving = texture_loader("graphics/player/moving/moving.png");
         this.movingrightframetiminglist = [0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5];
         this.movingrightframe = 0;
         this.movingleftframetiminglist = [6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 11];
         this.movingleftframe = 0;
         this.movingframetiminglistlen = this.movingrightframetiminglist.length;
-        this.wall_slide = texture_loader("graphics/player/wall_slide/wall_slide.png")
+        this.wall_slide = texture_loader("graphics/player/wall_slide/wall_slide.png");
         
-        this.verticaldirection = -1
-        this.falling = texture_loader("graphics/player/falling/falling.png")
+        this.verticaldirection = -1;
+        this.falling = texture_loader("graphics/player/falling/falling.png");
         this.fallingrightframetiminglist = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1];
         this.fallingleftframetiminglist = [2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3];
         this.fallingframe = 0;
         this.fallingframetiminglistlen = this.fallingrightframetiminglist.length;
 
-        this.ground_slideposition = 0
-        this.ground_slide = texture_loader("graphics/player/ground_slide/ground_slide.png")
+        this.ground_slideposition = 0;
+        this.ground_slide = texture_loader("graphics/player/ground_slide/ground_slide.png");
 
         this.jumpframe = 0;
         this.jump_animation_postion = 0;
         this.jumprightframetiminglist = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2];
         this.jumpleftframetiminglist = [4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5];
-        this.jump_animation = texture_loader("graphics/player/jump/jump.png")
+        this.jump_animation = texture_loader("graphics/player/jump/jump.png");
         this.jumpframetiminglistlen = this.jumprightframetiminglist.length;
 
-        this.dashaanimation = texture_loader("graphics/player/dash/dash.png")
+        this.dashaanimation = texture_loader("graphics/player/dash/dash.png");
 
         // collisions[0] = en dessous
         // collisions[1] = au dessus
@@ -142,7 +140,7 @@ class PlayerData
                 {   
                     if(input[1] != input[3])
                     {
-                        this.animationmoving = true
+                        this.animationmoving = true;
                         switch(collisions[0])
                         {
                             case 0:
@@ -158,17 +156,17 @@ class PlayerData
                     else
                     {
                         this.maxcurrentvelocity = 0;
-                        this.animationmoving = false
+                        this.animationmoving = false;
                     }
                     
                     
-                    this.speed = (Math.round(1+this.maxcurrentvelocity - (this.maxcurrentvelocity / (Math.sqrt(vx**2)+1))))
+                    this.speed = (Math.round(1+this.maxcurrentvelocity - (this.maxcurrentvelocity / (Math.sqrt(vx**2)+1))));
                     if(input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0) //moving right
                     {
-                        this.lastdirection = 1
+                        this.lastdirection = 1;
                         if(vx <= this.maxcurrentvelocity)
                         {   
-                            vx = this.speed
+                            vx = this.speed;
                         }
                         else
                         {
@@ -176,19 +174,19 @@ class PlayerData
                             {
                                 case 1:
                                     vx -= this.groundfriction;
-                                    break
+                                    break;
                                 case 0:
                                     vx -= this.airfriction;
-                                    break
+                                    break;
                             }
                         }
                     }
                     else if(input[1] === 1 & vx <= 0 & input[3] === 0 & collisions[2] === 0) //moving left
                     { 
-                        this.lastdirection = -1
+                        this.lastdirection = -1;
                         if(vx >= -this.maxcurrentvelocity)
                         {   
-                            vx = -this.speed
+                            vx = -this.speed;
                         }
                         else
                         {
@@ -196,10 +194,10 @@ class PlayerData
                             {
                                 case 1:
                                     vx += this.groundfriction;
-                                    break
+                                    break;
                                 case 0:
                                     vx += this.airfriction;
-                                    break
+                                    break;
                             }
                         }
                     }
@@ -213,16 +211,16 @@ class PlayerData
                                     vx -= this.groundfriction;
                                     if(input[1] === 1 & collisions[3] === 0)
                                     {
-                                        this.ground_slideposition = -1
+                                        this.ground_slideposition = -1;
                                     }
-                                    break
+                                    break;
                                 case 0:
                                     vx -= this.airfriction;
                                     if(input[1] === 1)
                                     {
-                                        vx -= this.aerialmoving
+                                        vx -= this.aerialmoving;
                                     }
-                                    break
+                                    break;
                             }
                             if(vx < 0 | collisions[3] === 1)
                             {
@@ -237,16 +235,16 @@ class PlayerData
                                     vx += this.groundfriction;
                                     if(input[3] === 1 & collisions[2] === 0)
                                     {
-                                        this.ground_slideposition = 1
+                                        this.ground_slideposition = 1;
                                     }
-                                    break
+                                    break;
                                 case 0:
                                     vx += this.airfriction;
                                     if(input[3] === 1)
                                     {
-                                        vx += this.aerialmoving
+                                        vx += this.aerialmoving;
                                     }
-                                    break
+                                    break;
                             }
                             if(vx > 0 | collisions[2] === 1)
                             {
@@ -318,12 +316,12 @@ class PlayerData
                             vy = this.walljumpy;
                             this.lastdirection = -this.walljump*1;
                             
-                            this.jump = false
+                            this.jump = false;
                             this.walljump = 0;
                             this.walljumpcheck = false;
                             this.wallleave = this.wallleavemax;
                             this.dashcooldown = this.dashcooldownmax;
-                            this.lastactwalljump = true
+                            this.lastactwalljump = true;
                         }
                     }
                     else if(this.walljump != 1 & this.walljump != -1)
@@ -335,7 +333,7 @@ class PlayerData
                 
                 if(this.dashbuttonrelease === false & input[5] === 0) // dash
                 {
-                    this.dashbuttonrelease = true
+                    this.dashbuttonrelease = true;
                 }
                 if(this.dashcooldown === 0 & this.lastactwalljump === false)
                 {    
@@ -350,19 +348,19 @@ class PlayerData
                         {
                             vx = this.dashend*this.lastdirection;
                             vy = 0;
-                            this.dashcooldown = this.dashcooldownmax
-                            this.dashcount = 0
+                            this.dashcooldown = this.dashcooldownmax;
+                            this.dashcount = 0;
                         }
                         else
                         {
-                            vx = this.dashspeed*this.lastdirection
+                            vx = this.dashspeed*this.lastdirection;
                             vy = 0;
                         }    
                     }
                 }
                 if(this.dashcooldown > 0)
                 {
-                    this.dashcooldown -= 1
+                    this.dashcooldown -= 1;
                 }
                 
                 // if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
@@ -401,12 +399,12 @@ class PlayerData
                     this.wallleave = this.wallleavemax;
                     this.jump = true;
                     this.lastactwalljump = false;
-                    this.jumpavaiblelity = true
+                    this.jumpavaiblelity = true;
                     
                 }
                 if(input[4] === 0)
                 {
-                    this.releasejump = true
+                    this.releasejump = true;
                 }
                 
             }
@@ -504,20 +502,20 @@ class PlayerData
                 this.playerY -= vy;
             }
         }
-        return [vx,-vy]
+        return [vx,-vy];
     }
     
-    display(collisions, camsmoother, pause, px, py, dt)
+    display(collisions, camsmootherX, camsmootherY, pause, px, py, dt)
     {
         
         switch(this.walljump)
         {
             case 1:
-                this.ctx.drawImage(this.wall_slide, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
-                break
+                this.ctx.drawImage(this.wall_slide, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
+                break;
             case -1:
-                this.ctx.drawImage(this.wall_slide, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
-                break
+                this.ctx.drawImage(this.wall_slide, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
+                break;
             case 0:
                 switch(this.lastdirection)
                 {
@@ -529,10 +527,10 @@ class PlayerData
                                 if(this.animationmoving === true & collisions[3] === 0 & this.ground_slideposition === 0)
                                 {       
                                     this.movingleftframe = 0;
-                                    this.ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.movingrightframe += 1/dt
+                                        this.movingrightframe += 1/dt;
                                     }
                                     if(this.movingrightframe >= this.movingframetiminglistlen)
                                     {
@@ -541,22 +539,22 @@ class PlayerData
                                 }
                                 else if(this.ground_slideposition === -1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else
                                 {
                                     this.movingrightframe = 0;
-                                    this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
                                 {
-                                    this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.fallingframe += 1/dt
+                                        this.fallingframe += 1/dt;
                                     }
                                     if(this.fallingframe >= this.fallingframetiminglistlen)
                                     {
@@ -566,14 +564,14 @@ class PlayerData
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    this.ctx.drawImage(this.jump_animation, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.jump_animation, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    this.ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.jumpframe += 1/dt
+                                        this.jumpframe += 1/dt;
                                     }
                                     if(this.jumpframe >= this.jumpframetiminglistlen)
                                     {
@@ -584,7 +582,7 @@ class PlayerData
                         }
                         else
                         {
-                            this.ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                            this.ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                         }
                         break
                     case -1:
@@ -595,10 +593,10 @@ class PlayerData
                                 if(this.animationmoving === true & collisions[2] === 0 & this.ground_slideposition === 0)
                                 {
                                     this.movingrightframe = 0;
-                                    this.ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.movingleftframe += 1/dt
+                                        this.movingleftframe += 1/dt;
                                     }
                                     if(this.movingleftframe >= this.movingframetiminglistlen)
                                     {
@@ -607,22 +605,22 @@ class PlayerData
                                 }
                                 else if(this.ground_slideposition === 1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else
                                 {
                                     this.movingleftframe = 0;
-                                    this.ctx.drawImage(this.initial_pose, 0, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.initial_pose, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
                                 {
-                                    this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.fallingframe += 1/dt
+                                        this.fallingframe += 1/dt;
                                     }
                                     if(this.fallingframe >= this.fallingframetiminglistlen)
                                     {
@@ -632,14 +630,14 @@ class PlayerData
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    this.ctx.drawImage(this.jump_animation, 72, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.jump_animation, 72, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    this.ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                     if(pause === false)
                                     {
-                                        this.jumpframe += 1/dt
+                                        this.jumpframe += 1/dt;
                                     }
                                     if(this.jumpframe >= this.jumpframetiminglistlen)
                                     {
@@ -650,13 +648,34 @@ class PlayerData
                         }
                         else
                         {
-                            this.ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, upscale(px+camsmoother[0]), upscale(py+camsmoother[1]), upscale(71), upscale(71));
+                            this.ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                         }
                         break
                 }
                 break
         }
     }
+
+    reset()
+    {
+        this.playerX = 0;
+        this.playerY = 0;
+        this.previousplayerX = 0;
+        this.previousplayerY = 0;
+        this.jump = false;
+        this.jumpavaiblelity = true
+        this.releasejump = false;
+        this.jumpcount = 0;
+        this.left = true;
+        this.right = true;
+        this.walljump = 0;
+        this.walljumpcheck = false;
+        
+        
+        this.lastdirection = 1;
+        this.cachedata = [];
+        this.lastactwalljump = false;
+    }
 }
 
-export{PlayerData}
+export{PlayerData};
