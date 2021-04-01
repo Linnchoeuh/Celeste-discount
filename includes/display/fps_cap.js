@@ -19,19 +19,28 @@ class FPS
         this.dateseconds = this.date;
         this.pfps = 0;
         this.pfpslog = 0;
-        this.physicframeavaiblity = 0;       
+        this.physicframeavaiblity = 0;
+        this.pfpsframetiming = this.previouspfpsframetiming = Date.now();
+        this.pfpsintervaltiming = 0;
+        this.nbofframewithoutphysics = 0;
     }
 
     Log()
     {
         this.frameaverageaccumulation++;
-        if(this.frameaverageaccumulation >= 5)
+        if(this.date+1000 <= Date.now())
         {
             this.date = Date.now();
-            this.fps = 5000/(this.date-this.frametime);
-            this.frametime = this.date;
+            this.fps = this.frameaverageaccumulation;
+            this.dt = this.fps/60;
+            // console.log(this.fps)
             this.frameaverageaccumulation = 0;
         }
+        
+    }
+
+    Physic_log()
+    {
         this.pfps++;
         if(this.dateseconds+1000 <= Date.now())
         {
@@ -39,9 +48,8 @@ class FPS
             this.pfpslog = this.pfps;
             this.pfps = 0;
         }
-        this.dt = this.fps/60;
     }
-    
+
     Graphic_Cap(framerate = -1)
     {
         if(this.gfpsintervaltiming > Math.round(1000/framerate)+100)
@@ -68,26 +76,22 @@ class FPS
 
     Physics_Refresh_Cap(frequency = -1)
     {
-        if(this.gfpsintervaltiming > Math.round(1000/framerate)+100)
-        {
-            this.gfpsintervaltiming = 0;
-        }
         if(frequency === -1)
         {
             return true;
         }
-        else
+        // this.executionloop = 0;
+        this.previouspfpsframetiming = this.pfpsframetiming;
+        this.pfpsframetiming = Date.now();
+        this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
+        if(1000/frequency <= this.pfpsintervaltiming)
         {
-            this.gfpsframetiming = Date.now();
-            this.gfpsintervaltiming += this.gfpsframetiming-this.previousgfpsframetiming;
-            this.previousgfpsframetiming = this.gfpsframetiming;
-            if(this.gfpsintervaltiming > Math.round(1000/framerate))
-            {
-                this.gfpsintervaltiming -= Math.round(1000/framerate);
-                return true;
-            }
-            return false;
+            this.nbofframewithoutphysics = 0
+            this.executionloop = this.pfpsintervaltiming/(1000/frequency)
+            this.pfpsintervaltiming -= Math.floor(this.executionloop)*(1000/frequency)
+            return true;
         }
+        return false;
     }
 }
 

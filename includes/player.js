@@ -382,9 +382,14 @@ class PlayerData
 
                 if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
                 {
-                    if(collisions[1] === 1 | input[4] === 0 & this.jump === true)
+                    if(collisions[1] === 1)
                     {
                         vy = 0;
+                        this.jump = false;
+                    }
+                    if(input[4] === 0 & vy > 0 & this.lastactwalljump === false)
+                    {
+                        vy /= 1.5
                         this.jump = false;
                     }
                     if(-this.maxgravityspeed < vy)
@@ -505,7 +510,7 @@ class PlayerData
         return [vx,-vy];
     }
     
-    display(collisions, camsmootherX, camsmootherY, pause, px, py, dt)
+    display(collisions, pause, dt, camsmootherX, camsmootherY, px, py)
     {
         
         switch(this.walljump)

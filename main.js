@@ -11,6 +11,8 @@
 //reworked button system + add a new animated button type
 //map displaying optimisation
 //adapting ui animation for variable framerate
+//Physic clock more stable
+//Interpolation improved
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d", {alpha : false});
@@ -181,15 +183,12 @@ var stock = [0, 0];
 
 //Game running
 var PAUSE = new Pause(ctx)
-var executionloop = 0;
-var physicframeavaiblity = 0;
 var playerinterpoX = 0;
 var camerainterpoX = 0;
 var playerinterpoY = 0;
 var camerainterpoY = 0;
 var smoothinterpoX = 0;
 var smoothinterpoY = 0;
-var nbofframewithoutphysics = 1;
 
 //mapeditor
 var map_move_speed = 20;
@@ -333,7 +332,7 @@ function main()
     firstgameframe = Fullscreen.Screen_Scaler(canvas, screen, firstgameframe, keys_input);
 
     
-    if(Fps.Graphic_Cap(Fps.cap30fps))
+    if(Fps.Graphic_Cap(/*Fps.cap30fps*/75))
     {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         Fps.Log()
@@ -385,16 +384,11 @@ function main()
                 ctx.drawImage(bg, 0, 0, upscale(1200), upscale(675));
 
                 
-                if(Fps.dt < 1)
-                {
-                    executionloop += (1-Fps.dt)/(Fps.fps/60);
-                    physicframeavaiblity += 16.6;
-                }
-                physicframeavaiblity += 1000/Fps.fps;
+                
 
-                if(16.6 <= physicframeavaiblity) //gestion de la physique
+                if(Fps.Physics_Refresh_Cap(60)) //gestion de la physique
                 {
-                    for(var i = 0; i <= Math.trunc(executionloop); i++)
+                    for(var i = 0; i <= Fps.executionloop; i++)
                     {
                         player.previousplayerX = player.playerX;
                         player.previousplayerY = player.playerY;
@@ -408,31 +402,30 @@ function main()
 
                         player.playerX = stock[0];
                         player.playerY = stock[1];
-                        playerinterpoX = lerp(player.playerX-player.previousplayerX, Fps.pfps/Fps.fps);
-                        playerinterpoY = lerp(player.playerY-player.previousplayerY, Fps.pfps/Fps.fps);
+                        playerinterpoX = lerp(player.playerX-player.previousplayerX, Fps.pfpslog/Fps.fps);
+                        playerinterpoY = lerp(player.playerY-player.previousplayerY, Fps.pfpslog/Fps.fps);
 
-                        camerainterpoX = lerp(map.offsetX-map.previousoffsetX, Fps.pfps/Fps.fps);
-                        camerainterpoY = lerp(map.offsetY-map.previousoffsetY, Fps.pfps/Fps.fps);
+                        camerainterpoX = lerp(map.offsetX-map.previousoffsetX, Fps.pfpslog/Fps.fps);
+                        camerainterpoY = lerp(map.offsetY-map.previousoffsetY, Fps.pfpslog/Fps.fps);
 
-                        smoothinterpoX = lerp(map.camsmoother[0]-map.previouscamsmoother[0], Fps.pfps/Fps.fps);
-                        smoothinterpoY = lerp(map.camsmoother[1]-map.previouscamsmoother[1], Fps.pfps/Fps.fps);
-                        nbofframewithoutphysics = 0
+                        smoothinterpoX = lerp(map.camsmoother[0]-map.previouscamsmoother[0], Fps.pfpslog/Fps.fps);
+                        smoothinterpoY = lerp(map.camsmoother[1]-map.previouscamsmoother[1], Fps.pfpslog/Fps.fps);
+                        Fps.executionloop--;
+                        Fps.Physic_log();
                     }
-                    physicframeavaiblity -= 16.6;
                 }
                 
-                if(executionloop > 1)
-                {
-                    executionloop = executionloop-Math.trunc(executionloop);
-                }
+                
 
-                map.display(player.playerX, player.playerY, PAUSE.pause, map.previousoffsetX+camerainterpoX*nbofframewithoutphysics, map.previousoffsetY+camerainterpoY*nbofframewithoutphysics, 
-                    map.previouscamsmoother[0]+smoothinterpoX*nbofframewithoutphysics, map.previouscamsmoother[1]+smoothinterpoY*nbofframewithoutphysics);
+                map.display(   player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics, PAUSE.pause,
+                               map.previousoffsetX+camerainterpoX*Fps.nbofframewithoutphysics,        map.previousoffsetY+camerainterpoY*Fps.nbofframewithoutphysics, 
+                               map.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, map.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics);
                 
-                player.display(map.collisions, map.previouscamsmoother[0]+smoothinterpoX*nbofframewithoutphysics, map.previouscamsmoother[1]+smoothinterpoY*nbofframewithoutphysics, PAUSE.pause, 
-                    player.previousplayerX+playerinterpoX*nbofframewithoutphysics, player.previousplayerY+playerinterpoY*nbofframewithoutphysics, Fps.dt);
+                player.display(map.collisions, PAUSE.pause, Fps.dt,
+                               map.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, map.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics,
+                               player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics);
                 
-                nbofframewithoutphysics++;
+                Fps.nbofframewithoutphysics++;
                 
                 keypressed = PAUSE.Enabler_disabler("Pause", keypressed, keys_input, Fps.dt)
                 if(PAUSE.pause) //pause
@@ -1285,7 +1278,7 @@ function main()
                 ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
 
 
-                ctx.fillText(TransitionObject.currentfadestate, upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+                ctx.fillText(Fps.nbofframewithoutphysics+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
 
                 ctx.strokeStyle = "rgb(0,0,0)";
                 ctx.strokeText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions

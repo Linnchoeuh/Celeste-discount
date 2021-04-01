@@ -28,9 +28,9 @@ function upscale(initialscale)
 {
     if(canvasfullscreen == true)
     {
-        return initialscale*(canvas.height/675)
+        return Math.round(initialscale*(canvas.height/675))
     }
-    return initialscale
+    return Math.round(initialscale)
 }
 
 function gupscale(initialscale)

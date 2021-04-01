@@ -620,28 +620,28 @@ class MapData
 
         if(this.devmode == true) //Affichage debug des collisions
         {
-            if(this.collisions[5] == 1)
+            if(this.collisions[5] == 1) //Up red
             {
                 this.ctx.fillStyle = "rgb(255,0,0)";
-                this.ctx.fillRect(upscale(this.bestup[0]+smoothX), upscale(this.bestup[1]+smoothY+66),this.cache_data[4],upscale(5));
+                this.ctx.fillRect(upscale(this.bestup[2]-this.offsetsmoothX), upscale(this.bestup[3]-this.offsetsmoothY+320),this.cache_data[4],upscale(5));
             }
 
-            if(this.collisions[4] == 1)
+            if(this.collisions[4] == 1) //Down green
             {
                 this.ctx.fillStyle = "rgb(0,255,0)";
-                this.ctx.fillRect(upscale(this.bestdown[0]+smoothX), upscale(this.bestdown[1]+smoothY),this.cache_data[4],upscale(5));
+                this.ctx.fillRect(upscale(this.bestdown[2]-this.offsetsmoothX), upscale(this.bestdown[3]-this.offsetsmoothY+395),this.cache_data[4],upscale(5));
             }
 
             if(this.collisions[6] == 1) //Left blue
             {
                 this.ctx.fillStyle = "rgb(0,0,255)";
-                this.ctx.fillRect(upscale(this.bestleft[0]+smoothX+66), upscale(this.bestleft[1]+smoothY),upscale(5),this.cache_data[4]);
+                this.ctx.fillRect(upscale(this.bestleft[2]-this.offsetsmoothX+593), upscale(py+this.bestleft[3]-this.offsetsmoothY),upscale(5),this.cache_data[4]);
             }
 
             if(this.collisions[7] == 1) //Right yellow
             {
                 this.ctx.fillStyle = "rgb(255,255,0)";
-                this.ctx.fillRect(upscale(this.bestright[0]+smoothX), upscale(this.bestright[1]+smoothY),upscale(5),this.cache_data[4]);
+                this.ctx.fillRect(upscale(this.bestright[2]-this.offsetsmoothX+625), upscale(py+this.bestright[3]-this.offsetsmoothY),upscale(5),this.cache_data[4]);
             }
             this.ctx.lineWidth= 2;
             this.ctx.strokeStyle = "rgb(0,0,0)";
