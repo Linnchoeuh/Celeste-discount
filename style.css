@@ -1,7 +1,8 @@
 canvas {
+    image-rendering: smooth;
     /* image-rendering: pixelated;
     image-rendering: crisp-edges; */
-    /* image-rendering: smooth; */
+    
 
     margin-left: auto;
     margin-right: auto;

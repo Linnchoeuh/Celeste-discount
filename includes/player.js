@@ -39,13 +39,18 @@ class PlayerData
         this.dashend = 0; //choisir la vitesse du joeur a la fin du dash (valeures admises [0;70])
         
 
-        this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
-        this.maxcurrentvelocity; //La fameuse (Ne pas toucher)
+        // this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
+        
+
         this.jumpforce = 35; //Puissance du saut (valeures admises ]0;+inf[)
         this.jumptolerance = -10; //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
-        this.jumpattenuation = 0; // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
+        this.jumpattenuation = 1.5; // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
                                     // (valeures admises [1;+inf[) plus la valeure est vers l'inf plus le ralentissement sera prononcé
-
+        
+        this.maxcurrentvelocity; //La fameuse (Ne pas toucher)
+        this.currentacceleration;
+        this.groundacceleration = 1.5;
+        this.aerialacceleration = 0.5;
         this.maxgroundvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est au sol (valeures admises [0;70]) 0 équivaut a pas déplacment au sol
         this.maxaerialvelocity = 9; //Vitesse max de déplacement du joueur lorsqu'il est en chute libre (valeures admises [0;70]) 0 équivaut a pas déplacment en l'air
         this.aerialmoving = 0.5; //Pour pouvoir se diriger dans les airs, si la valeure est trop élevé on peut faire des walljump sur un seul mur mdr 
@@ -55,13 +60,13 @@ class PlayerData
         this.wallleave = this.wallleavemax+1; //(Ne pas toucher)
         this.walljumpx = 15; //(valeures admises [0;70]) 0 équivaut a pas déplacment horizontal
         this.walljumpy = 35; //(valeures admises [0;70]) 0 équivaut a pas déplacment vertical
-        this.walljumpslide = 5; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
+        this.walljumpslide = 4; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
 
-        this.groundfriction = 2; //Ralentissement de la vitesse joueur lorsqu'il est au sol (valeures admises ]0;+inf[)
+        this.groundfriction = 0.8; //Ralentissement de la vitesse joueur lorsqu'il est au sol (valeures admises ]0;+inf[)
         this.airfriction = 0.2; //Ralentissement de la vitesse joueur lorsqu'il est en l'air (valeures admises ]0;+inf[)
         
         
-        this.gravity = 2; //Permet d'ajuster la vitesse de chute du joueur (valeures admises ]0;70])
+        this.gravity = 3; //Permet d'ajuster la vitesse de chute du joueur (valeures admises ]0;70])
         this.maxgravityspeed = 20; //Permet de donner une vitesse de chute max (ne jamais dépasser 70px/frame) (valeures admises ]0;70])
 
 
@@ -159,46 +164,36 @@ class PlayerData
                         this.animationmoving = false;
                     }
                     
-                    
-                    this.speed = (Math.round(1+this.maxcurrentvelocity - (this.maxcurrentvelocity / (Math.sqrt(vx**2)+1))));
-                    if(input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0) //moving right
+                    if(input[3] === 1 & input[1] === 0) //moving right
                     {
                         this.lastdirection = 1;
-                        if(vx <= this.maxcurrentvelocity)
+                    }
+                    else if(input[1] === 1 & input[3] === 0)
+                    {
+                        this.lastdirection = -1;
+                    }
+                    if(input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0) //moving right
+                    {
+                        // this.lastdirection = 1;
+                        if(vx >= this.maxcurrentvelocity)
                         {   
-                            vx = this.speed;
+                            this.speed = vx = this.maxcurrentvelocity
                         }
                         else
                         {
-                            switch(collisions[0])
-                            {
-                                case 1:
-                                    vx -= this.groundfriction;
-                                    break;
-                                case 0:
-                                    vx -= this.airfriction;
-                                    break;
-                            }
+                            this.speed = vx += this.currentacceleration;
                         }
                     }
                     else if(input[1] === 1 & vx <= 0 & input[3] === 0 & collisions[2] === 0) //moving left
-                    { 
-                        this.lastdirection = -1;
-                        if(vx >= -this.maxcurrentvelocity)
+                    {
+                        // this.lastdirection = -1;
+                        if(vx <= -this.maxcurrentvelocity)
                         {   
-                            vx = -this.speed;
+                            this.speed = vx = -this.maxcurrentvelocity
                         }
                         else
                         {
-                            switch(collisions[0])
-                            {
-                                case 1:
-                                    vx += this.groundfriction;
-                                    break;
-                                case 0:
-                                    vx += this.airfriction;
-                                    break;
-                            }
+                            this.speed = vx -= this.currentacceleration;
                         }
                     }
                     else if(this.dashcount === 0) //no move
@@ -389,7 +384,7 @@ class PlayerData
                     }
                     if(input[4] === 0 & vy > 0 & this.lastactwalljump === false)
                     {
-                        vy /= 1.5
+                        vy /= this.jumpattenuation;
                         this.jump = false;
                     }
                     if(-this.maxgravityspeed < vy)
@@ -542,14 +537,15 @@ class PlayerData
                                         this.movingrightframe = 0;
                                     }
                                 }
-                                else if(this.ground_slideposition === -1)
+                                else if(this.ground_slideposition === 1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else
                                 {
                                     this.movingrightframe = 0;
                                     this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
+                                    console.log("oui")
                                 }
                             }
                             else
@@ -608,9 +604,9 @@ class PlayerData
                                         this.movingleftframe = 0;
                                     }
                                 }
-                                else if(this.ground_slideposition === 1)
+                                else if(this.ground_slideposition === -1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
+                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, upscale(px+camsmootherX), upscale(py+camsmootherY), upscale(71), upscale(71));
                                 }
                                 else
                                 {

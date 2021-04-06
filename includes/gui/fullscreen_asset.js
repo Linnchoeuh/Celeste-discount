@@ -13,7 +13,7 @@ class Canvas_resolution_asset
         this.fullscreendownscale = false;
     }
 
-    Enabler_disabler(elem)
+    Toggle(elem)
     {
         if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
             if (elem.requestFullScreen) {
@@ -49,7 +49,7 @@ class Canvas_resolution_asset
         return [mouseX, mouseY];
     }
 
-    Double_Click_Enabler_disabler(click, firstgameframe, enabler = true)
+    Double_Click_Toggle(click, firstgameframe, enabler = true)
     {
         if(enabler)
         {
@@ -66,7 +66,7 @@ class Canvas_resolution_asset
                 }
                 else if(click && this.doubleclickfullscreenmousepressed === false)
                 {
-                    this.Enabler_disabler(canvas);
+                    this.Toggle(canvas);
                     this.firstclick = false;
                     return true;
                 }

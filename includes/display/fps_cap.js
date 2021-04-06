@@ -18,7 +18,7 @@ class FPS
         this.executionloop = 0;
         this.dateseconds = this.date;
         this.pfps = 0;
-        this.pfpslog = 0;
+        this.pfpslog = 60;
         this.physicframeavaiblity = 0;
         this.pfpsframetiming = this.previouspfpsframetiming = Date.now();
         this.pfpsintervaltiming = 0;
@@ -33,7 +33,6 @@ class FPS
             this.date = Date.now();
             this.fps = this.frameaverageaccumulation;
             this.dt = this.fps/60;
-            // console.log(this.fps)
             this.frameaverageaccumulation = 0;
         }
         

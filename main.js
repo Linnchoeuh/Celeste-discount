@@ -1,18 +1,29 @@
 //TO DO:
-//Map editor
-//New map assets
+//add Map editor
+//add New map assets
 //Rework collisions
-
-//Particles
+//add Particles
 
 //DID:
-//Cap 30fps
-//Double click for fullscreen
-//reworked button system + add a new animated button type
-//map displaying optimisation
-//adapting ui animation for variable framerate
-//Physic clock more stable
-//Interpolation improved
+//  New features :
+//-Cap the at 30fps is now avaible in the setting
+//-Double click for fullscreen
+//-New animated button type
+
+//  Fix :
+//-Adapting speed of the GUI animation for variable framerate (pause animation, transition animation)
+
+//  Improvement :
+//-Map displaying optimisation
+//-Physic clock more stable
+//-Interpolation accuracy improved
+
+//  Rework :
+//-Player physics
+//-Player jump
+//-Player acceleration
+//-Map background
+
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d", {alpha : false});
@@ -25,27 +36,19 @@ ctx.canvas.addEventListener('mousemove', function(event)
 {
     mouseX = event.clientX - ctx.canvas.offsetLeft;
     mouseY = event.clientY - ctx.canvas.offsetTop;
-    var status = document.getElementById("status");
 });
 ctx.canvas.addEventListener('mousedown', function(event)
 {
-    mouseX = event.clientX - ctx.canvas.offsetLeft;
-    mouseY = event.clientY - ctx.canvas.offsetTop;
-    var clicking = document.getElementById("clicking");
-    click = true
+    click = true;
 });
 ctx.canvas.addEventListener('mouseup', function(event)
 {
-    mouseX = event.clientX - ctx.canvas.offsetLeft;
-    mouseY = event.clientY - ctx.canvas.offsetTop;
-    var clicking = document.getElementById("clicking");
-    click = false
+    click = false;
 });
 document.addEventListener("keydown", function(event)
 {
     key_press = String.fromCharCode(event.keyCode);
-    keynb = event.keyCode
-    switch(keynb)
+    switch(event.keyCode)
     {
         case 90:
             keys_input.splice(0, 1, 1); //z
@@ -124,6 +127,8 @@ document.addEventListener("webkitfullscreenchange", function () {
     Fullscreen.canvasfullscreen = (document.webkitIsFullScreen) ? true : false;
 }, false);
 
+
+
 var return_arrow = new Image();
 return_arrow.src = "graphics/ui/return_arrow.png";
 var bg = new Image();
@@ -200,6 +205,10 @@ var editedlevelid = 0;
 
 //Optimisation
 var firstgameframe = false;
+var renderingframetime = 0;
+var renderingframetimecount = 0;
+var renderingframetimelog = 0;
+var renderingframetimeaccumulation = 0;
 
 // Buttons
 var TransitionObject = new Transition(ctx);
@@ -302,6 +311,7 @@ function lerp(n, time)
 
 function main()
 {
+    renderingframetime = Date.now();
     requestAnimationFrame(main);
     ui_var_updater3(Fullscreen.canvasfullscreen, Fullscreen.fullscreenupscale, mouseX, mouseY);
     button1.click = button2.click = 
@@ -310,9 +320,7 @@ function main()
     button7.click = button8.click = 
     button9.click = button10.click = 
     button11.click = click;
-    
-    
-    
+
     button1.mouseX = button2.mouseX = 
     button3.mouseX = button4.mouseX = 
     button5.mouseX = button6.mouseX = 
@@ -327,7 +335,7 @@ function main()
     button9.mouseY = button10.mouseY = 
     button11.mouseY = animaticmousevalue[1];
     
-    firstgameframe = Fullscreen.Double_Click_Enabler_disabler(click, firstgameframe);
+    firstgameframe = Fullscreen.Double_Click_Toggle(click, firstgameframe);
     animaticmousevalue = Fullscreen.Mouse_adapter(mouseX, mouseY, canvas, screen);
     firstgameframe = Fullscreen.Screen_Scaler(canvas, screen, firstgameframe, keys_input);
 
@@ -427,7 +435,7 @@ function main()
                 
                 Fps.nbofframewithoutphysics++;
                 
-                keypressed = PAUSE.Enabler_disabler("Pause", keypressed, keys_input, Fps.dt)
+                keypressed = PAUSE.Toggle("Pause", keypressed, keys_input, Fps.dt)
                 if(PAUSE.pause) //pause
                 {
                     ctx.fillStyle = "rgb(255,255,255)";
@@ -452,7 +460,7 @@ function main()
                         if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                         {
                             firstgameframe = true;
-                            Fullscreen.Enabler_disabler(canvas);
+                            Fullscreen.Toggle(canvas);
                         }
 
                         if(button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu1") //back to menu
@@ -474,7 +482,7 @@ function main()
                         if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 222, 380, 40, -180+(PAUSE.pauseframe*20), 250, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                         {
                             firstgameframe = true;
-                            Fullscreen.Enabler_disabler(canvas)
+                            Fullscreen.Toggle(canvas)
                         }
 
                         if(button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu7") //back to menu
@@ -559,7 +567,7 @@ function main()
                 if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
                 {
                     firstgameframe = true;
-                    Fullscreen.Enabler_disabler(canvas);
+                    Fullscreen.Toggle(canvas);
                 }
 
                 if(Fullscreen.fullscreenupscale)
@@ -618,6 +626,8 @@ function main()
                         {
                             Fullscreen.fullscreendownscale = true;
                             Fullscreen.fullscreendownscalefactor = 4;
+                            document.getElementById("canvas").style.imageRendering = "crisp-edges";
+                            document.getElementById("canvas").style.imageRendering = "pixelated";
                         }
                         firstgameframe = true;
                     }
@@ -634,6 +644,10 @@ function main()
                         Fullscreen.fullscreenupscale = true;
                     }
                     firstgameframe = true;
+                }
+                if(Fullscreen.fullscreendownscale === false)
+                {
+                    document.getElementById("canvas").style.imageRendering = "auto";
                 }
 
 
@@ -1066,7 +1080,7 @@ function main()
                 }
                 if(keys_input[6] === 1 & PAUSE.pkey === false | PAUSE.pause) //PAUSE.pause
                 {
-                    keypressed = PAUSE.Enabler_disabler("Pause", keypressed, keys_input, Fps.dt)
+                    keypressed = PAUSE.Toggle("Pause", keypressed, keys_input, Fps.dt)
 
                     ctx.fillStyle = "rgb(255,255,255)";
 
@@ -1090,7 +1104,7 @@ function main()
                     if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                     {
                         firstgameframe = true;
-                        Fullscreen.Enabler_disabler(canvas);
+                        Fullscreen.Toggle(canvas);
                     }
 
                     if(button4.text_type1("Modify map properties", 0, 370, 470, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
@@ -1278,7 +1292,7 @@ function main()
                 ctx.fillText("["+map.bestright[2]+"]ox ; ["+map.bestright[3]+"]oy", upscale(1015), upscale(475));
 
 
-                ctx.fillText(Fps.nbofframewithoutphysics+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
+                ctx.fillText(player.ground_slideposition+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , upscale(1000), upscale(500)); //-------------------------------------------------------test var------------------------------------------------
 
                 ctx.strokeStyle = "rgb(0,0,0)";
                 ctx.strokeText("Collisions : "+map.collisions, upscale(963), upscale(175)); //collisions
@@ -1329,7 +1343,6 @@ function main()
                 ctx.strokeText("|", upscale(1080), upscale(275));
                 ctx.strokeText("OY : "+mapeditor.offsetY, upscale(1092), upscale(275));
             }
-
         }
         if(Fps.showfps)
         {    
@@ -1339,6 +1352,17 @@ function main()
             ctx.strokeStyle = "rgb(0,100,0)";
             ctx.strokeText(Math.round(Fps.fps)+" GFPS "+Number.parseFloat(Fps.dt).toPrecision(3)+" DT", upscale(20), upscale(25));
             ctx.strokeText(Fps.pfpslog+" PFPS ", upscale(20), upscale(50));
+            renderingframetimecount++;
+            renderingframetimeaccumulation += (Date.now() - renderingframetime)
+            if(renderingframetimecount > 10)
+            {
+                renderingframetimelog = renderingframetimeaccumulation/renderingframetimecount;
+                renderingframetimecount = renderingframetimeaccumulation = 0;
+            }
+            ctx.fillStyle = "rgb(0,255,0)";
+            ctx.fillText(Number.parseFloat(renderingframetimelog).toPrecision(3)+" ms", upscale(20), upscale(75)); //Temps de latence entre le début et la fin de la frame
+            ctx.strokeStyle = "rgb(0,100,0)";
+            ctx.strokeText(Number.parseFloat(renderingframetimelog).toPrecision(3)+" ms", upscale(20), upscale(75));
         }
         previousmouseX = animaticmousevalue[0];
         previousmouseY = animaticmousevalue[1];
