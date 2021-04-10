@@ -153,7 +153,7 @@ import {Map_Editor} from "./includes/Map_editor.js";
 
 var command = "false"; //command
 var push = 0;
-var devmode = true;
+var devmode = false;
 var godmode = false;
 var camsmootherenable = true;
 const Fullscreen = new Canvas_resolution_asset();
@@ -168,7 +168,7 @@ var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 2;
+var menu = 1;
 var lastmenu = -1;
 var mouseX = 0;
 var mouseY = 0;
