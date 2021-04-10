@@ -1,63 +1,8 @@
-import {upscale, gupscale} from "./tools.js";
-
-var ground_list = [];
+import {Tools} from "/main.js";
+import {Timer_Log} from "./tools.js";
 
 var testblock = new Image();
 testblock.src = "graphics/map_content/test_block.png";
-
-
-var dirt_full = new Image(); //0
-dirt_full.src = "graphics/map_content/dirt_full.png";
-ground_list.push(dirt_full);
-var dirt_L = new Image(); //1
-dirt_L.src = "graphics/map_content/dirt_L.png";
-ground_list.push(dirt_L);
-var dirt_R = new Image(); //2
-dirt_R.src = "graphics/map_content/dirt_R.png";
-ground_list.push(dirt_R);
-var dirt = new Image(); //3
-dirt.src = "graphics/map_content/dirt.png";
-ground_list.push(dirt);
-
-var ground_up_full = new Image(); //4
-ground_up_full.src = "graphics/map_content/ground_up_full.png";
-ground_list.push(ground_up_full);
-var ground_up_L = new Image(); //5
-ground_up_L.src = "graphics/map_content/ground_up_L.png";
-ground_list.push(ground_up_L);
-var ground_up_R = new Image(); //6
-ground_up_R.src = "graphics/map_content/ground_up_R.png";
-ground_list.push(ground_up_R);
-var ground_up = new Image(); //7
-ground_up.src = "graphics/map_content/ground_up.png";
-ground_list.push(ground_up);
-
-
-var ground_down_full = new Image(); //8
-ground_down_full.src = "graphics/map_content/ground_down_full.png";
-ground_list.push(ground_down_full);
-var ground_down_L = new Image(); //9
-ground_down_L.src = "graphics/map_content/ground_down_L.png";
-ground_list.push(ground_down_L)
-var ground_down_R = new Image(); //10
-ground_down_R.src = "graphics/map_content/ground_down_R.png";
-ground_list.push(ground_down_R);
-var ground_down = new Image(); //11
-ground_down.src = "graphics/map_content/ground_down.png";
-ground_list.push(ground_down);
-
-var ground_up_down_full = new Image(); //12
-ground_up_down_full.src = "graphics/map_content/ground_up_down_full.png";
-ground_list.push(ground_up_down_full);
-var ground_up_down_L = new Image(); //13
-ground_up_down_L.src = "graphics/map_content/ground_up_down_L.png";
-ground_list.push(ground_up_down_L);
-var ground_up_down_R = new Image(); //14
-ground_up_down_R.src = "graphics/map_content/ground_up_down_R.png";
-ground_list.push(ground_up_down_R);
-var ground_up_down = new Image(); //15
-ground_up_down.src = "graphics/map_content/ground_up_down.png";
-ground_list.push(ground_up_down);
 
 
 var a = 0;
@@ -205,8 +150,6 @@ function collider_left(offset_on, p, best, offset, v)
 }
 
 
-
-
 class MapData
 {   
     constructor()
@@ -222,6 +165,30 @@ class MapData
         this.offsetY_on = 0;
         this.cache_data = 0;
         this.collisions = [0,0,0,0,0,0,0,0];
+
+        this.maxi = 0;
+        this.i_define = 0;
+
+        this.block_map = []
+        this.block_map_snap_position = []
+        this.block_index = []
+        this.index_value = 0;
+        this.block_map_type_texture = []
+        this.copy_file = [];
+        this.all_block_map_count = 0;
+        this.operation_count = 0;
+
+        //Optimisation
+        this.pre_block_scale = 24;
+        this.pre_block_scaling = 71;
+        this.pre_block_scaling_unround = 71;
+        this.pre_snap_offset_smooth_X = 0;
+        this.pre_snap_offset_smooth_Y = 0;
+        this.pre_snap_offset_smooth_X_minus_05 = 0;
+        // this.pre_snap_offset_smooth_Y_minus_05 = 0;
+        this.pre_vertical_position_line_block_displayed = 0;
+
+
         this.stock = [];
         this.bestup = [false,false,false,false]; //mise a 0 des variable qui enregistre la position des blocs sujets a une possible collision
         this.bestdown = [false,false,false,false,false]; // ordre px,py;ox,oy
@@ -232,16 +199,24 @@ class MapData
         this.previouscamsmoother = [0,0];
         this.level_data_textures = [];
         this.data_temp = [];
+        this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
+        this.CollisionsLoop = new Timer_Log();
+        this.GraphicsLoop = new Timer_Log();
+        this.CamSmootherLoop = new Timer_Log();
+        this.collisions_loop_log = 0;
+        this.graphics_loop_log = 0;
+        this.cam_smoother_loop_log = 0;
     }
 
     start(file, editedlevelid)
     {   
-
+        this.copy_file = file;
         this.collisions = [1,1,1,1,1,1,1,1];
         this.maplimit = [file[3][editedlevelid][0][1], file[3][editedlevelid][0][2]];
         this.spawn = [file[3][editedlevelid][0][3], file[3][editedlevelid][0][4]];
         console.log(file[3][editedlevelid][1])
         this.level_data_textures = file[3][editedlevelid][1]
+
         this.data_temp = [];
         for (let i = 0; i < this.maplimit[1]+1; i++)
         {
@@ -318,19 +293,71 @@ class MapData
             py = 609-(this.maplimit[1]-this.spawn[1])*71;
         }
         
-        this.previousoffset = [ [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
-                                [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
-                                [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
-                                [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY]];
+        this.previousoffset = [[this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
+                               [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
+                               [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY],
+                               [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY], [this.offsetX, this.offsetY]];
         
-        console.log(px,py);
+        // console.log(px,py);
+
+        this.block_map = [];
+        this.block_map_type_texture = [];
+        this.obj = {"a" : -1}
+        for(let i = 0; i < this.maplimit[1]+1; i++)
+        {
+            this.block_map_type_texture.push({});
+            this.block_map.push([]);
+            this.block_index.push([]);
+            this.block_map_snap_position.push([]);
+        }
+        this.all_block_map_count = this.copy_file[3][editedlevelid][1].length;
+        for(let i = 0; i < this.all_block_map_count; i++)
+        {
+            this.block_map[this.copy_file[3][editedlevelid][1][i][1]].push(this.copy_file[3][editedlevelid][1][i][0]*this.pre_block_scaling);
+            this.block_map_snap_position[this.copy_file[3][editedlevelid][1][i][1]].push(this.copy_file[3][editedlevelid][1][i][0]);
+            this.block_map_type_texture[this.copy_file[3][editedlevelid][1][i][1]][this.copy_file[3][editedlevelid][1][i][0]] = this.copy_file[3][editedlevelid][1][i][2];
+            this.block_map[this.copy_file[3][editedlevelid][1][i][1]].sort(function(a, b) {return a - b;});
+            this.block_map_snap_position[this.copy_file[3][editedlevelid][1][i][1]].sort(function(a, b) {return a - b;});
+        }
+        
+        for(let i = 0; i < this.maplimit[1]+1; i++)
+        {
+            this.index_value = 0;
+            for(let k = 0; k < this.maplimit[0]+1; k++)
+            {
+
+                this.block_index[i].push(this.index_value)
+                if(k >= this.block_map[i][this.index_value]/71 && this.index_value < this.block_map[i].length-1)
+                {
+                    this.index_value++;
+                }
+            }
+        }
+        for(let i = 0; i < this.block_map_type_texture.length; i++)
+        {
+            this.cache_data = [];
+            
+            for(let k = 0; k < this.block_map_snap_position[i].length; k++)
+            {
+                this.cache_data.push(this.block_map_type_texture[i][this.block_map_snap_position[i][k]]);
+            }
+            this.block_map_type_texture[i] = this.cache_data
+        }
+        console.log(this.block_map)
+        console.log(this.block_map_snap_position)
+        console.log(this.block_index)
+        console.log(this.block_map_type_texture)
+        
+
         return [px,py];
     }
 
     collider(px, py, vx, vy, pause)
     {
+        this.CollisionsLoop.startTime();
         if(pause == false)    
         {    
+            
             this.collisions = [0,0,0,0,0,0,0,0]; //colldown,collup,collleft,collright,precolldoxn,precollup,precollleft,precollright,
             
             //DETECTION DES COLLISIONS
@@ -559,106 +586,142 @@ class MapData
                 }
             }
         }
+        this.collisions_loop_log = this.CollisionsLoop.endLogTime();
         return [px, py];
     }
 
     display(px, py, pause, offsetX, offsetY, smoothX, smoothY)
     {
+        this.GraphicsLoop.startTime()
+        this.operation_count = 0;
         if(pause == false)    
         {
-            this.offsetsmoothX = Math.round(offsetX)-smoothX;
-            this.offsetsmoothY = Math.round(offsetY)-smoothY;
+            this.offsetsmoothX = Math.round(Tools.resolutionScaler(offsetX-smoothX));
+            this.offsetsmoothY = Math.round(Tools.resolutionScaler(offsetY-smoothY));
         }
-        this.cache_data = [Math.round(this.offsetsmoothX/71), this.maplimit[0]+1, Math.round(this.offsetsmoothY/71), 0, gupscale(71)];
-        this.ctx.font = upscale(15)+'px arial';
-        this.ctx.fillStyle = "rgb(255,255,255)";
-        for (let i = Math.round(this.offsetsmoothY/71)-1; i < Math.round(this.offsetsmoothY/71)+10; i++) //Affichage des textures
+        this.pre_snap_offset_smooth_X = Math.round(this.offsetsmoothX/this.pre_block_scaling);
+        this.pre_snap_offset_smooth_Y = Math.round(this.offsetsmoothY/this.pre_block_scaling);
+        this.pre_snap_offset_smooth_X_minus_05 = Math.round(this.offsetsmoothX/this.pre_block_scaling-0.5)
+        // this.pre_snap_offset_smooth_Y_minus_05 = Math.round(this.pre_snap_offset_smooth_Y-0.5);
+        if(this.devmode)
         {
-            if(i <= this.maplimit[1])
+            this.ctx.lineWidth = Tools.resolutionScaler(0.5);
+            this.ctx.font = Tools.resolutionScaler(15)+'px arial';
+        }
+        this.i_define = 0;
+        if(this.i_define < this.pre_snap_offset_smooth_Y)
+        {
+            this.i_define = Math.round(this.offsetsmoothY/this.pre_block_scaling-0.5)
+        }
+        for (let i = this.i_define; i < this.pre_snap_offset_smooth_Y+10; i++) //Affichage des textures
+        {
+            this.pre_vertical_position_line_block_displayed = i*this.pre_block_scaling_unround-this.offsetsmoothY;
+            this.index_value = this.block_index[i][this.pre_snap_offset_smooth_X_minus_05];
+            for (let k = this.index_value; k < this.index_value+18; k++)
             {
-                this.maxi = i;
-            }
-            else
-            {
-                this.maxi = this.maplimit[1];
-            }
-            this.cache_data[3] = upscale(this.maxi*71-this.offsetsmoothY);
-            for (let k = this.cache_data[0]+(this.cache_data[1]*this.maxi)-1; k < Math.round(this.offsetsmoothX/71)+(this.cache_data[1]*this.maxi)+19; k++)
-            {
-                if(k > 0 & k < this.level_data_textures_len-1)
+                if(this.block_map_snap_position[i][k] > this.pre_snap_offset_smooth_X_minus_05+17 || this.block_map_snap_position[i][k] === this.block_map_snap_position[i][-1])
                 {
-                    this.maxk = k;
-                }
-                else if(k < 0)
-                {
-                    this.maxk = 0;
-                }
-                else
-                {
-                    this.maxk = this.level_data_textures_len-1;
-                }
-                if(this.level_data_textures[this.maxk] != 0)
-                {
-                    switch(this.level_data_textures[k][2][0]) // selection des textures
+                    if(this.devmode)
                     {
-                        case 0:
-                            this.ctx.drawImage(testblock, upscale(this.level_data_textures[k][0]-this.offsetsmoothX), this.cache_data[3], this.cache_data[4], this.cache_data[4]); //testblock
-                            break
-                        case 1:
-                            this.ctx.drawImage(ground_list[this.level_data_textures[k][2][1]], upscale(this.level_data_textures[k][0]-this.offsetsmoothX), this.cache_data[3], this.cache_data[4], this.cache_data[4]);
-                            break
+                        this.ctx.fillStyle = "rgba(0,0,255,0.25)";
+                        this.ctx.fillRect(this.block_map[i][k-1]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
                     }
-                    if(this.devmode == true) //Affichage position de chaque block
-                    {
-                        this.ctx.fillText("["+this.level_data_textures[k][0]/71+" : "+this.level_data_textures[k][1]/71+"]", upscale(this.level_data_textures[k][0]-this.offsetsmoothX+5), this.cache_data[3]+20);
-                    }                   
+                    break;
                 }
+                switch(this.block_map_type_texture[i][k][0]) // selection des textures
+                {
+                    case 0:
+                        this.ctx.drawImage(testblock, 
+                                           this.block_map[i][k]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, 
+                                           this.pre_block_scaling, this.pre_block_scaling); //testblock
+                        break
+                    case 1:
+                        this.ctx.drawImage(this.grass_blocks, 
+                                         ((this.block_map_type_texture[i][k][1]+4)%4)*this.pre_block_scale, Math.floor(this.block_map_type_texture[i][k][1]/4)*this.pre_block_scale, 
+                                           this.pre_block_scale, this.pre_block_scale, 
+                                           this.block_map[i][k]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, 
+                                           this.pre_block_scaling, this.pre_block_scaling);
+                        break;
+                }
+                if(this.devmode) //Affichage position de chaque block
+                {
+                    this.operation_count++;
+                    Tools.logText("["+Math.round(this.block_map[i][k]/this.pre_block_scaling)+" : "+i+"]", (this.block_map[i][k]-this.offsetsmoothX+5)/Tools.ratio, (this.pre_vertical_position_line_block_displayed)/Tools.ratio+20);
+                    Tools.logText("["+this.operation_count+"]", (this.block_map[i][k]-this.offsetsmoothX+5)/Tools.ratio, (this.pre_vertical_position_line_block_displayed)/Tools.ratio+60);
+                }
+                
+                
             }
-            
+            if(this.devmode)
+            {
+                this.ctx.fillStyle = "rgba(255,255,0,0.25)";
+                this.ctx.fillRect(this.block_map[i][this.index_value]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
+            }
         }
 
-
-        if(this.devmode == true) //Affichage debug des collisions
+        if(this.devmode) //Affichage debug des collisions
         {
+            this.ctx.font = Tools.resolutionScaler(20)+'px arial';
+            this.ctx.lineWidth = Tools.resolutionScaler(1);
+            Tools.logText("-Count : "+this.operation_count, 40, 225, "rgb(0,255,0)", "rgb(0,100,0)");
+            this.ctx.lineWidth = Tools.resolutionScaler(0.5);
+            this.ctx.font = Tools.resolutionScaler(15)+'px arial';
             if(this.collisions[5] == 1) //Up red
             {
                 this.ctx.fillStyle = "rgb(255,0,0)";
-                this.ctx.fillRect(upscale(this.bestup[2]-this.offsetsmoothX), upscale(this.bestup[3]-this.offsetsmoothY+320),this.cache_data[4],upscale(5));
+                this.ctx.fillRect(Tools.resolutionScaler(this.bestup[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestup[3]+320)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
             }
 
             if(this.collisions[4] == 1) //Down green
             {
                 this.ctx.fillStyle = "rgb(0,255,0)";
-                this.ctx.fillRect(upscale(this.bestdown[2]-this.offsetsmoothX), upscale(this.bestdown[3]-this.offsetsmoothY+395),this.cache_data[4],upscale(5));
+                this.ctx.fillRect(Tools.resolutionScaler(this.bestdown[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestdown[3]+395)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
             }
 
             if(this.collisions[6] == 1) //Left blue
             {
                 this.ctx.fillStyle = "rgb(0,0,255)";
-                this.ctx.fillRect(upscale(this.bestleft[2]-this.offsetsmoothX+593), upscale(py+this.bestleft[3]-this.offsetsmoothY),upscale(5),this.cache_data[4]);
+                this.ctx.fillRect(Tools.resolutionScaler(this.bestleft[2]+593)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestleft[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
             }
 
             if(this.collisions[7] == 1) //Right yellow
             {
                 this.ctx.fillStyle = "rgb(255,255,0)";
-                this.ctx.fillRect(upscale(this.bestright[2]-this.offsetsmoothX+625), upscale(py+this.bestright[3]-this.offsetsmoothY),upscale(5),this.cache_data[4]);
+                this.ctx.fillRect(Tools.resolutionScaler(this.bestright[2]+625)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestright[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
             }
-            this.ctx.lineWidth= 2;
+            Tools.logText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", px+smoothX+50, py+smoothY+20);
+            this.ctx.lineWidth= Tools.resolutionScaler(2);
             this.ctx.strokeStyle = "rgb(0,0,0)";
-            this.ctx.strokeRect(upscale(px+smoothX), upscale(py+smoothY),upscale(71),upscale(71));
+            this.ctx.strokeRect(Tools.resolutionScaler(px+smoothX), Tools.resolutionScaler(py+smoothY),this.pre_block_scaling,this.pre_block_scaling);
             this.ctx.strokeStyle = "rgb(150,150,150)";
-            this.ctx.strokeRect(upscale(px+smoothX+22), upscale(py+smoothY),upscale(28),upscale(71));
-            this.ctx.fillStyle = "rgb(255,255,255)";
-            this.ctx.fillText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", upscale(px+smoothX+50), upscale(py+smoothY+20));
-            this.ctx.strokeStyle = "rgb(0,0,0)";
-            this.ctx.lineWidth= 1;
-            this.ctx.strokeText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", upscale(px+smoothX+50), upscale(py+smoothY+20));
-            
+            this.ctx.strokeRect(Tools.resolutionScaler(px+smoothX+22), Tools.resolutionScaler(py+smoothY),Tools.resolutionScaler(28),this.pre_block_scaling);
+        }
+        this.graphics_loop_log = this.GraphicsLoop.endLogTime()
+    }
+
+    requiredDisplayVariableUpdater()
+    {
+        this.pre_block_scale = 24;
+        this.pre_block_scaling_unround = Tools.resolutionScalerUnround(71);
+        this.pre_block_scaling = Tools.resolutionScaler(71);
+        this.block_map = [];
+        
+        for(let i = 0; i < this.maplimit[1]+1; i++)
+        {
+            this.block_map.push([]);
+        }
+        for(let i = 0; i < this.maplimit[1]+1; i++)
+        {
+            for(let k = 0; k < this.block_map_snap_position[i].length; k++)
+            {
+                this.block_map[i].push(Math.round(this.block_map_snap_position[i][k]*this.pre_block_scaling_unround));
+            }
         }
     }
 
     fcamsmoother(camsmootherenable, pause)
     {
+        this.CamSmootherLoop.startTime()
         if(pause == false)    
         {     
             if(camsmootherenable == true) //smooth the camera
@@ -694,6 +757,7 @@ class MapData
                 this.camsmoother = [0, 0];
             }
         }
+        this.cam_smoother_loop_log = this.CamSmootherLoop.endLogTime()
     }
 
     reset()
@@ -723,3 +787,4 @@ class MapData
 }
 
 export{MapData}
+

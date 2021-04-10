@@ -1,4 +1,4 @@
-// import {upscale, gupscale} from "../tools.js";
+import {Tools, Map} from "/main.js";
 class Canvas_resolution_asset
 {
     constructor()
@@ -25,7 +25,7 @@ class Canvas_resolution_asset
             } else if (elem.mozRequestFullScreen) {
                 elem.mozRequestFullScreen();
             }
-            this.canvasfullscreen = true;
+            Tools.canvasfullscreen = this.canvasfullscreen = true;
         } else {
             if (document.cancelFullScreen) {
                 document.cancelFullScreen();
@@ -36,7 +36,7 @@ class Canvas_resolution_asset
             } else if (document.mozCancelFullScreen) {
                 document.mozCancelFullScreen();
             }
-            this.canvasfullscreen = false;
+            Tools.canvasfullscreen = this.canvasfullscreen = false;
         }
     }
 
@@ -79,6 +79,7 @@ class Canvas_resolution_asset
     {
         if(firstgameframe)
         {
+            
             if(this.canvasfullscreen)
             {
                 if(this.fullscreenupscale)
@@ -98,16 +99,20 @@ class Canvas_resolution_asset
                 this.ablefullscreen = "Enable";
             }
             firstgameframe = false;
+            Tools.requiredDisplayVariableUpdater()
+            Map.requiredDisplayVariableUpdater()
         }
         if(this.canvasfullscreen & keys_input[9] == 1)
         {
-            this.canvasfullscreen = false;
+            Tools.canvasfullscreen = this.canvasfullscreen = false;
         }
-        if(this.canvasfullscreen === false & canvas.width !== 1200 & canvas.height !== 625)
+        if(this.canvasfullscreen === false & canvas.width !== 1200 & canvas.height !== 675)
         {
             canvas.width = 1200;
             canvas.height = 675;
             this.ablefullscreen = "Enable";
+            Tools.requiredDisplayVariableUpdater()
+            Map.requiredDisplayVariableUpdater()
         }
         return firstgameframe;
     }

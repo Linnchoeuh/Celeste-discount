@@ -1,5 +1,5 @@
 canvas {
-    image-rendering: smooth;
+    image-rendering: auto;
     /* image-rendering: pixelated;
     image-rendering: crisp-edges; */
     

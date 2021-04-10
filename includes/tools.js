@@ -1,70 +1,135 @@
-var devmode = false;
-var ctx;
-var canvasfullscreen = false;
-var mouseX = 0;
-var mouseY = 0;
-var fullscreenupscale;
-
-function ui_var_updater(actx)
+class Tool_Kit
 {
-    ctx = actx;
-}
-
-function ui_var_updater2(adevmode)
-{
-    devmode = adevmode;
-}
-
-function ui_var_updater3(acanvasfullscreen, afullscreenupscale, amouseX, amouseY)
-{
-    canvasfullscreen = acanvasfullscreen;
-    fullscreenupscale = afullscreenupscale;
-    mouseX = amouseX;
-    mouseY = amouseY;
-
-}
-
-function upscale(initialscale)
-{
-    if(canvasfullscreen == true)
+    constructor(ctx, canvasfullscreen = false, mouseX = -1, mouseY = -1, devmode = false)
     {
-        return initialscale*(canvas.height/675);
-    }
-    return initialscale;
-}
+        this.ctx = ctx;
+        this.canvasfullscreen = canvasfullscreen;
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        this.devmode = devmode;
 
-function gupscale(initialscale)
+        this.font = "arial";
+        this.font_type = "";
+        this.font_scale = "20";
+        this.stroke_line_width = 1
+
+        this.ratio = 1
+    }
+
+    requiredDisplayVariableUpdater()
+    {
+        this.ratio = canvas.height/675;
+    }
+
+    resolutionScaler(initial_scale)
+    {
+        if(this.canvasfullscreen)
+        {
+            return Math.round(initial_scale*this.ratio);
+        }
+        return Math.round(initial_scale);
+    }
+
+    resolutionScalerUnround(initial_scale)
+    {
+        if(this.canvasfullscreen)
+        {
+            return initial_scale*this.ratio;
+        }
+        return initial_scale;
+    }
+
+    resolutionScalerAddOne(initial_scale)
+    {
+        if(this.canvasfullscreen)
+        {
+            return Math.round(initial_scale*this.ratio+1);
+        }
+        return Math.round(initial_scale);
+    }
+
+    invisibleMouseCollider(posX, posY, width, height)
+    {
+        if(this.devmode)
+        {
+            this.ctx.strokeStyle = "rgb(255,255,255)";
+            this.ctx.strokeRect(this.resolutionScaler(posX),this.resolutionScaler(posY),this.resolutionScaler(width),this.resolutionScaler(height));
+        }
+        if(this.canvasfullscreen)
+        {
+            posX = posX*(screen.height/675);
+            posY = posY*(screen.height/675);
+            width = width*(screen.height/675);
+            height = height*(screen.height/675);
+        }
+        if(this.mouseX >= posX & this.mouseY >= posY & this.mouseX <= posX+width & this.mouseY <= posY+height)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    logText(text, posX, posY, fill_color = "rgb(255,255,255)", stroke_color = "rgb(0,0,0)")
+    {
+        this.ctx.fillStyle   = fill_color;
+        this.ctx.fillText(  text, 
+                            this.resolutionScaler(posX), 
+                            this.resolutionScaler(posY));
+        this.ctx.strokeStyle = stroke_color;
+        this.ctx.strokeText(text, 
+                            this.resolutionScaler(posX), 
+                            this.resolutionScaler(posY));
+    }
+
+    textureLoader(path)
+    {
+        var texture = new Image();
+        texture.src = path;
+        return texture;
+    }
+    // textPropertiesModifier(font_scale = this.font_scale, font_type = this.font_type, font = this.font, stroke_line_width = this.stroke_line_width)
+    // {
+    //     this.ctx.font          = font_type+" "+this.resolutionScaler(font_scale)+"px"+font;
+    //     this.ctx.lineWidth     = this.resolutionScaler(stroke_line_width);
+    //     this.font_scale        = font_scale;
+    //     this.font_type         = font_type;
+    //     this.font              = font;
+    //     this.stroke_line_width = stroke_line_width;
+    // }
+}
+class Timer_Log
 {
-    if(canvasfullscreen == true)
+    constructor()
     {
-        return Math.round(initialscale*(canvas.height/675)+1);
+        this.rendering_frame_time = 0;
+        this.rendering_frame_time_count = 0;
+        this.log = 0;
+        this.rendering_frame_time_accumulation = 0;
     }
-    return Math.round(initialscale);
+
+    startTime()
+    {
+        this.rendering_frame_time = Date.now();
+    }
+
+    endLogTime(count = 300)
+    {
+        this.rendering_frame_time_count++;
+        this.rendering_frame_time_accumulation += Date.now() - this.rendering_frame_time
+        
+        if(this.rendering_frame_time_count > count)
+        {
+            this.log = this.rendering_frame_time_accumulation/this.rendering_frame_time_count;
+            this.rendering_frame_time_count = this.rendering_frame_time_accumulation = 0;
+        }
+        return this.log
+    }
+
+
 }
 
-function invisible_mouse_collider(posX, posY, width, height)
-{
-    if(devmode == true)
-    {
-        ctx.strokeStyle = "rgb(255,255,255)";
-        ctx.strokeRect(upscale(posX),upscale(posY),upscale(width),upscale(height));
-    }
-    if(canvasfullscreen == true)
-    {
-        posX = posX*(screen.height/675);
-        posY = posY*(screen.height/675);
-        width = width*(screen.height/675);
-        height = height*(screen.height/675);
-    }
-    if(mouseX >= posX & mouseY >= posY & mouseX <= posX+width & mouseY <= posY+height)
-    {
-        return true;
-    }
-    return false;
-}
 
 
 
 
-
-export{upscale, invisible_mouse_collider, gupscale, ui_var_updater, ui_var_updater2, ui_var_updater3};
+export{Tool_Kit, Timer_Log};
