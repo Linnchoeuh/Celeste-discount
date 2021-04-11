@@ -1,4 +1,4 @@
-import {Tools, MapData} from "../../main.js";
+import {Tools, MapData} from "../relay_one.js";
 class Canvas_resolution_asset
 {
     constructor()
