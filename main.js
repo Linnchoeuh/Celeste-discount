@@ -139,16 +139,16 @@ document.addEventListener("webkitfullscreenchange", function () {
 
 
 
-import {Tool_Kit, Timer_Log} from "/includes/tools.js";
-import {Pause} from "/includes/gui/pause.js";
+import {Tool_Kit, Timer_Log} from "./includes/tools.js";
+import {Pause} from "./includes/gui/pause.js";
 import {Transition} from "/includes/gui/transition.js";
 import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
-import {FPS} from "/includes/display/fps_cap.js"
-import {Animatic} from "/includes/animatic.js";
-import {MapData} from "/includes/level_reader.js";
-import {PlayerData} from "/includes/player.js";
-import * as levels from "/includes/levels.js";
-import {Map_Editor} from "/includes/map_editor.js";
+import {FPS} from "./includes/display/fps_cap.js"
+import {Animatic} from "./includes/animatic.js";
+import {MapData} from "./includes/level_reader.js";
+import {PlayerData} from "./includes/player.js";
+import * as levels from "./includes/levels.js";
+import {Map_Editor} from "./includes/map_editor.js";
 
 
 var command = "false"; //command
