@@ -14,7 +14,7 @@
 //-Adapting speed of the GUI animation for variable framerate (pause animation, transition animation)
 
 //  Improvement :
-//-Map displaying up to 90% performance less used 
+//-Map displaying up to 90% faster
 //-Physic clock more stable
 //-Interpolation accuracy improved
 
@@ -141,14 +141,14 @@ document.addEventListener("webkitfullscreenchange", function () {
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 import {Pause} from "./includes/gui/pause.js";
-import {Transition} from "./includes/gui/Transition.js";
+import {Transition} from "./includes/gui/transition.js";
 import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
 import {FPS} from "./includes/display/fps_cap.js"
 import {Animatic} from "./includes/animatic.js";
 import {MapData} from "./includes/level_reader.js";
 import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
-import {Map_Editor} from "./includes/Map_editor.js";
+import {Map_Editor} from "./includes/map_editor.js";
 
 
 var command = "false"; //command
