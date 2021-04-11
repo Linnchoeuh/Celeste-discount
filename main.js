@@ -1,6 +1,6 @@
 //TO DO:
-//add Map editor
-//add New Map assets
+//add MapData editor
+//add New MapData assets
 //Rework collisions
 //add Particles
 
@@ -14,7 +14,7 @@
 //-Adapting speed of the GUI animation for variable framerate (pause animation, transition animation)
 
 //  Improvement :
-//-Map displaying up to 90% faster
+//-MapData displaying up to 90% faster
 //-Physic clock more stable
 //-Interpolation accuracy improved
 
@@ -22,7 +22,7 @@
 //-Player physics
 //  -Player jump
 //  -Player acceleration
-//-Map background
+//-MapData background
 
 //SYNTAXE :
 //Variables  : two_words
@@ -141,11 +141,11 @@ document.addEventListener("webkitfullscreenchange", function () {
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 import {Pause} from "./includes/gui/pause.js";
-import {Transition} from "/includes/gui/transition.js";
+// import {Transition} from "/includes/gui/transition.js";
 import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
 import {FPS} from "./includes/display/fps_cap.js"
 import {Animatic} from "./includes/animatic.js";
-import {MapData} from "./includes/level_reader.js";
+import {Map_Data} from "./includes/level_reader.js";
 import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
@@ -172,8 +172,8 @@ var menu = 1;
 var lastmenu = -1;
 var mouseX = 0;
 var mouseY = 0;
-var MapmousetranslationX = mouseX;
-var MapmousetranslationY = mouseY;
+var MapDatamousetranslationX = mouseX;
+var MapDatamousetranslationY = mouseY;
 var previousmouseX = mouseX;
 var previousmouseY = mouseY;
 var keypressed = false;
@@ -188,7 +188,7 @@ const Fps = new FPS();
 //game
 var level = ["testlevel", levels.leveltest1, levels.leveltest2, levels.leveltest3]; 
 var levelid = 1;
-const Map = new MapData(level[levelid]);
+const MapData = new Map_Data(level[levelid]);
 var start = true;
 const player = new PlayerData();
 const MapEditor = new Map_Editor(ctx);
@@ -205,7 +205,7 @@ var smoothinterpoX = 0;
 var smoothinterpoY = 0;
 
 //MapEditor
-var Map_move_speed = 20;
+var MapData_move_speed = 20;
 var edition_mode = 0;
 var sub_edition_mode = 0;
 var spawnmodifier = false;
@@ -230,7 +230,7 @@ const button9 = new Animatic(ctx);
 const button10 = new Animatic(ctx);
 const button11 = new Animatic(ctx);
 
-// Map editor
+// MapData editor
 var block = {
     "x" : 0,
     "y" : 0,
@@ -252,9 +252,9 @@ var other_element = {
     "Type" : 0
 };
 
-var Map_element = {
+var MapData_element = {
     "Name" : "",
-    "Map_limit" : {
+    "MapData_limit" : {
         "x" : 50,
         "y" : 50
     },
@@ -270,16 +270,16 @@ var Map_element = {
 
 };
 
-var Map_pack = {
-    "Map_certificate" : "CelesteDiscountMapApprovedCerticate",
-    "Map_count" : 1,
+var MapData_pack = {
+    "MapData_certificate" : "CelesteDiscountMapDataApprovedCerticate",
+    "MapData_count" : 1,
     "Name" : "",
-    "Maps" : [Map_element]
+    "MapDatas" : [MapData_element]
 };
-// console.log(Map_pack.Maps[0].Blocks[0].Collisions.Top)
-var Map_pack = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[],[]]]]; //[MapCertifcate, number of Map, name of the Map pack,
-                                                                                                 //    [Maps
-                                                                                                 //        [Nom, Maplimitx, Maplimity, playerspawnx, playerspawny],
+// console.log(MapData_pack.MapDatas[0].Blocks[0].Collisions.Top)
+var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[],[]]]]; //[MapDataCertifcate, number of MapData, name of the MapData pack,
+                                                                                                 //    [MapDatas
+                                                                                                 //        [Nom, MapDatalimitx, MapDatalimity, playerspawnx, playerspawny],
                                                                                                  //        [Blocks[snap_x, snap_y, [category,sub category], collisions]]
                                                                                                  //            category:
                                                                                                  //                -testblock
@@ -293,12 +293,12 @@ var Map_pack = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",50,50,0,0],[
                                                                                                  //        [Decorations[x,y]]
                                                                                                  //    ]
                                                                                                  //]
-var previousMappropertiesvalue = "";
+var previousMapDatapropertiesvalue = "";
 
 //setting
 
-Map.ctx = ctx
-Map.devmode = devmode
+MapData.ctx = ctx
+MapData.devmode = devmode
 player.ctx = ctx;
 
 function openFileOption()
@@ -403,9 +403,9 @@ function main()
                 if(start)
                 {
                     player.reset();
-                    Map.reset();
+                    MapData.reset();
                     vect = [0, 0];
-                    player.spawn(Map.start(level[levelid], editedlevelid));
+                    player.spawn(MapData.start(level[levelid], editedlevelid));
                     start = false;
                 }
                 
@@ -419,12 +419,12 @@ function main()
                     {
                         player.previousplayerX = player.playerX;
                         player.previousplayerY = player.playerY;
-                        Map.previousoffsetX = Map.offsetX;
-                        Map.previousoffsetY = Map.offsetY;
+                        MapData.previousoffsetX = MapData.offsetX;
+                        MapData.previousoffsetY = MapData.offsetY;
 
-                        vect = player.velocity(keys_input, vect[0], vect[1], godmode, Map.collisions, Map.offsetX_on, Map.offsetY_on, Map.bestdown[4], PAUSE.pause);
-                        stock = Map.collider(player.playerX, player.playerY, vect[0], vect[1], PAUSE.pause);
-                        Map.fcamsmoother(camsmootherenable, PAUSE.pause);
+                        vect = player.velocity(keys_input, vect[0], vect[1], godmode, MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], PAUSE.pause);
+                        stock = MapData.collider(player.playerX, player.playerY, vect[0], vect[1], PAUSE.pause);
+                        MapData.fcamsmoother(camsmootherenable, PAUSE.pause);
                         
 
                         player.playerX = stock[0];
@@ -432,11 +432,11 @@ function main()
                         playerinterpoX = lerp(player.playerX-player.previousplayerX, Fps.pfpslog/Fps.fps);
                         playerinterpoY = lerp(player.playerY-player.previousplayerY, Fps.pfpslog/Fps.fps);
 
-                        camerainterpoX = lerp(Map.offsetX-Map.previousoffsetX, Fps.pfpslog/Fps.fps);
-                        camerainterpoY = lerp(Map.offsetY-Map.previousoffsetY, Fps.pfpslog/Fps.fps);
+                        camerainterpoX = lerp(MapData.offsetX-MapData.previousoffsetX, Fps.pfpslog/Fps.fps);
+                        camerainterpoY = lerp(MapData.offsetY-MapData.previousoffsetY, Fps.pfpslog/Fps.fps);
 
-                        smoothinterpoX = lerp(Map.camsmoother[0]-Map.previouscamsmoother[0], Fps.pfpslog/Fps.fps);
-                        smoothinterpoY = lerp(Map.camsmoother[1]-Map.previouscamsmoother[1], Fps.pfpslog/Fps.fps);
+                        smoothinterpoX = lerp(MapData.camsmoother[0]-MapData.previouscamsmoother[0], Fps.pfpslog/Fps.fps);
+                        smoothinterpoY = lerp(MapData.camsmoother[1]-MapData.previouscamsmoother[1], Fps.pfpslog/Fps.fps);
                         Fps.executionloop--;
                         Fps.Physic_log();
                     }
@@ -444,12 +444,12 @@ function main()
                 
                 
 
-                Map.display(   player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics, PAUSE.pause,
-                               Map.previousoffsetX+camerainterpoX*Fps.nbofframewithoutphysics,        Map.previousoffsetY+camerainterpoY*Fps.nbofframewithoutphysics, 
-                               Map.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, Map.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics);
+                MapData.display(   player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics, PAUSE.pause,
+                               MapData.previousoffsetX+camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previousoffsetY+camerainterpoY*Fps.nbofframewithoutphysics, 
+                               MapData.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics);
                 
-                player.display(Map.collisions, PAUSE.pause, Fps.dt, //a opti
-                               Map.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, Map.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics,
+                player.display(MapData.collisions, PAUSE.pause, Fps.dt, //a opti
+                               MapData.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics,
                                player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics);
                 
                 Fps.nbofframewithoutphysics++;
@@ -700,7 +700,7 @@ function main()
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
                 ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
-                ctx.fillText("Map editor", Tools.resolutionScaler(345), Tools.resolutionScaler(75));
+                ctx.fillText("MapData editor", Tools.resolutionScaler(345), Tools.resolutionScaler(75));
 
                 if(button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | transition === "finish" & selectedaction === "menu1")
                 {
@@ -727,15 +727,15 @@ function main()
                     button11.click = click = false;
                 }
                 break
-            case 6: //Map creator init menu
+            case 6: //MapData creator init menu
                 if(lastmenu != 6)
                 {
-                    Map_pack = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]]
+                    MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]]
                     lastmenu = 6
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
                 ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
-                ctx.fillText("Map properties", Tools.resolutionScaler(250), Tools.resolutionScaler(75));
+                ctx.fillText("MapData properties", Tools.resolutionScaler(250), Tools.resolutionScaler(75));
                 if(button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Cancel", 50, 70, 20) | transition === "finish" & selectedaction === "menu5")
                 {
                     stock = TransitionObject.Switcher(transition, menu, selectedaction, 5)
@@ -744,45 +744,45 @@ function main()
                 ctx.drawImage(no_preview, Tools.resolutionScaler(262), Tools.resolutionScaler(255), Tools.resolutionScaler(75), Tools.resolutionScaler(75));
                 ctx.strokeStyle = "rgb(255,255,255)";
                 ctx.strokeRect(Tools.resolutionScaler(12),Tools.resolutionScaler(130),Tools.resolutionScaler(576),Tools.resolutionScaler(324));
-                if(button2.text_type2("Name : "+Map_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
+                if(button2.text_type2("Name : "+MapData_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
                 {
-                    previousMappropertiesvalue = Map_pack[3][0][0][0];
-                    Map_pack[3][0][0][0] = prompt("Name level:");
-                    if(Map_pack[3][0][0][0] === null)
+                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][0];
+                    MapData_pack[3][0][0][0] = prompt("Name level:");
+                    if(MapData_pack[3][0][0][0] === null)
                     {
-                        Map_pack[3][0][0][0] = previousMappropertiesvalue;
+                        MapData_pack[3][0][0][0] = previousMapDatapropertiesvalue;
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button3.text_type2("Map width : "+Map_pack[3][0][0][1], 600, 230, 600, 60, 620, 280, 40))
+                if(button3.text_type2("MapData width : "+MapData_pack[3][0][0][1], 600, 230, 600, 60, 620, 280, 40))
                 {
-                    previousMappropertiesvalue = Map_pack[3][0][0][1];
-                    Map_pack[3][0][0][1] = prompt("Set width:");
-                    if(Map_pack[3][0][0][1] === null)
+                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][1];
+                    MapData_pack[3][0][0][1] = prompt("Set width:");
+                    if(MapData_pack[3][0][0][1] === null)
                     {
-                        Map_pack[3][0][0][1] = previousMappropertiesvalue;
+                        MapData_pack[3][0][0][1] = previousMapDatapropertiesvalue;
                     }
-                    Map_pack[3][0][0][1] = Number(Map_pack[3][0][0][1])
-                    if(isNaN(Map_pack[3][0][0][1]))
+                    MapData_pack[3][0][0][1] = Number(MapData_pack[3][0][0][1])
+                    if(isNaN(MapData_pack[3][0][0][1]))
                     {
                         alert("Invalid value.")
-                        Map_pack[3][0][0][1] = previousMappropertiesvalue;
+                        MapData_pack[3][0][0][1] = previousMapDatapropertiesvalue;
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button4.text_type2("Map height : "+Map_pack[3][0][0][2], 600, 330, 600, 60, 620, 380, 40))
+                if(button4.text_type2("MapData height : "+MapData_pack[3][0][0][2], 600, 330, 600, 60, 620, 380, 40))
                 {
-                    previousMappropertiesvalue = Map_pack[3][0][0][2];
-                    Map_pack[3][0][0][2] = prompt("Set height:");
-                    if(Map_pack[3][0][0][2] === null)
+                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][2];
+                    MapData_pack[3][0][0][2] = prompt("Set height:");
+                    if(MapData_pack[3][0][0][2] === null)
                     {
-                        Map_pack[3][0][0][2] = previousMappropertiesvalue;
+                        MapData_pack[3][0][0][2] = previousMapDatapropertiesvalue;
                     }
-                    Map_pack[3][0][0][2] = Number(Map_pack[3][0][0][2])
-                    if(isNaN(Map_pack[3][0][0][2]))
+                    MapData_pack[3][0][0][2] = Number(MapData_pack[3][0][0][2])
+                    if(isNaN(MapData_pack[3][0][0][2]))
                     {
                         alert("Invalid value.")
-                        Map_pack[3][0][0][2] = previousMappropertiesvalue;
+                        MapData_pack[3][0][0][2] = previousMapDatapropertiesvalue;
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
@@ -795,9 +795,9 @@ function main()
             case 7:
                 if(lastmenu != 7)
                 {
-                    Map_pack = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]];
+                    MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]];
                     editedlevelid = 0;
-                    Map_pack = level[levelid];
+                    MapData_pack = level[levelid];
                     start = true;
                     PAUSE.pause = false;
                     edition_mode = 0;
@@ -807,7 +807,7 @@ function main()
                 ctx.drawImage(bg, 0, 0, Tools.resolutionScaler(1200), Tools.resolutionScaler(675));
                 if(start)
                 {
-                    // MapEditor.load(Map_pack);
+                    // MapEditor.load(MapData_pack);
                     MapEditor.load(level[levelid], editedlevelid);
                     start = false;
                 }
@@ -947,7 +947,7 @@ function main()
                     ctx.fillStyle = "rgb(255,255,255)";
                     ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(173+sub_edition_mode*40), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
                     
-                    if(button3.texture_type2(90, 635, MapEditor.play_icon, "Test the Map", true) | transition === "finish" & selectedaction === "menu9")
+                    if(button3.texture_type2(90, 635, MapEditor.play_icon, "Test the MapData", true) | transition === "finish" & selectedaction === "menu9")
                     {
                         switch(transition)
                         {
@@ -975,50 +975,50 @@ function main()
 
                     if(keys_input[5] === 0 & animaticmousevalue[0]-previousmouseX === 0 & animaticmousevalue[1]-previousmouseY === 0 & click & spawnmodifier === false)
                     {
-                        MapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
-                        MapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                        MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                        MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
                         mousepressed = true;
                     }
                     
                     if(keys_input[5] === 1)
                     {
-                        Map_move_speed = 0;
+                        MapData_move_speed = 0;
                         if(click)
                         {
                             if(mousepressed === false)
                             {
-                                MapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
-                                MapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
                                 mousepressed = true;
                             }
-                            if(MapEditor.offsetX >= MapEditor.Maplimit[0]*71 & animaticmousevalue[0]-previousmouseX <= 0)
+                            if(MapEditor.offsetX >= MapEditor.MapDatalimit[0]*71 & animaticmousevalue[0]-previousmouseX <= 0)
                             {
-                                MapEditor.offsetX = MapEditor.Maplimit[0]*71;
-                                MapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapEditor.offsetX = MapEditor.MapDatalimit[0]*71;
+                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
                             }
                             else if(MapEditor.offsetX <= -1129 & animaticmousevalue[0]-previousmouseX >= 0)
                             {
                                 MapEditor.offsetX = -1129;
-                                MapmousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
                             }
                             else
                             {
-                                MapEditor.offsetX = Math.round(MapmousetranslationX-(animaticmousevalue[0]*(1200/canvas.width)));
+                                MapEditor.offsetX = Math.round(MapDatamousetranslationX-(animaticmousevalue[0]*(1200/canvas.width)));
                             }
 
-                            if(MapEditor.offsetY >= MapEditor.Maplimit[1]*71 & animaticmousevalue[1]-previousmouseY <= 0)
+                            if(MapEditor.offsetY >= MapEditor.MapDatalimit[1]*71 & animaticmousevalue[1]-previousmouseY <= 0)
                             {
-                                MapEditor.offsetY = MapEditor.Maplimit[1]*71;
-                                MapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapEditor.offsetY = MapEditor.MapDatalimit[1]*71;
+                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
                             }
                             else if(MapEditor.offsetY <= -604 & animaticmousevalue[1]-previousmouseY >= 0)
                             {
                                 MapEditor.offsetY = -604;
-                                MapmousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
                             }
                             else
                             {
-                                MapEditor.offsetY = Math.round(MapmousetranslationY-(animaticmousevalue[1]*(675/(canvas.height))));
+                                MapEditor.offsetY = Math.round(MapDatamousetranslationY-(animaticmousevalue[1]*(675/(canvas.height))));
                             }
 
                         }
@@ -1030,7 +1030,7 @@ function main()
                     }
                     else
                     {
-                        Map_move_speed = Math.round(20/Fps.dt);
+                        MapData_move_speed = Math.round(20/Fps.dt);
                         if(spawnmodifier)
                         {
                             ctx.fillStyle = "rgba(255,25,0,0.2)";
@@ -1045,8 +1045,8 @@ function main()
                                 // console.log(MapEditor.spawn);
                                 level[levelid][3][editedlevelid][0][3] = Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
                                 level[levelid][3][editedlevelid][0][4] = Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
-                                // Map_pack[3][0][0][3] = Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
-                                // Map_pack[3][0][0][4] = Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
+                                // MapData_pack[3][0][0][3] = Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
+                                // MapData_pack[3][0][0][4] = Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
                                 spawnmodifier = false;
                                 // start = true;
                             }
@@ -1055,31 +1055,31 @@ function main()
                     }
                     if(keys_input[0] === 1 & MapEditor.offsetY > -604)
                     {
-                        MapEditor.offsetY -= Map_move_speed;
+                        MapEditor.offsetY -= MapData_move_speed;
                         if(MapEditor.offsetY < -604)
                         {
                             MapEditor.offsetY = -604;
                         }
                     }
-                    if(keys_input[2] === 1 & MapEditor.offsetY < ((MapEditor.Maplimit[1])*71))
+                    if(keys_input[2] === 1 & MapEditor.offsetY < ((MapEditor.MapDatalimit[1])*71))
                     {
-                        MapEditor.offsetY += Map_move_speed;
-                        if(MapEditor.offsetY > ((MapEditor.Maplimit[1])*71))
+                        MapEditor.offsetY += MapData_move_speed;
+                        if(MapEditor.offsetY > ((MapEditor.MapDatalimit[1])*71))
                         {
-                            MapEditor.offsetY = ((MapEditor.Maplimit[1])*71);
+                            MapEditor.offsetY = ((MapEditor.MapDatalimit[1])*71);
                         }
                     }
-                    if(keys_input[3] === 1 & MapEditor.offsetX < ((MapEditor.Maplimit[0])*71))
+                    if(keys_input[3] === 1 & MapEditor.offsetX < ((MapEditor.MapDatalimit[0])*71))
                     {
-                        MapEditor.offsetX += Map_move_speed;
-                        if(MapEditor.offsetX > ((MapEditor.Maplimit[0])*71))
+                        MapEditor.offsetX += MapData_move_speed;
+                        if(MapEditor.offsetX > ((MapEditor.MapDatalimit[0])*71))
                         {
-                            MapEditor.offsetX = ((MapEditor.Maplimit[0])*71);
+                            MapEditor.offsetX = ((MapEditor.MapDatalimit[0])*71);
                         }
                     }
                     if(keys_input[1] === 1)
                     {
-                        MapEditor.offsetX -= Map_move_speed;
+                        MapEditor.offsetX -= MapData_move_speed;
                         if(MapEditor.offsetX < -1129)
                         {
                             MapEditor.offsetX = -1129;
@@ -1124,10 +1124,10 @@ function main()
                         Fullscreen.Toggle(canvas);
                     }
 
-                    if(button4.text_type1("Modify Map properties", 0, 370, 470, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
+                    if(button4.text_type1("Modify MapData properties", 0, 370, 470, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
                     {
                     }
-                    if(button5.text_type1("Change Map", 0, 445, 285, 40, -180+(PAUSE.pauseframe*20), 475, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
+                    if(button5.text_type1("Change MapData", 0, 445, 285, 40, -180+(PAUSE.pauseframe*20), 475, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
                     {
                     }
                     if(button6.text_type1("Quit", 0, 520, 125, 40, -180+(PAUSE.pauseframe*20), 550, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu5") //back to menu
@@ -1171,10 +1171,10 @@ function main()
                         case null:
                             break
                         case "devmode true": case "devmode enable":
-                            Map.devmode = devmode = true;
+                            MapData.devmode = devmode = true;
                             break
                         case "devmode false": case "devmode disable":
-                            Map.devmode = devmode = false;
+                            MapData.devmode = devmode = false;
                             break
                         case "godmode true": case "godmode enable":
                             godmode = true;
@@ -1260,35 +1260,35 @@ function main()
             {
                 ctx.fillStyle = "rgb(255,255,255)";
 
-                Tools.logText("Collisions : "+Map.collisions, 963, 175); //collisions
+                Tools.logText("Collisions : "+MapData.collisions, 963, 175); //collisions
 
                 Tools.logText("PX : "+Math.round(player.playerX), 985, 200); //px
                 Tools.logText("|", 1080, 200);
-                Tools.logText("OffOnX : "+Map.offsetX_on, 1092, 200);
+                Tools.logText("OffOnX : "+MapData.offsetX_on, 1092, 200);
                 
                 Tools.logText("PY : "+Math.round(player.playerY), 985, 225); //py
                 Tools.logText("|", 1080, 225);
-                Tools.logText("OffOnY : "+Map.offsetY_on, 1092, 225);
+                Tools.logText("OffOnY : "+MapData.offsetY_on, 1092, 225);
                 
                 Tools.logText("VX : "+Math.round(vect[0]), 985, 250); //vect
                 Tools.logText("|", 1080, 250);
                 Tools.logText("VY : "+vect[1], 1092, 250);
                 
-                Tools.logText("OX : "+Math.round(Map.offsetX), 985, 275); //offset
+                Tools.logText("OX : "+Math.round(MapData.offsetX), 985, 275); //offset
                 Tools.logText("|", 1080, 275);
-                Tools.logText("OY : "+Map.offsetY, 1092, 275);
+                Tools.logText("OY : "+MapData.offsetY, 1092, 275);
                 
-                Tools.logText("BU : ["+Map.bestup[0]+"]px ; ["+Map.bestup[1]+"]py", 970, 300);
-                Tools.logText("["+Map.bestup[2]+"]ox ; ["+Map.bestup[3]+"]oy", 1015, 325);
+                Tools.logText("BU : ["+MapData.bestup[0]+"]px ; ["+MapData.bestup[1]+"]py", 970, 300);
+                Tools.logText("["+MapData.bestup[2]+"]ox ; ["+MapData.bestup[3]+"]oy", 1015, 325);
                 
-                Tools.logText("BD : ["+Map.bestdown[0]+"]px ; ["+Map.bestdown[1]+"]py", 970, 350);
-                Tools.logText("["+Map.bestdown[2]+"]ox ; ["+Map.bestdown[3]+"]oy", 1015, 375);
+                Tools.logText("BD : ["+MapData.bestdown[0]+"]px ; ["+MapData.bestdown[1]+"]py", 970, 350);
+                Tools.logText("["+MapData.bestdown[2]+"]ox ; ["+MapData.bestdown[3]+"]oy", 1015, 375);
                 
-                Tools.logText("BL : ["+Map.bestleft[0]+"]px ; ["+Map.bestleft[1]+"]py", 970, 400);
-                Tools.logText("["+Map.bestleft[2]+"]ox ; ["+Map.bestleft[3]+"]oy", 1015, 425);
+                Tools.logText("BL : ["+MapData.bestleft[0]+"]px ; ["+MapData.bestleft[1]+"]py", 970, 400);
+                Tools.logText("["+MapData.bestleft[2]+"]ox ; ["+MapData.bestleft[3]+"]oy", 1015, 425);
                 
-                Tools.logText("BR : ["+Map.bestright[0]+"]px ; ["+Map.bestright[1]+"]py", 970, 450);
-                Tools.logText("["+Map.bestright[2]+"]ox ; ["+Map.bestright[3]+"]oy", 1015, 475);
+                Tools.logText("BR : ["+MapData.bestright[0]+"]px ; ["+MapData.bestright[1]+"]py", 970, 450);
+                Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
                 Tools.logText(player.ground_slideposition+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
@@ -1310,9 +1310,9 @@ function main()
             Tools.logText(Fps.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique
             Tools.logText("Main : "+Number.parseFloat(MainLoop.log).toPrecision(3)+" ms", 20, 75, "rgb(0,255,0)", "rgb(0,100,0)"); //Temps de latence entre le début et la fin de la frame
             Tools.logText("-Player velocity : "+Number.parseFloat(player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Collisions : "+Number.parseFloat(Map.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Camsmoother : "+Number.parseFloat(Map.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Map display : "+Number.parseFloat(Map.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-MapData display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Player display : "+Number.parseFloat(player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
         }
         previousmouseX = animaticmousevalue[0];
@@ -1325,4 +1325,4 @@ function main()
 }
 
 main();
-export{Tools, Map}
+export{Tools, MapData}

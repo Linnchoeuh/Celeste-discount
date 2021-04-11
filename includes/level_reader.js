@@ -150,7 +150,7 @@ function collider_left(offset_on, p, best, offset, v)
 }
 
 
-class MapData
+class Map_Data
 {   
     constructor()
     {
@@ -787,5 +787,5 @@ class MapData
     }
 }
 
-export{MapData}
+export{Map_Data}
 

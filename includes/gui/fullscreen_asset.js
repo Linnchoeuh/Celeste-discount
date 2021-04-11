@@ -1,4 +1,4 @@
-import {Tools, Map} from "/main.js";
+import {Tools, MapData} from "/main.js";
 class Canvas_resolution_asset
 {
     constructor()
@@ -100,7 +100,7 @@ class Canvas_resolution_asset
             }
             firstgameframe = false;
             Tools.requiredDisplayVariableUpdater()
-            Map.requiredDisplayVariableUpdater()
+            MapData.requiredDisplayVariableUpdater()
         }
         if(this.canvasfullscreen & keys_input[9] == 1)
         {
@@ -112,7 +112,7 @@ class Canvas_resolution_asset
             canvas.height = 675;
             this.ablefullscreen = "Enable";
             Tools.requiredDisplayVariableUpdater()
-            Map.requiredDisplayVariableUpdater()
+            MapData.requiredDisplayVariableUpdater()
         }
         return firstgameframe;
     }
