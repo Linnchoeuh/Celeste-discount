@@ -172,7 +172,7 @@ class PlayerData
                     if(this.dashcount === 0) //no move
                     {
                         
-                        if(vx > 0 && input[3] === 0 || collisions[3] === 1) //Ralenti si le perso allait a droite
+                        if(vx > 0 || collisions[3] === 1) //Ralenti si le perso allait a droite
                         {
                             switch(collisions[0])
                             {
@@ -197,7 +197,7 @@ class PlayerData
                                 vx = 0;
                             }
                         }
-                        else if(vx < 0 && input[1] === 0 || collisions[2] === 1) //Ralenti si le perso allait a gauche
+                        else if(vx < 0 || collisions[2] === 1) //Ralenti si le perso allait a gauche
                         {
                             switch(collisions[0])
                             {
@@ -223,21 +223,30 @@ class PlayerData
                         }
                     }
 
-                    if(input[3] === 1 & input[1] === 0) //moving right
+                    if(input[3] === 1 && input[1] === 0 && collisions[0] === 1 || vx > 0 && collisions[0] === 0) //moving right
                     {
                         this.lastdirection = 1;
                     }
-                    else if(input[1] === 1 & input[3] === 0)
+                    else if(input[1] === 1 && input[3] === 0 && collisions[0] === 1 || vx < 0 && collisions[0] === 0)
                     {
                         this.lastdirection = -1;
                     }
                     if     (input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0 & vx < this.maxcurrentvelocity) //moving right
                     {
                         this.speed = vx += this.currentacceleration;
+                        if(vx > this.maxcurrentvelocity)
+                        {
+                            this.speed = vx = this.maxcurrentvelocity;
+                        }
+
                     }
                     else if(input[1] === 1 & input[3] === 0 & vx <= 0 & collisions[2] === 0 & vx > -this.maxcurrentvelocity) //moving left
                     {
                         this.speed = vx -= this.currentacceleration;
+                        if(vx < -this.maxcurrentvelocity)
+                        {
+                            this.speed = vx = -this.maxcurrentvelocity;
+                        }
                     }
                     
 
