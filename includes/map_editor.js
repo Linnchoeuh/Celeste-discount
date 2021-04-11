@@ -1,4 +1,4 @@
-import {Tools} from "/main.js";
+import {Tools} from "../main.js";
 
 var testblock = new Image();
 testblock.src = "graphics/map_content/test_block.png";

@@ -1,4 +1,4 @@
-import {Tools} from "/main.js";
+import {Tools} from "../main.js";
 import {Timer_Log} from "./tools.js";
 
 var testblock = new Image();
