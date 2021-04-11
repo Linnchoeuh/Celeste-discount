@@ -620,7 +620,7 @@ class MapData
             this.index_value = this.block_index[i][this.pre_snap_offset_smooth_X_minus_05];
             for (let k = this.index_value; k < this.index_value+18; k++)
             {
-                if(this.block_map_snap_position[i][k] > this.pre_snap_offset_smooth_X_minus_05+17 || this.block_map_snap_position[i][k] === this.block_map_snap_position[i][-1])
+                if(this.block_map_snap_position[i][k] > this.pre_snap_offset_smooth_X_minus_05+18 || this.block_map_snap_position[i][k] === this.block_map_snap_position[i][-1])
                 {
                     if(this.devmode)
                     {
