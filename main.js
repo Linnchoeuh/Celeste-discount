@@ -143,7 +143,7 @@ import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 import {Pause} from "./includes/pause.js";
 import {Transition} from "./includes/transition.js";
 import {Canvas_resolution_asset} from "./includes/fullscreen_asset.js"
-// import {FPS} from "./includes/display/fps_cap.js"
+import {FPS} from "./includes/display/fps_cap.js"
 import {Animatic} from "./includes/animatic.js";
 import {Map_Data} from "./includes/level_reader.js";
 import {PlayerData} from "./includes/player.js";
