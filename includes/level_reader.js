@@ -302,7 +302,8 @@ class MapData
 
         this.block_map = [];
         this.block_map_type_texture = [];
-        this.obj = {"a" : -1}
+        this.block_index = [];
+        this.block_map_snap_position = [];
         for(let i = 0; i < this.maplimit[1]+1; i++)
         {
             this.block_map_type_texture.push({});
