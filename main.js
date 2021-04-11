@@ -147,7 +147,7 @@ import {FPS} from "./includes/display/fps_cap.js"
 import {Animatic} from "./includes/animatic.js";
 import {Map_Data} from "./includes/level_reader.js";
 import {PlayerData} from "./includes/player.js";
-// import * as levels from "./includes/levels.js";
+import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
 
 
