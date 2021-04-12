@@ -146,6 +146,190 @@ import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
 
+class Pause
+{
+    constructor(ctx)
+    {
+        this.ctx = ctx
+        this.grd = ctx.createLinearGradient(-150, 0, Tools.resolutionScaler(3000), 0);
+        this.grd.addColorStop(0.1, "transparent");
+        this.grd.addColorStop(0, "black");
+
+        this.pauseframe = 0;
+        this.pause = false;
+        this.pkey = false;
+        this.endpause = false;
+    }
+
+    Toggle(text, keypressed, keys_input, dt)
+    {
+        if(keys_input[6] === 1 & this.pkey === false & this.pause === false)
+        {
+            this.pause = true;
+            keypressed = true;
+            this.pkey = true
+            this.endpause = false; 
+        }
+        if(this.pause)
+        {
+            if(this.pauseframe < 10 & this.endpause === false)
+            {
+                this.pauseframe += 1/dt;
+            }
+            if(this.pauseframe > 10)
+            {
+                this.pauseframe = 10
+            }
+            this.ctx.fillStyle = "rgba(0,0,0,"+0.05*this.pauseframe+")";
+            this.ctx.fillRect(0,0,canvas.width,canvas.height);
+            this.ctx.fillStyle = this.grd;
+            this.ctx.fillRect(Tools.resolutionScaler(-200+(this.pauseframe*20)), 0, Tools.resolutionScaler(100+(this.pauseframe*20)), Tools.resolutionScaler(675));
+            this.ctx.fillStyle = "rgba(255,255,255,"+0.1*this.pauseframe+")";
+            if(this.endpause === false)
+            {
+                this.ctx.font = "Bold "+Tools.resolutionScaler(125)+'px arial';
+                this.ctx.fillText(text, Tools.resolutionScaler(425), Tools.resolutionScaler(100));
+            }
+            if(keys_input[6] === 1 & this.pkey === false || this.endpause)
+            {
+                
+                this.endpause = true;
+                this.grd.addColorStop(0.1, "transparent");
+                this.grd.addColorStop(0, "black");
+                this.ctx.fillStyle = this.grd;
+                this.pauseframe -= 1/dt;
+                this.ctx.fillRect(Tools.resolutionScaler(-200-(this.pauseframe*20)), 0, Tools.resolutionScaler(100-(this.pauseframe*20)), Tools.resolutionScaler(675));
+                if(this.pauseframe < 1)
+                {
+                    this.endpause = false;
+                    this.pause = false;
+                    this.pauseframe = 0;
+                }
+            }
+        }
+        return keypressed; 
+    }
+}
+
+class Canvas_resolution_asset
+{
+    constructor()
+    {
+        this.canvasfullscreen = false;
+        this.doubleclicktiming = 0;
+        this.firstclick = false;
+        this.doubleclickfullscreenmousepressed = false;
+        this.fullscreenupscale = true;
+        this.fullscreendownscalefactor = 5;
+        this.ablefullscreen = "Enable";
+        this.fullscreendownscale = false;
+    }
+
+    Toggle(elem)
+    {
+        if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+            if (elem.requestFullScreen) {
+                elem.requestFullScreen();
+            } else if (elem.webkitRequestFullScreen) {
+                elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            }
+            Tools.canvasfullscreen = this.canvasfullscreen = true;
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
+            Tools.canvasfullscreen = this.canvasfullscreen = false;
+        }
+    }
+
+    Mouse_adapter(mouseX, mouseY, canvas, screen)
+    {
+        if(this.canvasfullscreen)
+        {
+            return [mouseX*(canvas.width / screen.width), mouseY*(canvas.height / screen.height)];
+        }
+        return [mouseX, mouseY];
+    }
+
+    Double_Click_Toggle(click, firstgameframe, enabler = true)
+    {
+        if(enabler)
+        {
+            if(this.doubleclicktiming+150 < Date.now())
+            {
+                this.firstclick = false;
+            }
+            if(click || this.firstclick)
+            {
+                if(this.firstclick === false)
+                {
+                    this.doubleclicktiming = Date.now();
+                    this.firstclick = this.doubleclickfullscreenmousepressed = true;
+                }
+                else if(click && this.doubleclickfullscreenmousepressed === false)
+                {
+                    this.Toggle(canvas);
+                    this.firstclick = false;
+                    return true;
+                }
+            }
+        }
+        return firstgameframe;
+    }
+
+    Screen_Scaler(canvas, screen, firstgameframe, keys_input)
+    {
+        if(firstgameframe)
+        {
+            
+            if(this.canvasfullscreen)
+            {
+                if(this.fullscreenupscale)
+                {    
+                    canvas.width = screen.width;
+                    canvas.height = screen.height;
+                }
+                else
+                {
+                    canvas.width = 240*this.fullscreendownscalefactor;
+                    canvas.height = 135*this.fullscreendownscalefactor;
+                }
+                this.ablefullscreen = "Disable";
+            }
+            else
+            {
+                this.ablefullscreen = "Enable";
+            }
+            firstgameframe = false;
+            // Tools.requiredDisplayVariableUpdater()
+            // MapData.requiredDisplayVariableUpdater()
+        }
+        if(this.canvasfullscreen & keys_input[9] == 1)
+        {
+            Tools.canvasfullscreen = this.canvasfullscreen = false;
+        }
+        if(this.canvasfullscreen === false & canvas.width !== 1200 & canvas.height !== 675)
+        {
+            canvas.width = 1200;
+            canvas.height = 675;
+            this.ablefullscreen = "Enable";
+            // Tools.requiredDisplayVariableUpdater()
+            // MapData.requiredDisplayVariableUpdater()
+        }
+        return firstgameframe;
+    }
+}
+
 
 var command = "false"; //command
 var push = 0;
