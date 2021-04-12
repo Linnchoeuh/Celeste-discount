@@ -9,7 +9,6 @@ class Transition
 
     plus()
     {
-        
         if(0.05*this.currentfadestate < 1)    
         {    
             this.ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate)+")";

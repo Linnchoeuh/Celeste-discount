@@ -138,7 +138,7 @@ document.addEventListener("webkitfullscreenchange", function () {
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 import {Pause} from "./includes/gui/pause.js";
 import {Transition} from "./includes/gui/transition.js";
-// import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
+import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
 import {FPS} from "./includes/display/fps_cap.js"
 import {Animatic} from "./includes/animatic.js";
 import {Map_Data} from "./includes/level_reader.js";
@@ -152,7 +152,7 @@ var push = 0;
 var devmode = false;
 var godmode = false;
 var camsmootherenable = true;
-// const Fullscreen = new Canvas_resolution_asset();
+const Fullscreen = new Canvas_resolution_asset();
 const Tools = new Tool_Kit(ctx, false, 0, 0, devmode);
 
 var return_arrow = Tools.textureLoader("graphics/ui/return_arrow.png");
@@ -319,7 +319,7 @@ function main()
     MainLoop.startTime()
     requestAnimationFrame(main);
 
-    // Tools.canvasfullscreen = Fullscreen.canvasfullscreen;
+    Tools.canvasfullscreen = Fullscreen.canvasfullscreen;
     Tools.mouseX           = mouseX;
     Tools.mouseY           = mouseY;
     Tools.devmode          = devmode;
@@ -345,9 +345,9 @@ function main()
     button9.mouseY = button10.mouseY = 
     button11.mouseY = animaticmousevalue[1];
     
-    // firstgameframe = Fullscreen.Double_Click_Toggle(click, firstgameframe);
-    // animaticmousevalue = Fullscreen.Mouse_adapter(mouseX, mouseY, canvas, screen);
-    // firstgameframe = Fullscreen.Screen_Scaler(canvas, screen, firstgameframe, keys_input);
+    firstgameframe = Fullscreen.Double_Click_Toggle(click, firstgameframe);
+    animaticmousevalue = Fullscreen.Mouse_adapter(mouseX, mouseY, canvas, screen);
+    firstgameframe = Fullscreen.Screen_Scaler(canvas, screen, firstgameframe, keys_input);
     ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
 
     
