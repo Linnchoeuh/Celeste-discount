@@ -146,6 +146,8 @@ import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
 
+import{Une_Classe} from "./includes/gui/test.js";
+
 class Pause
 {
     constructor(ctx)
