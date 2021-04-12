@@ -136,7 +136,7 @@ document.addEventListener("webkitfullscreenchange", function () {
 }, false);
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
-// import {Pause} from "./includes/gui/pause.js";
+import {Pause} from "./includes/gui/pause.js";
 import {Transition} from "./includes/gui/transition.js";
 // import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
 import {FPS} from "./includes/display/fps_cap.js"
