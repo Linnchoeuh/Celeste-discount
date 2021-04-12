@@ -1,4 +1,4 @@
-// import {Tools, MapData} from "../../main.js";
+import {Tools, MapData} from "../../main.js";
 class Canvas_resolution_asset
 {
     constructor()
