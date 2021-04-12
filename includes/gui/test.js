@@ -1,4 +1,4 @@
-import {Tools, MapData} from "../../main.js";
+import {Tools} from "../../main.js";
 
 class Une_Classe
 {

@@ -378,7 +378,7 @@ var vect = [0, 0];
 var stock = [0, 0];
 
 //Game running
-const PAUSE = new Pause(ctx)
+const PAUSE = new Une_Classe(ctx)
 var playerinterpoX = 0;
 var camerainterpoX = 0;
 var playerinterpoY = 0;
