@@ -1,6 +1,6 @@
 import {Tools} from "../../main.js";
 
-class Une_Classe
+class Pause
 {
     constructor(ctx)
     {
@@ -65,4 +65,4 @@ class Une_Classe
     }
 }
 
-export{Une_Classe};
+export{Pause};

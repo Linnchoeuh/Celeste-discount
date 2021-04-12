@@ -146,7 +146,7 @@ import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
 
-import{Une_Classe} from "./includes/gui/test.js";
+import{Pause} from "./includes/gui/test.js";
 
 class Canvas_resolution_asset
 {
@@ -313,8 +313,8 @@ var vect = [0, 0];
 var stock = [0, 0];
 
 //Game running
-// const PAUSE = new Pause(ctx)
-const PAUSE = new Une_Classe(ctx)
+const PAUSE = new Pause(ctx)
+// const PAUSE = new Une_Classe(ctx)
 var playerinterpoX = 0;
 var camerainterpoX = 0;
 var playerinterpoY = 0;
