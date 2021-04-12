@@ -1,4 +1,4 @@
-class FPS
+class Fps_
 {
     constructor()
     {
@@ -94,4 +94,4 @@ class FPS
     }
 }
 
-export{FPS}
+export{Fps_}

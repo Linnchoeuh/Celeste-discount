@@ -1,6 +1,6 @@
 import {Tools} from "../../main.js";
 
-class Pause
+class Pause_
 {
     constructor(ctx)
     {
@@ -65,4 +65,4 @@ class Pause
     }
 }
 
-export{Pause};
+export{Pause_};

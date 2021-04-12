@@ -8,7 +8,7 @@ function texture_loader(path)
     return texture;
 }
 
-class PlayerData
+class Player_Data
 {
     constructor()
     {
@@ -19,6 +19,8 @@ class PlayerData
         
         this.playerX = 0;
         this.playerY = 0;
+        this.vector_X = 0;
+        this.vector_Y = 0;
         this.previousplayerX = 0;
         this.previousplayerY = 0;
         this.jump = false;
@@ -139,7 +141,7 @@ class PlayerData
     velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, distanceground, pause)
     {
         this.PhysicsLoop.startTime()
-        vy = -vy;
+        this.vector_Y = -vy;
         if(pause === false)
         {     
             this.ground_slideposition = 0;
@@ -172,110 +174,111 @@ class PlayerData
                     if(this.dashcount === 0) //no move
                     {
                         
-                        if(vx > 0 || collisions[3] === 1) //Ralenti si le perso allait a droite
+                        if(this.vector_X > 0 || collisions[3] === 1) //Ralenti si le perso allait a droite
                         {
                             switch(collisions[0])
                             {
                                 case 1:
-                                    vx -= this.groundfriction;
+                                    this.vector_X -= this.groundfriction;
                                     
-                                    if(input[1] === 1 & collisions[3] === 0)
+                                    if(input[1] === 1 && collisions[3] === 0)
                                     {
                                         this.ground_slideposition = -1;
                                     }
                                     break;
                                 case 0:
-                                    vx -= this.airfriction;
+                                    this.vector_X -= this.airfriction;
                                     if(input[1] === 1)
                                     {
-                                        vx -= this.aerialmoving;
+                                        this.vector_X -= this.aerialmoving;
                                     }
                                     break;
                             }
-                            if(vx < 0 || collisions[3] === 1)
+                            if(this.vector_X < 0 || collisions[3] === 1)
                             {
-                                vx = 0;
+                                this.vector_X = 0;
                             }
                         }
-                        else if(vx < 0 || collisions[2] === 1) //Ralenti si le perso allait a gauche
+                        else if(this.vector_X < 0 || collisions[2] === 1) //Ralenti si le perso allait a gauche
                         {
                             switch(collisions[0])
                             {
                                 case 1:
-                                    vx += this.groundfriction;
-                                    if(input[3] === 1 & collisions[2] === 0)
+                                    this.vector_X += this.groundfriction;
+                                    if(input[3] === 1 && collisions[2] === 0)
                                     {
                                         this.ground_slideposition = 1;
                                     }
                                     break;
                                 case 0:
-                                    vx += this.airfriction;
+                                    this.vector_X += this.airfriction;
                                     if(input[3] === 1)
                                     {
-                                        vx += this.aerialmoving;
+                                        this.vector_X += this.aerialmoving;
                                     }
                                     break;
                             }
-                            if(vx > 0 || collisions[2] === 1)
+                            if(this.vector_X > 0 || collisions[2] === 1)
                             {
-                                vx = 0;
+                                this.vector_X = 0;
                             }
                         }
                     }
 
-                    if(input[3] === 1 && input[1] === 0 && collisions[0] === 1 || vx > 0 && collisions[0] === 0) //moving right
+                    if(input[3] === 1 && input[1] === 0 && collisions[0] === 1 || this.vector_X > 0 && collisions[0] === 0) //moving right
                     {
                         this.lastdirection = 1;
                     }
-                    else if(input[1] === 1 && input[3] === 0 && collisions[0] === 1 || vx < 0 && collisions[0] === 0)
+                    else if(input[1] === 1 && input[3] === 0 && collisions[0] === 1 || this.vector_X < 0 && collisions[0] === 0)
                     {
                         this.lastdirection = -1;
                     }
-                    if     (input[3] === 1 & input[1] === 0 & vx >= 0 & collisions[3] === 0 & vx < this.maxcurrentvelocity) //moving right
+                    if     (input[3] === 1 && input[1] === 0 && this.vector_X >= 0 && collisions[3] === 0 && this.vector_X < this.maxcurrentvelocity) //moving right
                     {
-                        this.speed = vx += this.currentacceleration;
-                        if(vx > this.maxcurrentvelocity)
+                        this.speed = this.vector_X += this.currentacceleration;
+                        if(this.vector_X > this.maxcurrentvelocity)
                         {
-                            this.speed = vx = this.maxcurrentvelocity;
+                            this.speed = this.vector_X = this.maxcurrentvelocity;
                         }
 
                     }
-                    else if(input[1] === 1 & input[3] === 0 & vx <= 0 & collisions[2] === 0 & vx > -this.maxcurrentvelocity) //moving left
+                    else if(input[1] === 1 && input[3] === 0 && this.vector_X <= 0 && collisions[2] === 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
                     {
-                        this.speed = vx -= this.currentacceleration;
-                        if(vx < -this.maxcurrentvelocity)
+                        this.speed = this.vector_X -= this.currentacceleration;
+                        if(this.vector_X < -this.maxcurrentvelocity)
                         {
-                            this.speed = vx = -this.maxcurrentvelocity;
+                            this.speed = this.vector_X = -this.maxcurrentvelocity;
                         }
                     }
                     
 
                 }
                 
-                if(input[4] === 1 & collisions[1] === 0 & this.walljump === 0 & this.releasejump === true & this.jump === true | vy >= this.jumptolerance & this.releasejump === true & input[4] === 1 & this.walljump === 0 & this.jumpavaiblelity === true) //jump
+                if(input[4] === 1 && collisions[1] === 0 && this.walljump === 0 && this.releasejump === true && this.jump === true || 
+                    this.vector_Y >= this.jumptolerance && this.releasejump === true && input[4] === 1 && this.walljump === 0 && this.jumpavaiblelity === true) //jump
                 {
-                    vy = this.jumpforce;
+                    this.vector_Y = this.jumpforce;
                     this.releasejump = false;
                     this.jump_animation_postion = 1;
                     this.jumpavaiblelity = false
                     this.walljumpcheck = false;
                 }
-                else if(vy > 0)
+                else if(this.vector_Y > 0)
                 {
                     this.jump_animation_postion = 2;
                 }
 
-                if(input[4] === 0 & this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
+                if(input[4] === 0 && this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
                 {
                     this.walljumpcheck = true;
                 }
-                if(collisions[0] === 0 & vy <= 0 | this.lastactwalljump === true) //walljump
+                if(collisions[0] === 0 && this.vector_Y <= 0 || this.lastactwalljump === true) //walljump
                 {
-                    if(collisions[2] === 1 & distanceground > 71 | collisions[2] === 1 & distanceground === false) //left
+                    if(collisions[2] === 1 && distanceground > 71 || collisions[2] === 1 && distanceground === false) //left
                     {
                         this.walljump = -1;
                     }
-                    else if(collisions[3] === 1 & distanceground > 71 | collisions[3] === 1 & distanceground === false) //right
+                    else if(collisions[3] === 1 && distanceground > 71 || collisions[3] === 1 && distanceground === false) //right
                     {
                         this.walljump = 1;
                     }
@@ -286,12 +289,12 @@ class PlayerData
                     }
                     if(this.walljump != 0)
                     {
-                        if(this.walljump === 1 | this.walljump === -1)
+                        if(this.walljump === 1 || this.walljump === -1)
                         {
-                            vy = -this.walljumpslide;
+                            this.vector_Y = -this.walljumpslide;
                             this.jump = false;
                         }
-                        if(input[1] === 1 | input[3] === 1)
+                        if(input[1] === 1 || input[3] === 1)
                         {
                             this.wallleave += 1;
                             if(input[3] === 1)
@@ -308,10 +311,10 @@ class PlayerData
                             this.wallleave = 0;
                         }
                         
-                        if(this.walljumpcheck === true & collisions[0] === 0 & collisions[1] === 0 & input[4] === 1)
+                        if(this.walljumpcheck === true && collisions[0] === 0 && collisions[1] === 0 && input[4] === 1)
                         {
-                            vx = -this.walljump*this.walljumpx;
-                            vy = this.walljumpy;
+                            this.vector_X = -this.walljump*this.walljumpx;
+                            this.vector_Y = this.walljumpy;
                             this.lastdirection = -this.walljump*1;
                             
                             this.jump = false;
@@ -322,37 +325,37 @@ class PlayerData
                             this.lastactwalljump = true;
                         }
                     }
-                    else if(this.walljump != 1 & this.walljump != -1)
+                    else if(this.walljump != 1 && this.walljump != -1)
                     {
                         this.wallleave = this.wallleavemax;
                         this.jump = false;
                     }
                 }
                 
-                if(this.dashbuttonrelease === false & input[5] === 0) // dash
+                if(this.dashbuttonrelease === false && input[5] === 0) // dash
                 {
                     this.dashbuttonrelease = true;
                 }
-                if(this.dashcooldown === 0 & this.lastactwalljump === false)
+                if(this.dashcooldown === 0 && this.lastactwalljump === false)
                 {    
-                    if(input[5] === 1 & this.dashbuttonrelease === true | this.dashcount != 0)
+                    if(input[5] === 1 && this.dashbuttonrelease === true || this.dashcount != 0)
                     {
                         if(this.dashcount === 0)
                         {
                             this.dashbuttonrelease = false;
                         }
                         this.dashcount += 1
-                        if(this.dashcount >= this.dashduration | collisions[2] === 1 & vx < 0 | collisions[3] === 1 & vx > 0)
+                        if(this.dashcount >= this.dashduration || collisions[2] === 1 && this.vector_X < 0 || collisions[3] === 1 && this.vector_X > 0)
                         {
-                            vx = this.dashend*this.lastdirection;
-                            vy = 0;
+                            this.vector_X = this.dashend*this.lastdirection;
+                            this.vector_Y = 0;
                             this.dashcooldown = this.dashcooldownmax;
                             this.dashcount = 0;
                         }
                         else
                         {
-                            vx = this.dashspeed*this.lastdirection;
-                            vy = 0;
+                            this.vector_X = this.dashspeed*this.lastdirection;
+                            this.vector_Y = 0;
                         }    
                     }
                 }
@@ -361,27 +364,27 @@ class PlayerData
                     this.dashcooldown -= 1;
                 }
 
-                if(collisions[0] === 0 & this.walljump === 0 & this.dashcount === 0) //gravity
+                if(collisions[0] === 0 && this.walljump === 0 && this.dashcount === 0) //gravity
                 {
                     if(collisions[1] === 1)
                     {
-                        vy = 0;
+                        this.vector_Y = 0;
                         this.jump = false;
                     }
-                    if(input[4] === 0 & vy > 0 & this.lastactwalljump === false)
+                    if(input[4] === 0 && this.vector_Y > 0 && this.lastactwalljump === false)
                     {
-                        vy /= this.jumpattenuation;
+                        this.vector_Y /= this.jumpattenuation;
                         this.jump = false;
                     }
-                    if(-this.maxgravityspeed < vy)
+                    if(-this.maxgravityspeed < this.vector_Y)
                     {
-                        vy -= 2;
+                        this.vector_Y -= 2;
                     }
                 }
 
-                if(collisions[0] === 1 & this.jump === false)
+                if(collisions[0] === 1 && this.jump === false)
                 {
-                    vy = 0;
+                    this.vector_Y = 0;
                     this.wallleave = this.wallleavemax;
                     this.jump = true;
                     this.lastactwalljump = false;
@@ -398,98 +401,98 @@ class PlayerData
             {    
                 if(input[8] === 1)
                 {
-                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
+                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
                     {
-                        vy = 1;
+                        this.vector_Y = 1;
                     }
-                    else if(input[2] === 1 & collisions[0] === 0) //down
+                    else if(input[2] === 1 && collisions[0] === 0) //down
                     {
-                        vy = -1;
+                        this.vector_Y = -1;
                     }
                     else //neutral y
                     {
-                        vy = 0;
+                        this.vector_Y = 0;
                     }
-                    if(input[3] === 1 & collisions[3] === 0) //right
+                    if(input[3] === 1 && collisions[3] === 0) //right
                     {
-                        vx = 1;
+                        this.vector_X = 1;
                     }
-                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
+                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
                     {
-                        vx = -1;
+                        this.vector_X = -1;
                     }
                     else //neutral x
                     {
-                        vx = 0;
+                        this.vector_X = 0;
                     }
                 }
                 else if(input[5] === 1)
                 {
-                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
+                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
                     {
-                        vy = 25;
+                        this.vector_Y = 25;
                     }
-                    else if(input[2] === 1 & collisions[0] === 0) //down
+                    else if(input[2] === 1 && collisions[0] === 0) //down
                     {
-                        vy = -25;
+                        this.vector_Y = -25;
                     }
                     else //neutral y
                     {
-                        vy = 0;
+                        this.vector_Y = 0;
                     }
-                    if(input[3] === 1 & collisions[3] === 0) //right
+                    if(input[3] === 1 && collisions[3] === 0) //right
                     {
-                        vx = 25;
+                        this.vector_X = 25;
                     }
-                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
+                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
                     {
-                        vx = -25;
+                        this.vector_X = -25;
                     }
                     else //neutral x
                     {
-                        vx = 0;
+                        this.vector_X = 0;
                     }
                 }
                 else
                 {    
-                    if(input[0] === 1 & collisions[1] === 0 & input[2] === 0) //up
+                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
                     {
-                        vy = 10;
+                        this.vector_Y = 10;
                     }
-                    else if(input[2] === 1 & collisions[0] === 0) //down
+                    else if(input[2] === 1 && collisions[0] === 0) //down
                     {
-                        vy = -10;
+                        this.vector_Y = -10;
                     }
                     else //neutral y
                     {
-                        vy = 0;
+                        this.vector_Y = 0;
                     }
-                    if(input[3] === 1 & collisions[3] === 0) //right
+                    if(input[3] === 1 && collisions[3] === 0) //right
                     {
-                        vx = 10;
+                        this.vector_X = 10;
                     }
-                    else if(input[1] === 1 & collisions[2] === 0 & input[3] === 0) //left
+                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
                     {
-                        vx = -10;
+                        this.vector_X = -10;
                     }
                     else //neutral x
                     {
-                        vx = 0;
+                        this.vector_X = 0;
                     }
                 }
             }
             
             if(offsetX_on != 0)
             {
-                this.playerX += vx;
+                this.playerX += this.vector_X;
             }
             if(offsetY_on != 0)
             {
-                this.playerY -= vy;
+                this.playerY -= this.vector_Y;
             }
         }
         this.physics_loop_log = this.PhysicsLoop.endLogTime();
-        return [vx,-vy];
+        return [this.vector_X,-this.vector_Y];
     }
     
     display(collisions, pause, dt, camsmootherX, camsmootherY, px, py)
@@ -511,7 +514,7 @@ class PlayerData
                         { 
                             if(collisions[0] === 1)
                             {    
-                                if(this.animationmoving === true & collisions[3] === 0 & this.ground_slideposition === 0)
+                                if(this.animationmoving === true && collisions[3] === 0 && this.ground_slideposition === 0)
                                 {       
                                     this.movingleftframe = 0;
                                     this.ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
@@ -536,7 +539,7 @@ class PlayerData
                             }
                             else
                             {
-                                if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
+                                if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
                                     this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
@@ -577,7 +580,7 @@ class PlayerData
                         {    
                             if(collisions[0] === 1)
                             {
-                                if(this.animationmoving === true & collisions[2] === 0 & this.ground_slideposition === 0)
+                                if(this.animationmoving === true && collisions[2] === 0 && this.ground_slideposition === 0)
                                 {
                                     this.movingrightframe = 0;
                                     this.ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
@@ -602,7 +605,7 @@ class PlayerData
                             }
                             else
                             {
-                                if(this.verticaldirection === -1 & this.jump_animation_postion === 0)
+                                if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
                                     this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
@@ -666,4 +669,4 @@ class PlayerData
     }
 }
 
-export{PlayerData};
+export{Player_Data};

@@ -1,7 +1,7 @@
 import {Tools} from "../main.js";
 
 
-class Animatic
+class Animatic_
 {
     constructor(ctx)
     {
@@ -281,4 +281,4 @@ class Animatic
     }
 }
 
-export{Animatic};
+export{Animatic_};

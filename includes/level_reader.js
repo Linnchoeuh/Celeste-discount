@@ -1,3 +1,4 @@
+import {ctx} from "../main.js";
 import {Tools} from "../main.js";
 import {Timer_Log} from "./tools.js";
 
@@ -166,7 +167,7 @@ class Map_Data
         this.cache_data = 0;
         this.collisions = [0,0,0,0,0,0,0,0];
 
-        this.maxi = 0;
+        this.maxi = 0; //Potentiellement suprimé bientôt
         this.i_define = 0;
 
         this.block_map = [0]
@@ -177,6 +178,10 @@ class Map_Data
         this.copy_file = [0];
         this.all_block_map_count = 0;
         this.operation_count = 0;
+
+        //Camera smoother
+        this.player_vect_x = 0;
+        this.player_vect_y = 0;
 
         //Optimisation
         this.pre_block_scale = 24;
@@ -200,6 +205,7 @@ class Map_Data
         this.level_data_textures = [];
         this.data_temp = [];
         this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
+        this.testblock = Tools.textureLoader("graphics/map_content/test_block.png");
         this.CollisionsLoop = new Timer_Log();
         this.GraphicsLoop = new Timer_Log();
         this.CamSmootherLoop = new Timer_Log();
@@ -595,7 +601,7 @@ class Map_Data
     {
         this.GraphicsLoop.startTime()
         this.operation_count = 0;
-        if(pause == false)    
+        if(pause === false)    
         {
             this.offsetsmoothX = Math.round(Tools.resolutionScaler(offsetX-smoothX));
             this.offsetsmoothY = Math.round(Tools.resolutionScaler(offsetY-smoothY));
@@ -606,8 +612,8 @@ class Map_Data
         // this.pre_snap_offset_smooth_Y_minus_05 = Math.round(this.pre_snap_offset_smooth_Y-0.5);
         if(this.devmode)
         {
-            this.ctx.lineWidth = Tools.resolutionScaler(0.5);
-            this.ctx.font = Tools.resolutionScaler(15)+'px arial';
+            ctx.lineWidth = Tools.resolutionScaler(0.5);
+            ctx.font = Tools.resolutionScaler(15)+'px arial';
         }
         this.i_define = 0;
         if(this.i_define < this.pre_snap_offset_smooth_Y)
@@ -624,20 +630,20 @@ class Map_Data
                 {
                     if(this.devmode)
                     {
-                        this.ctx.fillStyle = "rgba(0,0,255,0.25)";
-                        this.ctx.fillRect(this.block_map[i][k-1]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
+                        ctx.fillStyle = "rgba(0,0,255,0.25)";
+                        ctx.fillRect(this.block_map[i][k-1]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
                     }
                     break;
                 }
                 switch(this.block_map_type_texture[i][k][0]) // selection des textures
                 {
                     case 0:
-                        this.ctx.drawImage(testblock, 
+                        ctx.drawImage(this.testblock, 
                                            this.block_map[i][k]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, 
                                            this.pre_block_scaling, this.pre_block_scaling); //testblock
                         break
                     case 1:
-                        this.ctx.drawImage(this.grass_blocks, 
+                        ctx.drawImage(this.grass_blocks, 
                                          ((this.block_map_type_texture[i][k][1]+4)%4)*this.pre_block_scale, Math.floor(this.block_map_type_texture[i][k][1]/4)*this.pre_block_scale, 
                                            this.pre_block_scale, this.pre_block_scale, 
                                            this.block_map[i][k]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, 
@@ -655,47 +661,47 @@ class Map_Data
             }
             if(this.devmode)
             {
-                this.ctx.fillStyle = "rgba(255,255,0,0.25)";
-                this.ctx.fillRect(this.block_map[i][this.index_value]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
+                ctx.fillStyle = "rgba(255,255,0,0.25)";
+                ctx.fillRect(this.block_map[i][this.index_value]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
             }
         }
 
         if(this.devmode) //Affichage debug des collisions
         {
-            this.ctx.font = Tools.resolutionScaler(20)+'px arial';
-            this.ctx.lineWidth = Tools.resolutionScaler(1);
+            ctx.font = Tools.resolutionScaler(20)+'px arial';
+            ctx.lineWidth = Tools.resolutionScaler(1);
             Tools.logText("-Count : "+this.operation_count, 40, 225, "rgb(0,255,0)", "rgb(0,100,0)");
-            this.ctx.lineWidth = Tools.resolutionScaler(0.5);
-            this.ctx.font = Tools.resolutionScaler(15)+'px arial';
+            ctx.lineWidth = Tools.resolutionScaler(0.5);
+            ctx.font = Tools.resolutionScaler(15)+'px arial';
             if(this.collisions[5] == 1) //Up red
             {
-                this.ctx.fillStyle = "rgb(255,0,0)";
-                this.ctx.fillRect(Tools.resolutionScaler(this.bestup[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestup[3]+320)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
+                ctx.fillStyle = "rgb(255,0,0)";
+                ctx.fillRect(Tools.resolutionScaler(this.bestup[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestup[3]+320)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
             }
 
             if(this.collisions[4] == 1) //Down green
             {
-                this.ctx.fillStyle = "rgb(0,255,0)";
-                this.ctx.fillRect(Tools.resolutionScaler(this.bestdown[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestdown[3]+395)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
+                ctx.fillStyle = "rgb(0,255,0)";
+                ctx.fillRect(Tools.resolutionScaler(this.bestdown[2])-this.offsetsmoothX, Tools.resolutionScaler(this.bestdown[3]+395)-this.offsetsmoothY,this.pre_block_scaling,Tools.resolutionScaler(5));
             }
 
             if(this.collisions[6] == 1) //Left blue
             {
-                this.ctx.fillStyle = "rgb(0,0,255)";
-                this.ctx.fillRect(Tools.resolutionScaler(this.bestleft[2]+593)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestleft[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
+                ctx.fillStyle = "rgb(0,0,255)";
+                ctx.fillRect(Tools.resolutionScaler(this.bestleft[2]+593)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestleft[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
             }
 
             if(this.collisions[7] == 1) //Right yellow
             {
-                this.ctx.fillStyle = "rgb(255,255,0)";
-                this.ctx.fillRect(Tools.resolutionScaler(this.bestright[2]+625)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestright[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
+                ctx.fillStyle = "rgb(255,255,0)";
+                ctx.fillRect(Tools.resolutionScaler(this.bestright[2]+625)-this.offsetsmoothX, Tools.resolutionScaler(py+this.bestright[3])-this.offsetsmoothY,Tools.resolutionScaler(5),this.pre_block_scaling);
             }
             Tools.logText("["+Math.round((offsetX+px)/71)+" : "+Math.round((offsetY+py)/71)+"]", px+smoothX+50, py+smoothY+20);
-            this.ctx.lineWidth= Tools.resolutionScaler(2);
-            this.ctx.strokeStyle = "rgb(0,0,0)";
-            this.ctx.strokeRect(Tools.resolutionScaler(px+smoothX), Tools.resolutionScaler(py+smoothY),this.pre_block_scaling,this.pre_block_scaling);
-            this.ctx.strokeStyle = "rgb(150,150,150)";
-            this.ctx.strokeRect(Tools.resolutionScaler(px+smoothX+22), Tools.resolutionScaler(py+smoothY),Tools.resolutionScaler(28),this.pre_block_scaling);
+            ctx.lineWidth= Tools.resolutionScaler(2);
+            ctx.strokeStyle = "rgb(0,0,0)";
+            ctx.strokeRect(Tools.resolutionScaler(px+smoothX), Tools.resolutionScaler(py+smoothY),this.pre_block_scaling,this.pre_block_scaling);
+            ctx.strokeStyle = "rgb(150,150,150)";
+            ctx.strokeRect(Tools.resolutionScaler(px+smoothX+22), Tools.resolutionScaler(py+smoothY),Tools.resolutionScaler(28),this.pre_block_scaling);
         }
         this.graphics_loop_log = this.GraphicsLoop.endLogTime()
     }
@@ -734,23 +740,9 @@ class Map_Data
                                                                 this.previousoffset[4][1]+this.previousoffset[5][1]+this.previousoffset[6][1]+this.previousoffset[7][1]+
                                                                 this.previousoffset[8][1]+this.previousoffset[9][1]+this.previousoffset[10][1]+this.previousoffset[11][1]+
                                                                 this.previousoffset[12][1]+this.previousoffset[13][1]+this.previousoffset[14][1]+this.previousoffset[15][1])/16))]
-                                    
-                this.previousoffset.splice(15, 1, this.previousoffset[14]);
-                this.previousoffset.splice(14, 1, this.previousoffset[13]);
-                this.previousoffset.splice(13, 1, this.previousoffset[12]);
-                this.previousoffset.splice(12, 1, this.previousoffset[11]);
-                this.previousoffset.splice(11, 1, this.previousoffset[10]);
-                this.previousoffset.splice(10, 1, this.previousoffset[9]);
-                this.previousoffset.splice(9, 1, this.previousoffset[8]);
-                this.previousoffset.splice(8, 1, this.previousoffset[7]);
-                this.previousoffset.splice(7, 1, this.previousoffset[6]);
-                this.previousoffset.splice(6, 1, this.previousoffset[5]);
-                this.previousoffset.splice(5, 1, this.previousoffset[4]);
-                this.previousoffset.splice(4, 1, this.previousoffset[3]);
-                this.previousoffset.splice(3, 1, this.previousoffset[2]);
-                this.previousoffset.splice(2, 1, this.previousoffset[1]);
-                this.previousoffset.splice(1, 1, this.previousoffset[0]);
-                this.previousoffset.splice(0, 1, [this.offsetX, this.offsetY]);
+                
+                this.previousoffset.unshift([this.offsetX, this.offsetY]);
+                this.previousoffset.lenght = 16;
             }
             else
             {

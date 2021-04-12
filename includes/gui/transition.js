@@ -1,4 +1,4 @@
-class Transition
+class Transition_
 {
     constructor(ctx)
     {
@@ -65,4 +65,4 @@ class Transition
     }
 }
 
-export{Transition}
+export{Transition_}

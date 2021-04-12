@@ -1,8 +1,9 @@
+import {ctx} from "../main.js";
+
 class Tool_Kit
 {
-    constructor(ctx, canvasfullscreen = false, mouseX = -1, mouseY = -1, devmode = false)
+    constructor(canvasfullscreen = false, mouseX = -1, mouseY = -1, devmode = false)
     {
-        this.ctx = ctx;
         this.canvasfullscreen = canvasfullscreen;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -52,8 +53,8 @@ class Tool_Kit
     {
         if(this.devmode)
         {
-            this.ctx.strokeStyle = "rgb(255,255,255)";
-            this.ctx.strokeRect(this.resolutionScaler(posX),this.resolutionScaler(posY),this.resolutionScaler(width),this.resolutionScaler(height));
+            ctx.strokeStyle = "rgb(255,255,255)";
+            ctx.strokeRect(this.resolutionScaler(posX),this.resolutionScaler(posY),this.resolutionScaler(width),this.resolutionScaler(height));
         }
         if(this.canvasfullscreen)
         {
@@ -71,14 +72,14 @@ class Tool_Kit
 
     logText(text, posX, posY, fill_color = "rgb(255,255,255)", stroke_color = "rgb(0,0,0)")
     {
-        this.ctx.fillStyle   = fill_color;
-        this.ctx.fillText(  text, 
-                            this.resolutionScaler(posX), 
-                            this.resolutionScaler(posY));
-        this.ctx.strokeStyle = stroke_color;
-        this.ctx.strokeText(text, 
-                            this.resolutionScaler(posX), 
-                            this.resolutionScaler(posY));
+        ctx.fillStyle   = fill_color;
+        ctx.fillText(     text, 
+                          this.resolutionScaler(posX), 
+                          this.resolutionScaler(posY));
+        ctx.strokeStyle = stroke_color;
+        ctx.strokeText(   text, 
+                          this.resolutionScaler(posX), 
+                          this.resolutionScaler(posY));
     }
 
     textureLoader(path)
@@ -87,15 +88,6 @@ class Tool_Kit
         texture.src = path;
         return texture;
     }
-    // textPropertiesModifier(font_scale = this.font_scale, font_type = this.font_type, font = this.font, stroke_line_width = this.stroke_line_width)
-    // {
-    //     this.ctx.font          = font_type+" "+this.resolutionScaler(font_scale)+"px"+font;
-    //     this.ctx.lineWidth     = this.resolutionScaler(stroke_line_width);
-    //     this.font_scale        = font_scale;
-    //     this.font_type         = font_type;
-    //     this.font              = font;
-    //     this.stroke_line_width = stroke_line_width;
-    // }
 }
 class Timer_Log
 {

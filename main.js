@@ -38,7 +38,7 @@ const ctx = canvas.getContext("2d", {alpha : false});
 canvas.width = 1200;
 canvas.height = 675;
 
-var keys_input = [0,0,0,0,0,0,0,0,0,0]
+var keys_input = [0,0,0,0,0,0,0,0,0,0];
 
 ctx.canvas.addEventListener('mousemove', function(event)
 {
@@ -135,27 +135,65 @@ document.addEventListener("webkitfullscreenchange", function () {
     Fullscreen.canvasfullscreen = (document.webkitIsFullScreen) ? true : false;
 }, false);
 
+var devmode = false;
+var menu = 1;
+var lastmenu = -1;
+
+export{ctx, menu, lastmenu}
+
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
-import {Transition} from "./includes/gui/transition.js";
-import {FPS} from "./includes/display/fps_cap.js"
-import {Animatic} from "./includes/animatic.js";
+const MainLoop = new Timer_Log()
+const Tools = new Tool_Kit(false, 0, 0, devmode);
+export{Tools};
+
 import {Map_Data} from "./includes/level_reader.js";
-import {PlayerData} from "./includes/player.js";
-import * as levels from "./includes/levels.js";
+const MapData = new Map_Data(ctx);
+export{MapData};
+
+import {Transition_} from "./includes/gui/transition.js";
+const Transition = new Transition_(ctx);
+
+import {Fps_} from "./includes/display/fps_cap.js";
+const Fps = new Fps_();
+
+import {Animatic_} from "./includes/animatic.js";
+const Button1 = new Animatic_(ctx);
+const Button2 = new Animatic_(ctx);
+const Button3 = new Animatic_(ctx);
+const Button4 = new Animatic_(ctx);
+const Button5 = new Animatic_(ctx);
+const Button6 = new Animatic_(ctx);
+const Button7 = new Animatic_(ctx);
+const Button8 = new Animatic_(ctx);
+const Button9 = new Animatic_(ctx);
+const Button10 = new Animatic_(ctx);
+const Button11 = new Animatic_(ctx);
+export{Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11};
+
+import {Player_Data} from "./includes/player.js";
+const Player = new Player_Data();
+
 import {Map_Editor} from "./includes/map_editor.js";
-import{Pause} from "./includes/gui/pause.js";
+const MapEditor = new Map_Editor(ctx);
+
+import{Pause_} from "./includes/gui/pause.js";
+const Pause = new Pause_(ctx)
+
 import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js";
+const Fullscreen = new Canvas_resolution_asset();
+
+import * as levels from "./includes/levels.js";
 
 var command = "false"; //command
 var push = 0;
-var devmode = false;
+
 var godmode = false;
 var camsmootherenable = true;
-const Fullscreen = new Canvas_resolution_asset();
-const Tools = new Tool_Kit(ctx, false, 0, 0, devmode);
+
+
 
 var return_arrow = Tools.textureLoader("graphics/ui/return_arrow.png");
-var bg           = Tools.textureLoader("graphics/Map_content/background.png");
+var bg           = Tools.textureLoader("graphics/map_content/background.png");
 var plus         = Tools.textureLoader("graphics/ui/plus.png");
 var minus        = Tools.textureLoader("graphics/ui/minus.png");
 var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
@@ -163,8 +201,7 @@ var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
 var click = false;
-var menu = 1;
-var lastmenu = -1;
+
 var mouseX = 0;
 var mouseY = 0;
 var MapDatamousetranslationX = mouseX;
@@ -177,22 +214,21 @@ var transition = "false";
 var selectedaction = "N/A";
 
 
-const Fps = new FPS();
+
 
 
 //game
-var level = ["testlevel", levels.leveltest1, levels.leveltest2, levels.leveltest3]; 
+var level = ["testlevel", levels.leveltest1]; 
 var levelid = 1;
-const MapData = new Map_Data(level[levelid]);
+
 var start = true;
-const player = new PlayerData();
-const MapEditor = new Map_Editor(ctx);
+
+
 var vect = [0, 0];
 var stock = [0, 0];
 
 //Game running
-const PAUSE = new Pause(ctx)
-// const PAUSE = new Une_Classe(ctx)
+
 var playerinterpoX = 0;
 var camerainterpoX = 0;
 var playerinterpoY = 0;
@@ -210,21 +246,11 @@ var editedlevelid = 0;
 
 //Optimisation
 var firstgameframe = false;
-const MainLoop = new Timer_Log()
+
 // Buttons
-const TransitionObject = new Transition(ctx);
+
 var animaticmousevalue = [0, 0];
-const button1 = new Animatic(ctx);
-const button2 = new Animatic(ctx);
-const button3 = new Animatic(ctx);
-const button4 = new Animatic(ctx);
-const button5 = new Animatic(ctx);
-const button6 = new Animatic(ctx);
-const button7 = new Animatic(ctx);
-const button8 = new Animatic(ctx);
-const button9 = new Animatic(ctx);
-const button10 = new Animatic(ctx);
-const button11 = new Animatic(ctx);
+
 
 // MapData editor
 var block = {
@@ -295,7 +321,7 @@ var previousMapDatapropertiesvalue = "";
 
 MapData.ctx = ctx
 MapData.devmode = devmode
-player.ctx = ctx;
+Player.ctx = ctx;
 
 function openFileOption()
 {
@@ -324,26 +350,26 @@ function main()
     Tools.mouseY           = mouseY;
     Tools.devmode          = devmode;
 
-    button1.click = button2.click = 
-    button3.click = button4.click = 
-    button5.click = button6.click = 
-    button7.click = button8.click = 
-    button9.click = button10.click = 
-    button11.click = click;
+    Button1.click = Button2.click = 
+    Button3.click = Button4.click = 
+    Button5.click = Button6.click = 
+    Button7.click = Button8.click = 
+    Button9.click = Button10.click = 
+    Button11.click = click;
 
-    button1.mouseX = button2.mouseX = 
-    button3.mouseX = button4.mouseX = 
-    button5.mouseX = button6.mouseX = 
-    button7.mouseX = button8.mouseX = 
-    button9.mouseX = button10.mouseX = 
-    button11.mouseX = animaticmousevalue[0];
+    Button1.mouseX = Button2.mouseX = 
+    Button3.mouseX = Button4.mouseX = 
+    Button5.mouseX = Button6.mouseX = 
+    Button7.mouseX = Button8.mouseX = 
+    Button9.mouseX = Button10.mouseX = 
+    Button11.mouseX = animaticmousevalue[0];
 
-    button1.mouseY = button2.mouseY = 
-    button3.mouseY = button4.mouseY = 
-    button5.mouseY = button6.mouseY = 
-    button7.mouseY = button8.mouseY = 
-    button9.mouseY = button10.mouseY = 
-    button11.mouseY = animaticmousevalue[1];
+    Button1.mouseY = Button2.mouseY = 
+    Button3.mouseY = Button4.mouseY = 
+    Button5.mouseY = Button6.mouseY = 
+    Button7.mouseY = Button8.mouseY = 
+    Button9.mouseY = Button10.mouseY = 
+    Button11.mouseY = animaticmousevalue[1];
     
     firstgameframe = Fullscreen.Double_Click_Toggle(click, firstgameframe);
     animaticmousevalue = Fullscreen.Mouse_adapter(mouseX, mouseY, canvas, screen);
@@ -356,34 +382,32 @@ function main()
         ctx.fillStyle = 'rgba(0,0,0,0)';
         ctx.clearRect(0,0,canvas.width,canvas.height);
         Fps.Log()
-        TransitionObject.dt = Fps.dt
+        Transition.dt = Fps.dt
         
-        // ctx.drawImage(monImageData, 0, 0);
         switch(menu) 
         {
             case 1: //Main menu
-                
                 if(lastmenu != 1)
                 {
                     lastmenu = 1
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button1.text_type1("--Play--", 410, 375, 385, 60, 520, 420, 48, 54, 58, 60) | transition === "finish" & selectedaction === "menu2") //play
+                if(Button1.text_type1("--Play--", 410, 375, 385, 60, 520, 420, 48, 54, 58, 60) | transition === "finish" & selectedaction === "menu2") //play
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 2)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 2)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
-                if(button2.text_type1("--Setting--", 410, 475, 385, 60, 487, 520, 48, 54, 58, 60, -0.7) | transition === "finish" & selectedaction === "menu3") //setting
+                if(Button2.text_type1("--Setting--", 410, 475, 385, 60, 487, 520, 48, 54, 58, 60, -0.7) | transition === "finish" & selectedaction === "menu3") //setting
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 3)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 3)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
-                if(button3.text_type1("--Map editor--", 410, 575, 385, 60, 445, 620, 48, 54, 58, 60, -1.4) | transition === "finish" & selectedaction === "menu5") //setting
+                if(Button3.text_type1("--Map editor--", 410, 575, 385, 60, 445, 620, 48, 54, 58, 60, -1.4) | transition === "finish" & selectedaction === "menu5") //setting
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 5)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 5)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
-                break
+                break;
             case 2: case 9: //Game 
                 if(lastmenu != 2)
                 {
@@ -398,10 +422,10 @@ function main()
 
                 if(start)
                 {
-                    player.reset();
+                    Player.reset();
                     MapData.reset();
                     vect = [0, 0];
-                    player.spawn(MapData.start(level[levelid], editedlevelid));
+                    Player.spawn(MapData.start(level[levelid], editedlevelid));
                     start = false;
                 }
                 
@@ -413,20 +437,20 @@ function main()
                 {
                     for(var i = 0; i <= Fps.executionloop; i++)
                     {
-                        player.previousplayerX = player.playerX;
-                        player.previousplayerY = player.playerY;
+                        Player.previousplayerX = Player.playerX;
+                        Player.previousplayerY = Player.playerY;
                         MapData.previousoffsetX = MapData.offsetX;
                         MapData.previousoffsetY = MapData.offsetY;
 
-                        vect = player.velocity(keys_input, vect[0], vect[1], godmode, MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], PAUSE.pause);
-                        stock = MapData.collider(player.playerX, player.playerY, vect[0], vect[1], PAUSE.pause);
-                        MapData.fcamsmoother(camsmootherenable, PAUSE.pause);
+                        vect = Player.velocity(keys_input, vect[0], vect[1], godmode, MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
+                        stock = MapData.collider(Player.playerX, Player.playerY, vect[0], vect[1], Pause.pause);
+                        MapData.fcamsmoother(camsmootherenable, Pause.pause);
                         
 
-                        player.playerX = stock[0];
-                        player.playerY = stock[1];
-                        playerinterpoX = lerp(player.playerX-player.previousplayerX, Fps.pfpslog/Fps.fps);
-                        playerinterpoY = lerp(player.playerY-player.previousplayerY, Fps.pfpslog/Fps.fps);
+                        Player.playerX = stock[0];
+                        Player.playerY = stock[1];
+                        playerinterpoX = lerp(Player.playerX-Player.previousplayerX, Fps.pfpslog/Fps.fps);
+                        playerinterpoY = lerp(Player.playerY-Player.previousplayerY, Fps.pfpslog/Fps.fps);
 
                         camerainterpoX = lerp(MapData.offsetX-MapData.previousoffsetX, Fps.pfpslog/Fps.fps);
                         camerainterpoY = lerp(MapData.offsetY-MapData.previousoffsetY, Fps.pfpslog/Fps.fps);
@@ -440,52 +464,52 @@ function main()
                 
                 
 
-                MapData.display(   player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics, PAUSE.pause,
+                MapData.display(   Player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics, Pause.pause,
                                MapData.previousoffsetX+camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previousoffsetY+camerainterpoY*Fps.nbofframewithoutphysics, 
                                MapData.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics);
                 
-                player.display(MapData.collisions, PAUSE.pause, Fps.dt, //a opti
+                Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
                                MapData.previouscamsmoother[0]+smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+smoothinterpoY*Fps.nbofframewithoutphysics,
-                               player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics);
+                               Player.previousplayerX+playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+playerinterpoY*Fps.nbofframewithoutphysics);
                 
                 Fps.nbofframewithoutphysics++;
                 
-                keypressed = PAUSE.Toggle("Pause", keypressed, keys_input, Fps.dt)
-                if(PAUSE.pause) //pause
+                keypressed = Pause.Toggle("Pause", keypressed, keys_input, Fps.dt)
+                if(Pause.pause) //pause
                 {
                     ctx.fillStyle = "rgb(255,255,255)";
-                    if(button1.text_type1("Resume", 0, 145, 195, 40, -180+(PAUSE.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
+                    if(Button1.text_type1("Resume", 0, 145, 195, 40, -180+(Pause.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
                     {
-                        PAUSE.endpause = true;
+                        Pause.endpause = true;
                     }
                     if(menu === 2)
                     {
-                        if(button2.text_type1("Setting", 0, 222, 175, 40, -180+(PAUSE.pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | transition === "finish" & selectedaction === "menu4") //setting
+                        if(Button2.text_type1("Setting", 0, 222, 175, 40, -180+(Pause.pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | transition === "finish" & selectedaction === "menu4") //setting
                         {
-                            stock = TransitionObject.Switcher(transition, menu, selectedaction, 4)
+                            stock = Transition.Switcher(transition, menu, selectedaction, 4)
                             menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                             if(stock[4])
                             {
-                                PAUSE.endpause = false;
-                                PAUSE.pause = true;
-                                PAUSE.pauseframe = 10;
+                                Pause.endpause = false;
+                                Pause.pause = true;
+                                Pause.pauseframe = 10;
                             }
                         }
 
-                        if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
+                        if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                         {
                             firstgameframe = true;
                             Fullscreen.Toggle(canvas);
                         }
 
-                        if(button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu1") //back to menu
+                        if(Button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu1") //back to menu
                         {
-                            stock = TransitionObject.Switcher(transition, menu, selectedaction, 1)
+                            stock = Transition.Switcher(transition, menu, selectedaction, 1)
                             menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                             if(stock[4])
                             {
-                                PAUSE.pause = PAUSE.endpause = false;
-                                PAUSE.pauseframe = 0;
+                                Pause.pause = Pause.endpause = false;
+                                Pause.pauseframe = 0;
                                 // ctx.webkitImageSmoothingEnabled = true;
                                 // ctx.msImageSmoothingEnabled = true;
                                 // ctx.imageSmoothingEnabled = true;
@@ -494,19 +518,19 @@ function main()
                     }
                     else
                     {   
-                        if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 222, 380, 40, -180+(PAUSE.pauseframe*20), 250, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
+                        if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 222, 380, 40, -180+(Pause.pauseframe*20), 250, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                         {
                             firstgameframe = true;
                             Fullscreen.Toggle(canvas)
                         }
 
-                        if(button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu7") //back to menu
+                        if(Button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu7") //back to menu
                         {
-                            stock = TransitionObject.Switcher(transition, menu, selectedaction, 7, true)
+                            stock = Transition.Switcher(transition, menu, selectedaction, 7, true)
                             menu = stock[0]; transition = stock[1]; selectedaction = stock[2]; lastmenu = stock[3];
                             if(stock[4])
                             {
-                                PAUSE.pause = PAUSE.endpause = false;
+                                Pause.pause = Pause.endpause = false;
                             }
                         }
                     }
@@ -526,7 +550,7 @@ function main()
                 {
                     lastmenu = 3;
                 }
-                if(button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | transition === "finish" & selectedaction === "menu3.2")
+                if(Button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | transition === "finish" & selectedaction === "menu3.2")
                 {
                     switch(transition)
                     {
@@ -560,7 +584,7 @@ function main()
                 {
                     ctx.fillStyle = "rgb(255,50,75)";
                 }
-                if(button2.text_type1("Show FPS", 0, 130, 320, 60, 20, 175, 40, 45, 50, 55, 3.6, 0.4)) //show Fps.fps button
+                if(Button2.text_type1("Show FPS", 0, 130, 320, 60, 20, 175, 40, 45, 50, 55, 3.6, 0.4)) //show Fps.fps button
                 {
                     if(Fps.showfps)
                     {
@@ -580,7 +604,7 @@ function main()
                 {
                     ctx.fillStyle = "rgb(255,50,75)";
                 }
-                if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
+                if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
                 {
                     firstgameframe = true;
                     Fullscreen.Toggle(canvas);
@@ -604,7 +628,7 @@ function main()
                         ctx.fillText(Fullscreen.fullscreendownscalefactor*20+"%", Tools.resolutionScaler(900), Tools.resolutionScaler(435));
                         if(Fullscreen.fullscreendownscalefactor > 1)
                         {
-                            if(button4.texture_type1(minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & keypressed === false | transition === "finish" & selectedaction === "menu3.2")
+                            if(Button4.texture_type1(minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & keypressed === false | transition === "finish" & selectedaction === "menu3.2")
                             {
                                 Fullscreen.fullscreendownscalefactor--;
                                 firstgameframe = true;
@@ -612,7 +636,7 @@ function main()
                         }
                         if(Fullscreen.fullscreendownscalefactor < 5)
                         {
-                            if(button5.texture_type1(plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & keypressed === false | transition === "finish" & selectedaction === "menu3.2")
+                            if(Button5.texture_type1(plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & keypressed === false | transition === "finish" & selectedaction === "menu3.2")
                             {
                                 if(Fullscreen.fullscreendownscalefactor == 4)
                                 {
@@ -631,7 +655,7 @@ function main()
                     {
                         ctx.fillStyle = "rgb(255,50,75)";
                     }
-                    if(button6.text_type1("Fullscreen downscale", 100, 391, 660, 60, 120, 435, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen
+                    if(Button6.text_type1("Fullscreen downscale", 100, 391, 660, 60, 120, 435, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen
                     {
                         if(Fullscreen.fullscreendownscale)
                         {
@@ -649,7 +673,7 @@ function main()
                     }
                     ctx.fillStyle = "rgb(255,50,75)";
                 }
-                if(button7.text_type1("Fullscreen Upscale", 0, 330, 560, 60, 20, 375, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen upscale button
+                if(Button7.text_type1("Fullscreen Upscale", 0, 330, 560, 60, 20, 375, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen upscale button
                 {
                     if(Fullscreen.fullscreenupscale)
                     {
@@ -675,7 +699,7 @@ function main()
                 {
                     ctx.fillStyle = "rgb(255,50,75)";
                 }
-                if(button8.text_type1("Cap the game at 30fps", 0, 490, 650, 60, 20, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
+                if(Button8.text_type1("Cap the game at 30fps", 0, 490, 650, 60, 20, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
                 {
                     if(Fps.cap30fps === 30)
                     {
@@ -698,29 +722,29 @@ function main()
                 ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
                 ctx.fillText("MapData editor", Tools.resolutionScaler(345), Tools.resolutionScaler(75));
 
-                if(button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | transition === "finish" & selectedaction === "menu1")
+                if(Button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | transition === "finish" & selectedaction === "menu1")
                 {
                     ctx.fillStyle = "rgb(255,255,255)";
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 1)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 1)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
 
-                if(button2.text_type1("New", 0, 225, 320, 100, 20, 300, 80, 85, 90, 95, 3.6, 0.4) | transition === "finish" & selectedaction === "menu6") //create a new file
+                if(Button2.text_type1("New", 0, 225, 320, 100, 20, 300, 80, 85, 90, 95, 3.6, 0.4) | transition === "finish" & selectedaction === "menu6") //create a new file
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 6)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 6)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
 
-                if(button3.text_type1("Load", 0, 400, 320, 100, 20, 475, 80, 85, 90, 95, 3.6, 0.4)) //load a file
+                if(Button3.text_type1("Load", 0, 400, 320, 100, 20, 475, 80, 85, 90, 95, 3.6, 0.4)) //load a file
                 {
                     openFileOption();
                     // console.log(document.getElementById('fileItem').files[0])
-                    button1.click = button2.click = 
-                    button3.click = button4.click = 
-                    button5.click = button6.click = 
-                    button7.click = button8.click = 
-                    button9.click = button10.click = 
-                    button11.click = click = false;
+                    Button1.click = Button2.click = 
+                    Button3.click = Button4.click = 
+                    Button5.click = Button6.click = 
+                    Button7.click = Button8.click = 
+                    Button9.click = Button10.click = 
+                    Button11.click = click = false;
                 }
                 break
             case 6: //MapData creator init menu
@@ -732,15 +756,15 @@ function main()
                 ctx.fillStyle = "rgb(255,255,255)";
                 ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
                 ctx.fillText("MapData properties", Tools.resolutionScaler(250), Tools.resolutionScaler(75));
-                if(button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Cancel", 50, 70, 20) | transition === "finish" & selectedaction === "menu5")
+                if(Button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Cancel", 50, 70, 20) | transition === "finish" & selectedaction === "menu5")
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 5)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 5)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
                 ctx.drawImage(no_preview, Tools.resolutionScaler(262), Tools.resolutionScaler(255), Tools.resolutionScaler(75), Tools.resolutionScaler(75));
                 ctx.strokeStyle = "rgb(255,255,255)";
                 ctx.strokeRect(Tools.resolutionScaler(12),Tools.resolutionScaler(130),Tools.resolutionScaler(576),Tools.resolutionScaler(324));
-                if(button2.text_type2("Name : "+MapData_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
+                if(Button2.text_type2("Name : "+MapData_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
                 {
                     previousMapDatapropertiesvalue = MapData_pack[3][0][0][0];
                     MapData_pack[3][0][0][0] = prompt("Name level:");
@@ -750,7 +774,7 @@ function main()
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button3.text_type2("MapData width : "+MapData_pack[3][0][0][1], 600, 230, 600, 60, 620, 280, 40))
+                if(Button3.text_type2("MapData width : "+MapData_pack[3][0][0][1], 600, 230, 600, 60, 620, 280, 40))
                 {
                     previousMapDatapropertiesvalue = MapData_pack[3][0][0][1];
                     MapData_pack[3][0][0][1] = prompt("Set width:");
@@ -766,7 +790,7 @@ function main()
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button4.text_type2("MapData height : "+MapData_pack[3][0][0][2], 600, 330, 600, 60, 620, 380, 40))
+                if(Button4.text_type2("MapData height : "+MapData_pack[3][0][0][2], 600, 330, 600, 60, 620, 380, 40))
                 {
                     previousMapDatapropertiesvalue = MapData_pack[3][0][0][2];
                     MapData_pack[3][0][0][2] = prompt("Set height:");
@@ -782,9 +806,9 @@ function main()
                     }
                 }
                 ctx.fillStyle = "rgb(255,255,255)";
-                if(button5.text_type2("Create", 0, 470, 1200, 205, 250, 650, 225, "rgb(255,255,255)", 5) | transition === "finish" & selectedaction === "menu7")
+                if(Button5.text_type2("Create", 0, 470, 1200, 205, 250, 650, 225, "rgb(255,255,255)", 5) | transition === "finish" & selectedaction === "menu7")
                 {
-                    stock = TransitionObject.Switcher(transition, menu, selectedaction, 7)
+                    stock = Transition.Switcher(transition, menu, selectedaction, 7)
                     menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                 }
                 break
@@ -795,7 +819,7 @@ function main()
                     editedlevelid = 0;
                     MapData_pack = level[levelid];
                     start = true;
-                    PAUSE.pause = false;
+                    Pause.pause = false;
                     edition_mode = 0;
                     lastmenu = 7;
                 }
@@ -816,21 +840,21 @@ function main()
                 ctx.lineWidth = Tools.resolutionScaler(1);
                 ctx.strokeText("["+Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", mouseX+Tools.resolutionScaler(10), mouseY-Tools.resolutionScaler(10));
                 
-                if(PAUSE.pause === false)
+                if(Pause.pause === false)
                 {
-                    if(button1.texture_type2(1160, 10, MapEditor.add_block_icon, "Add"))
+                    if(Button1.texture_type2(1160, 10, MapEditor.add_block_icon, "Add"))
                     {
                         edition_mode = 0;
                         sub_edition_mode = 0;
                         mousepressed = false;
                     }
-                    if(button2.texture_type2(1160, 50, MapEditor.modification_icon, "Modifications"))
+                    if(Button2.texture_type2(1160, 50, MapEditor.modification_icon, "Modifications"))
                     {
                         edition_mode = 1;
                         sub_edition_mode = 0;
                         mousepressed = false;
                     }
-                    if(button3.texture_type2(1160, 90, MapEditor.remove_block_icon, "Delete"))
+                    if(Button3.texture_type2(1160, 90, MapEditor.remove_block_icon, "Delete"))
                     {
                         edition_mode = 2;
                         sub_edition_mode = 0;
@@ -864,23 +888,23 @@ function main()
                             }
                             ctx.fillStyle = "rgb(255,255,150)";
                             ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(13), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(button4.texture_type2(1160, 170, MapEditor.add_block_icon, "Add blocks"))
+                            if(Button4.texture_type2(1160, 170, MapEditor.add_block_icon, "Add blocks"))
                             {
                                 sub_edition_mode = 0;
                             }
-                            if(button5.texture_type2(1160, 210, MapEditor.add_water_icon, "Add water"))
+                            if(Button5.texture_type2(1160, 210, MapEditor.add_water_icon, "Add water"))
                             {
                                 sub_edition_mode = 1;
                             }
-                            if(button6.texture_type2(1160, 250, MapEditor.add_ennemy_icon, "Add ennemies"))
+                            if(Button6.texture_type2(1160, 250, MapEditor.add_ennemy_icon, "Add ennemies"))
                             {
                                 sub_edition_mode = 2;
                             }
-                            if(button7.texture_type2(1160, 290, MapEditor.add_interactive_block_icon, "Add interactive blocks"))
+                            if(Button7.texture_type2(1160, 290, MapEditor.add_interactive_block_icon, "Add interactive blocks"))
                             {
                                 sub_edition_mode = 3;
                             }
-                            if(button8.texture_type2(1160, 330, MapEditor.add_decoration_icon, "Add decorations"))
+                            if(Button8.texture_type2(1160, 330, MapEditor.add_decoration_icon, "Add decorations"))
                             {
                                 sub_edition_mode = 4;
                             }
@@ -902,15 +926,15 @@ function main()
                             }
                             ctx.fillStyle = "rgb(255,255,150)";
                             ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(53), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(button4.texture_type2(1160, 170, MapEditor.move_block_icon, "Move objects"))
+                            if(Button4.texture_type2(1160, 170, MapEditor.move_block_icon, "Move objects"))
                             {
                                 sub_edition_mode = 0;
                             }
-                            if(button5.texture_type2(1160, 210, MapEditor.move_decoration_icon, "Move decorations"))
+                            if(Button5.texture_type2(1160, 210, MapEditor.move_decoration_icon, "Move decorations"))
                             {
                                 sub_edition_mode = 1;
                             }
-                            if(button6.texture_type2(1160, 250, MapEditor.modification_icon, "Modify properties"))
+                            if(Button6.texture_type2(1160, 250, MapEditor.modification_icon, "Modify properties"))
                             {
                                 sub_edition_mode = 2;
                             }
@@ -930,11 +954,11 @@ function main()
                             }
                             ctx.fillStyle = "rgb(255,255,150)";
                             ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(93), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(button4.texture_type2(1160, 170, MapEditor.remove_block_icon, "Remove blocks"))
+                            if(Button4.texture_type2(1160, 170, MapEditor.remove_block_icon, "Remove blocks"))
                             {
                                 sub_edition_mode = 0;
                             }
-                            if(button5.texture_type2(1160, 210, MapEditor.remove_decoration_icon, "Remove decorations"))
+                            if(Button5.texture_type2(1160, 210, MapEditor.remove_decoration_icon, "Remove decorations"))
                             {
                                 sub_edition_mode = 1;
                             }
@@ -943,7 +967,7 @@ function main()
                     ctx.fillStyle = "rgb(255,255,255)";
                     ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(173+sub_edition_mode*40), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
                     
-                    if(button3.texture_type2(90, 635, MapEditor.play_icon, "Test the MapData", true) | transition === "finish" & selectedaction === "menu9")
+                    if(Button3.texture_type2(90, 635, MapEditor.play_icon, "Test the MapData", true) | transition === "finish" & selectedaction === "menu9")
                     {
                         switch(transition)
                         {
@@ -959,11 +983,11 @@ function main()
                         }
                         mousepressed = true;
                     }
-                    if(button2.texture_type2(50, 635, MapEditor.end_block_icon, "Add end level zone", true))
+                    if(Button2.texture_type2(50, 635, MapEditor.end_block_icon, "Add end level zone", true))
                     {
                         mousepressed = true;
                     }
-                    if(button1.texture_type2(10, 635, MapEditor.spawn_icon, "Set spawn point", true))
+                    if(Button1.texture_type2(10, 635, MapEditor.spawn_icon, "Set spawn point", true))
                     {
                         spawnmodifier = true
                         mousepressed = true;
@@ -1084,60 +1108,57 @@ function main()
                 }
                 
 
-                if(PAUSE.pause === false)
+                if(Pause.pause === false)
                 {
                     ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
                     ctx.fillStyle = "rgba(255,255,255,0.7)";
                     ctx.fillText("Press P to show the menu", Tools.resolutionScaler(875), Tools.resolutionScaler(640)); //mouse pos
                     ctx.fillText("Press H to get the control ", Tools.resolutionScaler(875), Tools.resolutionScaler(665)); //mouse pos
                 }
-                if(keys_input[6] === 1 & PAUSE.pkey === false | PAUSE.pause) //PAUSE.pause
+                if(keys_input[6] === 1 & Pause.pkey === false | Pause.pause) //Pause.pause
                 {
-                    keypressed = PAUSE.Toggle("Pause", keypressed, keys_input, Fps.dt)
+                    keypressed = Pause.Toggle("Pause", keypressed, keys_input, Fps.dt)
 
                     ctx.fillStyle = "rgb(255,255,255)";
 
-                    if(button1.text_type1("Resume", 0, 145, 195, 40, -180+(PAUSE.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
+                    if(Button1.text_type1("Resume", 0, 145, 195, 40, -180+(Pause.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
                     {
-                        PAUSE.endpause = true;
+                        Pause.endpause = true;
                     }
 
-                    if(button2.text_type1("Setting", 0, 222, 175, 40, -180+(PAUSE.pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | transition === "finish" & selectedaction === "menu8") //setting
+                    if(Button2.text_type1("Setting", 0, 222, 175, 40, -180+(Pause.pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | transition === "finish" & selectedaction === "menu8") //setting
                     {
-                        stock = TransitionObject.Switcher(transition, menu, selectedaction, 8)
+                        stock = Transition.Switcher(transition, menu, selectedaction, 8)
                         menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                         if(stock[4])
                         {
-                            PAUSE.endpause = false;
-                            PAUSE.pause = true;
-                            PAUSE.pauseframe = 10;
+                            Pause.endpause = false;
+                            Pause.pause = true;
+                            Pause.pauseframe = 10;
                         }
                     }
 
-                    if(button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(PAUSE.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
+                    if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                     {
                         firstgameframe = true;
                         Fullscreen.Toggle(canvas);
                     }
 
-                    if(button4.text_type1("Modify MapData properties", 0, 370, 470, 40, -180+(PAUSE.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
+                    if(Button4.text_type1("Modify MapData properties", 0, 370, 470, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
                     {
                     }
-                    if(button5.text_type1("Change MapData", 0, 445, 285, 40, -180+(PAUSE.pauseframe*20), 475, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
+                    if(Button5.text_type1("Change MapData", 0, 445, 285, 40, -180+(Pause.pauseframe*20), 475, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "bop") //back to menu
                     {
                     }
-                    if(button6.text_type1("Quit", 0, 520, 125, 40, -180+(PAUSE.pauseframe*20), 550, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu5") //back to menu
+                    if(Button6.text_type1("Quit", 0, 520, 125, 40, -180+(Pause.pauseframe*20), 550, 30, 33, 36, 40, 3.8, 0.4) | transition === "finish" & selectedaction === "menu5") //back to menu
                     {
-                        stock = TransitionObject.Switcher(transition, menu, selectedaction, 5)
+                        stock = Transition.Switcher(transition, menu, selectedaction, 5)
                         menu = stock[0]; transition = stock[1]; selectedaction = stock[2];
                         if(stock[4])
                         {
-                            // ctx.webkitImageSmoothingEnabled = true;
-                            // ctx.msImageSmoothingEnabled = true;
-                            // ctx.imageSmoothingEnabled = true;
-                            PAUSE.endpause = false;
-                            PAUSE.pause = false;
-                            PAUSE.pauseframe = 0;
+                            Pause.endpause = false;
+                            Pause.pause = false;
+                            Pause.pauseframe = 0;
                         }
                     }
                 }
@@ -1205,33 +1226,33 @@ function main()
             mousepressed = false;
             Fullscreen.doubleclickfullscreenmousepressed = false;
         }
-        button1.mousepressed = button2.mousepressed = 
-        button3.mousepressed = button4.mousepressed = 
-        button5.mousepressed = button6.mousepressed = 
-        button7.mousepressed = button8.mousepressed = 
-        button9.mousepressed = button10.mousepressed = 
-        button11.mousepressed = mousepressed;
+        Button1.mousepressed = Button2.mousepressed = 
+        Button3.mousepressed = Button4.mousepressed = 
+        Button5.mousepressed = Button6.mousepressed = 
+        Button7.mousepressed = Button8.mousepressed = 
+        Button9.mousepressed = Button10.mousepressed = 
+        Button11.mousepressed = mousepressed;
         for(let i = 0; i < keys_input.length; ++i)
         {    
             if(keys_input[i] === 0)
             {
                 keypressed = false;
-                PAUSE.pkey = false;
+                Pause.pkey = false;
             }
             else
             {
                 keypressed = true;
                 if(keys_input[6] === 1)
                 {
-                    PAUSE.pkey = true;
+                    Pause.pkey = true;
                 }
                 break;
             }
         }
-        TransitionObject.minus(transition);
+        Transition.minus(transition);
         if(transition === "true")
         {
-            transition = TransitionObject.plus();
+            transition = Transition.plus();
         }
         ctx.font = Tools.resolutionScaler(20)+'px arial';
         ctx.lineWidth = Tools.resolutionScaler(1);
@@ -1258,11 +1279,11 @@ function main()
 
                 Tools.logText("Collisions : "+MapData.collisions, 963, 175); //collisions
 
-                Tools.logText("PX : "+Math.round(player.playerX), 985, 200); //px
+                Tools.logText("PX : "+Math.round(Player.playerX), 985, 200); //px
                 Tools.logText("|", 1080, 200);
                 Tools.logText("OffOnX : "+MapData.offsetX_on, 1092, 200);
                 
-                Tools.logText("PY : "+Math.round(player.playerY), 985, 225); //py
+                Tools.logText("PY : "+Math.round(Player.playerY), 985, 225); //py
                 Tools.logText("|", 1080, 225);
                 Tools.logText("OffOnY : "+MapData.offsetY_on, 1092, 225);
                 
@@ -1287,7 +1308,7 @@ function main()
                 Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
-                Tools.logText(player.ground_slideposition+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(Player.ground_slideposition+"   "+camerainterpoX*(Fps.fps/Fps.pfpslog)+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
             if(menu === 7)
             {
@@ -1296,7 +1317,7 @@ function main()
                 Tools.logText("|", 1080, 275);
                 Tools.logText("OY : "+MapEditor.offsetY, 1092, 275);
 
-                Tools.logText(TransitionObject.currentfadestate+"    " , 1000, 500); //-------------------------------------------------------test var-----------------------------------------------
+                Tools.logText(Transition.currentfadestate+"    " , 1000, 500); //-------------------------------------------------------test var-----------------------------------------------
             }
         }
         if(Fps.showfps)
@@ -1305,11 +1326,11 @@ function main()
             Tools.logText(Fps.fps+" GFPS "+Number.parseFloat(Fps.dt).toPrecision(3)+" DT", 20, 25, "rgb(0,255,0)", "rgb(0,100,0)"); //GFPS = Frame d'affichage
             Tools.logText(Fps.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique
             Tools.logText("Main : "+Number.parseFloat(MainLoop.log).toPrecision(3)+" ms", 20, 75, "rgb(0,255,0)", "rgb(0,100,0)"); //Temps de latence entre le début et la fin de la frame
-            Tools.logText("-Player velocity : "+Number.parseFloat(player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Player display : "+Number.parseFloat(player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Player display : "+Number.parseFloat(Player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
         }
         previousmouseX = animaticmousevalue[0];
         previousmouseY = animaticmousevalue[1];
@@ -1321,4 +1342,4 @@ function main()
 }
 
 main();
-export{Tools, MapData}
+
