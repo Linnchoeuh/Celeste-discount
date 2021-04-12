@@ -1,4 +1,4 @@
-import {Tools} from "../main.js";
+import {Tools} from "../relay_one.js";
 class Pause
 {
     constructor(ctx)
