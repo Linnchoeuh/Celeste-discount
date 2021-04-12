@@ -223,7 +223,6 @@ var push = 0;
 
 
 var return_arrow = Tools.textureLoader("graphics/ui/return_arrow.png");
-var bg           = Tools.textureLoader("graphics/map_content/background.png");
 var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
 
 var key_press = "N/A"; //ui and interactivity
@@ -493,8 +492,6 @@ function main()
                     edition_mode = 0;
                     GV.last_menu = 7;
                 }
-                
-                ctx.drawImage(bg, 0, 0, Tools.resolutionScaler(1200), Tools.resolutionScaler(675));
                 if(GV.start)
                 {
                     // MapEditor.load(MapData_pack);

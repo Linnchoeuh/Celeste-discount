@@ -203,6 +203,7 @@ class Map_Data
         this.previouscamsmoother = [0,0];
         this.level_data_textures = [];
         this.data_temp = [];
+        this.bg = Tools.textureLoader("graphics/map_content/background.png");
         this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
         this.testblock = Tools.textureLoader("graphics/map_content/test_block.png");
         this.CollisionsLoop = new Timer_Log();
@@ -600,6 +601,7 @@ class Map_Data
     {
         this.GraphicsLoop.startTime()
         this.operation_count = 0;
+        ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
         if(pause === false)    
         {
             this.offsetsmoothX = Math.round(Tools.resolutionScaler(offsetX-smoothX));
