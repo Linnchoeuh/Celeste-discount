@@ -592,7 +592,7 @@ function main()
 
                 
                 
-                ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+                // ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
                 if(Fps.Physics_Refresh_Cap(60)) //gestion de la physique
                 {
                     for(var i = 0; i <= Fps.executionloop; i++)
