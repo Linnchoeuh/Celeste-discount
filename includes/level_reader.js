@@ -169,12 +169,12 @@ class Map_Data
         this.maxi = 0;
         this.i_define = 0;
 
-        this.block_map = []
-        this.block_map_snap_position = []
-        this.block_index = []
+        this.block_map = [0]
+        this.block_map_snap_position = [0]
+        this.block_index = [0]
         this.index_value = 0;
-        this.block_map_type_texture = []
-        this.copy_file = [];
+        this.block_map_type_texture = [0]
+        this.copy_file = [0];
         this.all_block_map_count = 0;
         this.operation_count = 0;
 

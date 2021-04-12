@@ -1308,7 +1308,7 @@ function main()
             Tools.logText("-Player velocity : "+Number.parseFloat(player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-MapData display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Player display : "+Number.parseFloat(player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
         }
         previousmouseX = animaticmousevalue[0];
