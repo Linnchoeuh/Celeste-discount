@@ -136,7 +136,7 @@ document.addEventListener("webkitfullscreenchange", function () {
 }, false);
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
-// import {Pause} from "./includes/gui/pause.js";
+import {Pause} from "./includes/gui/pause.js";
 import {Transition} from "./includes/gui/transition.js";
 // import {Canvas_resolution_asset} from "./includes/gui/fullscreen_asset.js"
 import {FPS} from "./includes/display/fps_cap.js"
@@ -146,7 +146,7 @@ import {PlayerData} from "./includes/player.js";
 import * as levels from "./includes/levels.js";
 import {Map_Editor} from "./includes/map_editor.js";
 
-import{Une_Classe} from "./includes/gui/test.js";
+// import{Une_Classe} from "./includes/gui/test.js";
 
 class Pause
 {
@@ -378,7 +378,7 @@ var vect = [0, 0];
 var stock = [0, 0];
 
 //Game running
-const PAUSE = new Une_Classe(ctx)
+const PAUSE = new Pause(ctx)
 var playerinterpoX = 0;
 var camerainterpoX = 0;
 var playerinterpoY = 0;
