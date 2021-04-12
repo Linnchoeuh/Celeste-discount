@@ -1,4 +1,5 @@
-import {Tools} from "/main.js";
+import {Tools} from "../../main.js";
+
 class Pause
 {
     constructor(ctx)
@@ -45,7 +46,7 @@ class Pause
             }
             if(keys_input[6] === 1 & this.pkey === false || this.endpause)
             {
-                
+
                 this.endpause = true;
                 this.grd.addColorStop(0.1, "transparent");
                 this.grd.addColorStop(0, "black");
@@ -60,8 +61,8 @@ class Pause
                 }
             }
         }
-        return keypressed; 
+        return keypressed;
     }
 }
 
-export{Pause}
+export{Pause};
