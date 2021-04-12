@@ -99,8 +99,8 @@ class Canvas_resolution_asset
                 this.ablefullscreen = "Enable";
             }
             firstgameframe = false;
-            // Tools.requiredDisplayVariableUpdater()
-            // MapData.requiredDisplayVariableUpdater()
+            Tools.requiredDisplayVariableUpdater()
+            MapData.requiredDisplayVariableUpdater()
         }
         if(this.canvasfullscreen & keys_input[9] == 1)
         {
@@ -111,8 +111,8 @@ class Canvas_resolution_asset
             canvas.width = 1200;
             canvas.height = 675;
             this.ablefullscreen = "Enable";
-            // Tools.requiredDisplayVariableUpdater()
-            // MapData.requiredDisplayVariableUpdater()
+            Tools.requiredDisplayVariableUpdater()
+            MapData.requiredDisplayVariableUpdater()
         }
         return firstgameframe;
     }
