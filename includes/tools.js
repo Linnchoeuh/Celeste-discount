@@ -1,13 +1,12 @@
-import {ctx} from "../main.js";
+import {ctx, GV} from "../main.js";
 
 class Tool_Kit
 {
-    constructor(canvasfullscreen = false, mouseX = -1, mouseY = -1, devmode = false)
+    constructor(canvasfullscreen = false, mouseX = -1, mouseY = -1)
     {
         this.canvasfullscreen = canvasfullscreen;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-        this.devmode = devmode;
 
         this.font = "arial";
         this.font_type = "";
@@ -51,7 +50,7 @@ class Tool_Kit
 
     invisibleMouseCollider(posX, posY, width, height)
     {
-        if(this.devmode)
+        if(GV.devmode)
         {
             ctx.strokeStyle = "rgb(255,255,255)";
             ctx.strokeRect(this.resolutionScaler(posX),this.resolutionScaler(posY),this.resolutionScaler(width),this.resolutionScaler(height));
@@ -87,6 +86,11 @@ class Tool_Kit
         var texture = new Image();
         texture.src = path;
         return texture;
+    }
+
+    lerp(n, time)
+    {
+        return n*time;
     }
 }
 class Timer_Log

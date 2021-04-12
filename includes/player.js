@@ -1,4 +1,4 @@
-import {Tools} from "../main.js";
+import {ctx, Tools, GV} from "../main.js";
 import {Timer_Log} from "./tools.js";
 
 function texture_loader(path)
@@ -138,7 +138,7 @@ class Player_Data
         this.playerY = coords[1]-1;
     }
 
-    velocity(input, vx, vy, godmode, collisions, offsetX_on, offsetY_on, distanceground, pause)
+    velocity(input, vx, vy, collisions, offsetX_on, offsetY_on, distanceground, pause)
     {
         this.PhysicsLoop.startTime()
         this.vector_Y = -vy;
@@ -146,7 +146,7 @@ class Player_Data
         {     
             this.ground_slideposition = 0;
             this.jump_animation_postion = 0;
-            if(godmode === false)
+            if(GV.godmode === false)
             {
                 if(this.wallleave >= this.wallleavemax) //moving
                 {   
@@ -501,10 +501,10 @@ class Player_Data
         switch(this.walljump)
         {
             case 1:
-                this.ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                 break;
             case -1:
-                this.ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                 break;
             case 0:
                 switch(this.lastdirection)
@@ -517,7 +517,7 @@ class Player_Data
                                 if(this.animationmoving === true && collisions[3] === 0 && this.ground_slideposition === 0)
                                 {       
                                     this.movingleftframe = 0;
-                                    this.ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.movingrightframe += 1/dt;
@@ -529,19 +529,19 @@ class Player_Data
                                 }
                                 else if(this.ground_slideposition === 1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                                 else
                                 {
                                     this.movingrightframe = 0;
-                                    this.ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
-                                    this.ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.fallingframe += 1/dt;
@@ -554,11 +554,11 @@ class Player_Data
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    this.ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    this.ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.jumpframe += 1/dt;
@@ -572,7 +572,7 @@ class Player_Data
                         }
                         else
                         {
-                            this.ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                            ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                         }
                         break
                     case -1:
@@ -583,7 +583,7 @@ class Player_Data
                                 if(this.animationmoving === true && collisions[2] === 0 && this.ground_slideposition === 0)
                                 {
                                     this.movingrightframe = 0;
-                                    this.ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.movingleftframe += 1/dt;
@@ -595,19 +595,19 @@ class Player_Data
                                 }
                                 else if(this.ground_slideposition === -1)
                                 {
-                                    this.ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                                 else
                                 {
                                     this.movingleftframe = 0;
-                                    this.ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
-                                    this.ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.fallingframe += 1/dt;
@@ -620,11 +620,11 @@ class Player_Data
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    this.ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    this.ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                                     if(pause === false)
                                     {
                                         this.jumpframe += 1/dt;
@@ -638,7 +638,7 @@ class Player_Data
                         }
                         else
                         {
-                            this.ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                            ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
                         }
                         break
                 }

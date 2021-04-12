@@ -1,5 +1,5 @@
 import {Tools, MapData} from "../../main.js";
-class Canvas_resolution_asset
+class Canvas_Resolution_Asset
 {
     constructor()
     {
@@ -118,4 +118,4 @@ class Canvas_resolution_asset
     }
 }
 
-export{Canvas_resolution_asset}
+export{Canvas_Resolution_Asset}

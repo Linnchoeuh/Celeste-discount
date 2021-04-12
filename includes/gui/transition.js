@@ -1,67 +1,68 @@
+import {ctx} from "../../main.js";
 class Transition_
 {
-    constructor(ctx)
+    constructor()
     {
-        this.ctx = ctx;
         this.dt = 1;
         this.currentfadestate = 0;
+        this.transition_state = "false"
+        this.selectedaction = "N/A"
     }
 
-    plus()
+    displayer()
     {
-        if(0.05*this.currentfadestate < 1)    
-        {    
-            this.ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate)+")";
-            this.ctx.fillRect(0,0,canvas.width,canvas.height);
-            this.currentfadestate += 1/this.dt;
-            return "true";
-        }
-        else
-        {
-            this.ctx.fillStyle = "rgb(0,0,0)";
-            this.ctx.fillRect(0,0,canvas.width,canvas.height);
-            return "finish";
-        }
-    }
-    
-    minus(transition)
-    {
-        if(transition != "true")
+        if(this.transition_state != "true")
         {    
             if(0.05*this.currentfadestate > 0 & 0.05*this.currentfadestate < 1)    
             {    
-                this.ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate/this.dt)+")";
-                this.ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate/this.dt)+")";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
                 this.currentfadestate -= 1/this.dt;
             }
             else if(0.05*this.currentfadestate >= 1)
             {
-                this.ctx.fillStyle = "rgb(0,0,0)";
-                this.ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = "rgb(0,0,0)";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
                 this.currentfadestate -= 1/this.dt;
+            }
+        }
+        else
+        {
+            if(0.05*this.currentfadestate < 1)    
+            {    
+                ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate)+")";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                this.currentfadestate += 1/this.dt;
+                this.transition_state = "true";
+            }
+            else
+            {
+                ctx.fillStyle = "rgb(0,0,0)";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                this.transition_state = "finish";
             }
         }
     }
 
-    Switcher(transition, menu, selectedaction, menu_change, lastmenu_sync = false/*pour ne pas activer le reset des valeur lors de l'arrivé dans l'autre menu*/) //Permet le bon timing de transition entre un menu et un autre
+    Switcher(menu, menu_change, lastmenu_sync = false/*pour ne pas activer le reset des valeur lors de l'arrivé dans l'autre menu*/) //Permet le bon timing de transition entre un menu et un autre
     {
-        switch(transition)
+        switch(this.transition_state)
         {
             case "false":
-                transition = "true";
-                selectedaction = "menu"+menu_change+"";
+                this.transition_state = "true";
+                this.selectedaction = "menu"+menu_change+"";
                 break;
             case "finish":
                 menu = menu_change;
-                transition = "false";
-                selectedaction = "N/A";
+                this.transition_state = "false";
+                this.selectedaction = "N/A";
                 if(lastmenu_sync)
                 {
-                    lastmenu_sync = menu_change
+                    lastmenu_sync = menu_change;
                 }
-                return [menu, transition, selectedaction, lastmenu_sync, true] //La valeure true permet d'effectuer des changement spécifique au moment ou la transition est sur un fond noir
+                return [menu, lastmenu_sync, true]; //La valeure true permet d'effectuer des changement spécifique au moment ou la transition est sur un fond noir
         }
-        return [menu, transition, selectedaction, lastmenu_sync, false]
+        return [menu, lastmenu_sync, false];
     }
 }
 

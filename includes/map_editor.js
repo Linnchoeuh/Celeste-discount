@@ -1,12 +1,11 @@
-import {Tools} from "../main.js";
+import {ctx, Tools} from "../main.js";
 
 var testblock = new Image();
 testblock.src = "graphics/map_content/test_block.png";
 class Map_Editor
 {
-    constructor(ctx)
+    constructor()
     {
-        this.ctx = ctx;
         this.offsetX = 0;
         this.offsetY = 0;
         this.maplimit = [0, 0];
@@ -129,9 +128,9 @@ class Map_Editor
     display(spawnmodifier)
     {
         this.cache_data = [Math.round(this.offsetX/71), this.maplimit[0]+1, Math.round(this.offsetY/71), 0, Tools.resolutionScalerAddOne(71), 0, 0];
-        this.ctx.font = Tools.resolutionScaler(15)+'px arial';
-        this.ctx.fillStyle = "rgb(255,255,255)";
-        this.ctx.lineWidth = 1;
+        ctx.font = Tools.resolutionScaler(15)+'px arial';
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.lineWidth = 1;
         // console.log(this.level_data_textures[8][0])
         for (let i = this.cache_data[2]-1; i < this.cache_data[2]+10; i++) //Affichage des textures
         {
@@ -163,18 +162,18 @@ class Map_Editor
                     switch(this.level_data_textures[k][2][0]) // selection des textures
                     {
                         case 0:
-                            this.ctx.drawImage(testblock, Tools.resolutionScaler(this.level_data_textures[k][2]-this.offsetX), this.cache_data[3], this.cache_data[4], this.cache_data[4]); //testblock
+                            ctx.drawImage(testblock, Tools.resolutionScaler(this.level_data_textures[k][2]-this.offsetX), this.cache_data[3], this.cache_data[4], this.cache_data[4]); //testblock
                             break;
                         case 1:
-                            this.ctx.drawImage(this.grass_blocks, ((this.level_data_textures[k][2][1]+4)%4)*24, Math.floor(this.level_data_textures[k][2][1]/4)*24, 23, 23, 
+                            ctx.drawImage(this.grass_blocks, ((this.level_data_textures[k][2][1]+4)%4)*24, Math.floor(this.level_data_textures[k][2][1]/4)*24, 23, 23, 
                             Tools.resolutionScaler(this.level_data_textures[k][0]-this.offsetX), this.cache_data[3], this.cache_data[4], this.cache_data[4]);
                             break;
                     }
-                    // this.ctx.fillStyle = "rgb(255,255,255)";
+                    // ctx.fillStyle = "rgb(255,255,255)";
                     
                     if(this.devmode == true) //Affichage position de chaque block
                     {
-                        this.ctx.fillText("["+this.level_data_textures[k][0]/71+" : "+this.level_data_textures[k][1]/71+"]", Tools.resolutionScaler(this.level_data_textures[k][2]-this.offsetX+5), this.cache_data[4]+20);
+                        ctx.fillText("["+this.level_data_textures[k][0]/71+" : "+this.level_data_textures[k][1]/71+"]", Tools.resolutionScaler(this.level_data_textures[k][2]-this.offsetX+5), this.cache_data[4]+20);
                     }                   
                 }
    
@@ -183,10 +182,10 @@ class Map_Editor
         // console.log(this.spawn)
         if(spawnmodifier === false)
         {
-            this.ctx.fillStyle = "rgba(255,25,0,0.2)";
+            ctx.fillStyle = "rgba(255,25,0,0.2)";
             
-            this.ctx.fillRect(Tools.resolutionScaler(this.spawn[0]*71-this.offsetX), Tools.resolutionScaler(this.spawn[1]*71-this.offsetY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
-            this.ctx.drawImage(this.spawn_icon, Tools.resolutionScaler(this.spawn[0]*71-this.offsetX+10), Tools.resolutionScaler(this.spawn[1]*71-this.offsetY+10), Tools.resolutionScaler(50), Tools.resolutionScaler(50))
+            ctx.fillRect(Tools.resolutionScaler(this.spawn[0]*71-this.offsetX), Tools.resolutionScaler(this.spawn[1]*71-this.offsetY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+            ctx.drawImage(this.spawn_icon, Tools.resolutionScaler(this.spawn[0]*71-this.offsetX+10), Tools.resolutionScaler(this.spawn[1]*71-this.offsetY+10), Tools.resolutionScaler(50), Tools.resolutionScaler(50))
         }
 
         for (let i = this.cache_data[2]; i < this.cache_data[2]+11; i++) //Affichage des croix
@@ -196,11 +195,11 @@ class Map_Editor
             {
                 this.cache_data[5] = Tools.resolutionScaler(k*71-this.offsetX-1);
                 this.cache_data[6] = Tools.resolutionScaler(k*71-this.offsetX);
-                this.ctx.fillStyle = "rgba(255,255,255,0.8)";
-                this.ctx.fillRect(this.cache_data[6], this.cache_data[3], Tools.resolutionScaler(2), Tools.resolutionScaler(10));
-                this.ctx.fillRect(this.cache_data[6], this.cache_data[3], Tools.resolutionScaler(2), Tools.resolutionScaler(-10));
-                this.ctx.fillRect(this.cache_data[6]+2, this.cache_data[3]-1, Tools.resolutionScaler(10), Tools.resolutionScaler(2));
-                this.ctx.fillRect(this.cache_data[6]+1, this.cache_data[3]-1, Tools.resolutionScaler(-10), Tools.resolutionScaler(2));
+                ctx.fillStyle = "rgba(255,255,255,0.8)";
+                ctx.fillRect(this.cache_data[6], this.cache_data[3], Tools.resolutionScaler(2), Tools.resolutionScaler(10));
+                ctx.fillRect(this.cache_data[6], this.cache_data[3], Tools.resolutionScaler(2), Tools.resolutionScaler(-10));
+                ctx.fillRect(this.cache_data[6]+2, this.cache_data[3]-1, Tools.resolutionScaler(10), Tools.resolutionScaler(2));
+                ctx.fillRect(this.cache_data[6]+1, this.cache_data[3]-1, Tools.resolutionScaler(-10), Tools.resolutionScaler(2));
             }
         }
     }

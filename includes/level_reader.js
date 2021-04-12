@@ -1,5 +1,4 @@
-import {ctx} from "../main.js";
-import {Tools} from "../main.js";
+import {ctx, GV, Tools} from "../main.js";
 import {Timer_Log} from "./tools.js";
 
 var testblock = new Image();
@@ -726,12 +725,12 @@ class Map_Data
         }
     }
 
-    fcamsmoother(camsmootherenable, pause)
+    fcamsmoother(pause)
     {
         this.CamSmootherLoop.startTime()
         if(pause == false)    
         {     
-            if(camsmootherenable == true) //smooth the camera
+            if(GV.camsmootherenable == true) //smooth the camera
             {    
                 this.previouscamsmoother = this.camsmoother;
                 this.camsmoother = [Math.round(this.offsetX-((this.previousoffset[0][0]+this.previousoffset[1][0]+this.previousoffset[2][0]+this.previousoffset[3][0]+
