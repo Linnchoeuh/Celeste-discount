@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, keys_input, Pause, Fullscreen} from "../../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, keys_input, Pause, Fullscreen} from "../../../main.js";
 
 class Game_Menu
 {

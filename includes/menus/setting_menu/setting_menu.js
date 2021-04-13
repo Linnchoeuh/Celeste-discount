@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, keys_input, Fullscreen} from "../../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, keys_input, Fullscreen} from "../../../main.js";
 
 class Setting_Menu
 {

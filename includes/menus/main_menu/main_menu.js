@@ -1,4 +1,4 @@
-import {ctx, GV, Button1, Button2, Button3, Transition} from "../../../../main.js";
+import {ctx, GV, Button1, Button2, Button3, Transition} from "../../../main.js";
 class Main_Menu
 {
     displayMenu()
