@@ -207,8 +207,8 @@ import {Canvas_Resolution_Asset} from "./includes/gui/fullscreen_asset.js";
 const Fullscreen = new Canvas_Resolution_Asset();
 export{Fullscreen};
 
-import{Main_Menu} from "./includes/menus/main_menu/main_menu.js";
-const MainMenu = new Main_Menu();
+// import{Main_Menu} from "./includes/menus/main_menu/main_menu.js";
+// const MainMenu = new Main_Menu();
 
 // import{Game_Menu} from "./includes/menus/game_menu/game_menu.js";
 // const GameMenu = new Game_Menu();
