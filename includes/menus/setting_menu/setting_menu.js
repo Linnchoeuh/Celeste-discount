@@ -69,8 +69,8 @@ class Setting_Menu
         }
         if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
         {
-            GV.firstgameframe = true;
-            Fullscreen.Toggle(canvas);
+            Fullscreen.first_game_frame = true;
+            Fullscreen.toggle(canvas);
         }
         if(Fullscreen.fullscreenupscale)
         {
@@ -93,14 +93,15 @@ class Setting_Menu
                     if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
                     {
                         Fullscreen.fullscreendownscalefactor--;
-                        GV.firstgameframe = true;
+                        Fullscreen.first_game_frame = true;
                     }
+                    Fullscreen.firstclick = false;
                 }
                 if(Fullscreen.fullscreendownscalefactor < 5)
                 {
                     if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
                     {
-                        if(Fullscreen.fullscreendownscalefactor == 4)
+                        if(Fullscreen.fullscreendownscalefactor >= 4)
                         {
                             Fullscreen.fullscreendownscale = false;
                         }
@@ -108,7 +109,8 @@ class Setting_Menu
                         {
                             Fullscreen.fullscreendownscalefactor++;
                         }
-                        GV.firstgameframe = true;
+                        Fullscreen.first_game_frame = true;
+                        Fullscreen.firstclick = false;
                     }
                 }
                 ctx.fillStyle = "rgb(100,200,50)";
@@ -131,7 +133,7 @@ class Setting_Menu
                     document.getElementById("canvas").style.imageRendering = "crisp-edges";
                     document.getElementById("canvas").style.imageRendering = "pixelated";
                 }
-                GV.firstgameframe = true;
+                Fullscreen.first_game_frame = true;
             }
             ctx.fillStyle = "rgb(255,50,75)";
         }
@@ -145,7 +147,7 @@ class Setting_Menu
             {
                 Fullscreen.fullscreenupscale = true;
             }
-            GV.firstgameframe = true;
+            Fullscreen.first_game_frame = true;
         }
         if(Fullscreen.fullscreendownscale === false)
         {

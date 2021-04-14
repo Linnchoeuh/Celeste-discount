@@ -5,6 +5,7 @@ var mouse_y = 0;
 var mouse_click = false;
 var mouse_click_left = false
 var mouse_click_middle = false
+var mouse_out = false;
 
 canvas.addEventListener('mousemove', function(event)
 {
@@ -95,7 +96,7 @@ class Mouse_Data
         return false;
     }
 
-    ResolutionAdapter()
+    resolutionAdapter()
     {
         if(this.canvasfullscreen)
         {

@@ -1,7 +1,7 @@
 import {ctx, Tools} from "../main.js";
 
 var testblock = new Image();
-testblock.src = "graphics/map_content/test_block.png";
+testblock = "graphics/map_content/test_block.png";
 class Map_Editor
 {
     constructor()
@@ -10,35 +10,21 @@ class Map_Editor
         this.offsetY = 0;
         this.maplimit = [0, 0];
         this.spawn = [0, 0];
-        this.mouse_cursor = new Image();
-        this.mouse_cursor.src = "graphics/map_editor/mouse_cursor.png";
-        this.add_block_icon = new Image();
-        this.add_block_icon.src = "graphics/map_editor/add_block_icon.png";
-        this.remove_block_icon = new Image();
-        this.remove_block_icon.src = "graphics/map_editor/remove_block_icon.png";
-        this.add_water_icon = new Image();
-        this.add_water_icon.src = "graphics/map_editor/add_water_icon.png";
-        this.add_ennemy_icon = new Image();
-        this.add_ennemy_icon.src = "graphics/map_editor/add_ennemy_icon.png";
-        this.add_interactive_block_icon = new Image();
-        this.add_interactive_block_icon.src = "graphics/map_editor/add_interactive_block_icon.png";
-        this.add_decoration_icon = new Image();
-        this.add_decoration_icon.src = "graphics/map_editor/add_decoration_icon.png";
-        this.modification_icon = new Image();
-        this.modification_icon.src = "graphics/map_editor/modification_icon.png";
-        this.move_block_icon = new Image();
-        this.move_block_icon.src = "graphics/map_editor/move_block_icon.png";
-        this.move_decoration_icon = new Image();
-        this.move_decoration_icon.src = "graphics/map_editor/move_decoration_icon.png";
-        this.remove_decoration_icon = new Image();
-        this.remove_decoration_icon.src = "graphics/map_editor/remove_decoration_icon.png";
-        this.spawn_icon = new Image();
-        this.spawn_icon.src = "graphics/ui/icon.png";
-        this.end_block_icon = new Image();
-        this.end_block_icon.src = "graphics/map_editor/end_block_icon.png";
-        this.play_icon = new Image();
-        this.play_icon.src = "graphics/map_editor/play_icon.png";
-        this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png")
+        this.mouse_cursor = Tools.textureLoader("graphics/map_editor/mouse_cursor.png");
+        this.add_block_icon = Tools.textureLoader("graphics/map_editor/add_block_icon.png");
+        this.remove_block_icon = Tools.textureLoader("graphics/map_editor/remove_block_icon.png");
+        this.add_water_icon = Tools.textureLoader("graphics/map_editor/add_water_icon.png");
+        this.add_ennemy_icon = Tools.textureLoader("graphics/map_editor/add_ennemy_icon.png");
+        this.add_interactive_block_icon = Tools.textureLoader("graphics/map_editor/add_interactive_block_icon.png");
+        this.add_decoration_icon = Tools.textureLoader("graphics/map_editor/add_decoration_icon.png");
+        this.modification_icon = Tools.textureLoader("graphics/map_editor/modification_icon.png");
+        this.move_block_icon = Tools.textureLoader("graphics/map_editor/move_block_icon.png");
+        this.move_decoration_icon = Tools.textureLoader("graphics/map_editor/move_decoration_icon.png");
+        this.remove_decoration_icon = Tools.textureLoader("graphics/map_editor/remove_decoration_icon.png");
+        this.spawn_icon = Tools.textureLoader("graphics/ui/icon.png");
+        this.end_block_icon = Tools.textureLoader("graphics/map_editor/end_block_icon.png");
+        this.play_icon = Tools.textureLoader("graphics/map_editor/play_icon.png");
+        this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
         console.log(this.grass_blocks)
     }
 

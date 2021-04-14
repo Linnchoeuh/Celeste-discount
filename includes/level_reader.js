@@ -597,39 +597,40 @@ class Map_Data
         return [px, py];
     }
 
-    display(px, py, pause, offsetX, offsetY, smoothX, smoothY)
+    display(px, py, offsetX, offsetY, smoothX, smoothY)
     {
         this.GraphicsLoop.startTime()
-        this.operation_count = 0;
-        ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
-        if(pause === false)    
-        {
-            this.offsetsmoothX = Math.round(Tools.resolutionScaler(offsetX-smoothX));
-            this.offsetsmoothY = Math.round(Tools.resolutionScaler(offsetY-smoothY));
-        }
+        
+        this.offsetsmoothX = Math.round(Tools.resolutionScaler(offsetX-smoothX));
+        this.offsetsmoothY = Math.round(Tools.resolutionScaler(offsetY-smoothY));
         this.pre_snap_offset_smooth_X = Math.round(this.offsetsmoothX/this.pre_block_scaling);
         this.pre_snap_offset_smooth_Y = Math.round(this.offsetsmoothY/this.pre_block_scaling);
         this.pre_snap_offset_smooth_X_minus_05 = Math.round(this.offsetsmoothX/this.pre_block_scaling-0.5)
         // this.pre_snap_offset_smooth_Y_minus_05 = Math.round(this.pre_snap_offset_smooth_Y-0.5);
-        if(this.devmode)
+        if(GV.devmode)
         {
             ctx.lineWidth = Tools.resolutionScaler(0.5);
             ctx.font = Tools.resolutionScaler(15)+'px arial';
         }
         this.i_define = 0;
+        this.operation_count = 0;
+        ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
         if(this.i_define < this.pre_snap_offset_smooth_Y)
         {
-            this.i_define = Math.round(this.offsetsmoothY/this.pre_block_scaling-0.5)
+            this.i_define = Math.round(Math.round(offsetY-smoothY)/71-0.5)
         }
         for (let i = this.i_define; i < this.pre_snap_offset_smooth_Y+10; i++) //Affichage des textures
         {
+            if(i > this.maplimit[1]){
+                break;
+            }
             this.pre_vertical_position_line_block_displayed = i*this.pre_block_scaling_unround-this.offsetsmoothY;
             this.index_value = this.block_index[i][this.pre_snap_offset_smooth_X_minus_05];
             for (let k = this.index_value; k < this.index_value+18; k++)
             {
                 if(this.block_map_snap_position[i][k] > this.pre_snap_offset_smooth_X_minus_05+18 || this.block_map_snap_position[i][k] === this.block_map_snap_position[i][-1])
                 {
-                    if(this.devmode)
+                    if(GV.devmode)
                     {
                         ctx.fillStyle = "rgba(0,0,255,0.25)";
                         ctx.fillRect(this.block_map[i][k-1]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
@@ -651,7 +652,7 @@ class Map_Data
                                            this.pre_block_scaling, this.pre_block_scaling);
                         break;
                 }
-                if(this.devmode) //Affichage position de chaque block
+                if(GV.devmode) //Affichage position de chaque block
                 {
                     this.operation_count++;
                     Tools.logText("["+Math.round(this.block_map[i][k]/this.pre_block_scaling)+" : "+i+"]", (this.block_map[i][k]-this.offsetsmoothX+5)/Tools.ratio, (this.pre_vertical_position_line_block_displayed)/Tools.ratio+20);
@@ -660,14 +661,14 @@ class Map_Data
                 
                 
             }
-            if(this.devmode)
+            if(GV.devmode)
             {
                 ctx.fillStyle = "rgba(255,255,0,0.25)";
                 ctx.fillRect(this.block_map[i][this.index_value]-this.offsetsmoothX, this.pre_vertical_position_line_block_displayed, this.pre_block_scaling, this.pre_block_scaling);
             }
         }
 
-        if(this.devmode) //Affichage debug des collisions
+        if(GV.devmode) //Affichage debug des collisions
         {
             ctx.font = Tools.resolutionScaler(20)+'px arial';
             ctx.lineWidth = Tools.resolutionScaler(1);

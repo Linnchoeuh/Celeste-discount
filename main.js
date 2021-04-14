@@ -53,8 +53,6 @@ class Globals_Variable
         this.level = ["testlevel", levels.leveltest1]; 
         this.levelid = 1;
         this.editedlevelid = 0;
-        
-        this.firstgameframe = false;
 
         this.keys_input = [0,0,0,0,0,0,0,0,0,0];
         this.keypressed = false;
@@ -155,7 +153,7 @@ const Menus_ = {
 };
 
 
-export{ctx, GV, Menus_};
+export{ctx, canvas, GV, Menus_};
 
 import{Mouse_Data} from "./includes/mouse.js";
 const Mouse = new Mouse_Data();
@@ -323,18 +321,19 @@ function openFileOption()
 
 function main()
 {
-    MainLoop.startTime()
     requestAnimationFrame(main);
+    MainLoop.startTime()
 
-    Tools.canvasfullscreen = Fullscreen.canvasfullscreen;
-    Tools.mouseX           = Mouse.x;
-    Tools.mouseY           = Mouse.y;
+    Mouse.canvasfullscreen = 
+    Tools.canvasfullscreen = 
+    Fullscreen.canvasfullscreen;
     
     Fullscreen.varUpdater()
     Mouse.varUpdater()
-    Mouse.ResolutionAdapter();
-    GV.firstgameframe = Fullscreen.doubleClickToggle(Mouse.click_left, GV.firstgameframe);
-    GV.firstgameframe = Fullscreen.screenScaler(canvas, screen, GV.firstgameframe, GV.keys_input);
+    
+    Mouse.resolutionAdapter();
+    Fullscreen.doubleClickToggle();
+    Fullscreen.screenScaler();
     ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
     
     if(Fps.Graphic_Cap(Fps.cap30fps/*75*/))
@@ -404,7 +403,7 @@ function main()
                 if(Button2.text_type2("Name : "+MapData_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
                 {
                     previousMapDatapropertiesvalue = MapData_pack[3][0][0][0];
-                    MapData_pack[3][0][0][0] = prompt("Name GV.level:");
+                    MapData_pack[3][0][0][0] = prompt("Name level:");
                     if(MapData_pack[3][0][0][0] === null)
                     {
                         MapData_pack[3][0][0][0] = previousMapDatapropertiesvalue;
@@ -926,7 +925,7 @@ function main()
                 Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
-                Tools.logText(Transition.transition_state+"   "+Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(MapData.i_define+"   "+Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
             if(GV.menu === 7)
             {

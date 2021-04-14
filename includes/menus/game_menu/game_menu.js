@@ -61,7 +61,7 @@ class Game_Menu
         }
         
         
-        MapData.display(   Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics, Pause.pause,
+        MapData.display(   Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
                        MapData.previousoffsetX+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previousoffsetY+this.camerainterpoY*Fps.nbofframewithoutphysics, 
                        MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics);
         
@@ -96,7 +96,7 @@ class Game_Menu
                 if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                 {
                     GV.firstgameframe = true;
-                    Fullscreen.Toggle(canvas);
+                    Fullscreen.toggle(canvas);
                 }
                 if(Button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu1") //back to GV.menu
                 {

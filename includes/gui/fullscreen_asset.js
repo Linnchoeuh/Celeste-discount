@@ -1,4 +1,4 @@
-import {Tools, MapData, Mouse} from "../../main.js";
+import {GV, Tools, MapData, Mouse} from "../../main.js";
 
 var canvasfullscreen = false;
 
@@ -23,6 +23,8 @@ class Canvas_Resolution_Asset
         this.fullscreendownscalefactor = 5;
         this.ablefullscreen = "Enable";
         this.fullscreendownscale = false;
+        this.double_click_toggle = true;
+        this.first_game_frame = false;
 
         
     }
@@ -61,26 +63,25 @@ class Canvas_Resolution_Asset
             Tools.canvasfullscreen = 
             this.canvasfullscreen = false;
         }
+        this.first_game_frame = true;
     }
 
-    
-
-    doubleClickToggle(click, firstgameframe, enabler = true)
+    doubleClickToggle()
     {
-        if(enabler)
+        if(this.double_click_toggle)
         {
             if(this.doubleclicktiming+150 < Date.now())
             {
                 this.firstclick = false;
             }
-            if(click || this.firstclick)
+            if(Mouse.click_left || this.firstclick)
             {
                 if(this.firstclick === false)
                 {
                     this.doubleclicktiming = Date.now();
                     this.firstclick = Mouse.double_click_fullscreen_mouse_pressed = true;
                 }
-                else if(click && Mouse.double_click_fullscreen_mouse_pressed === false)
+                else if(Mouse.click_left && Mouse.double_click_fullscreen_mouse_pressed === false)
                 {
                     this.toggle(canvas);
                     this.firstclick = false;
@@ -88,24 +89,23 @@ class Canvas_Resolution_Asset
                 }
             }
         }
-        return firstgameframe;
     }
 
-    screenScaler(canvas, screen, firstgameframe, keys_input)
+    screenScaler()
     {
-        if(firstgameframe)
+        if(this.canvasfullscreen && canvas.width !== screen.width                       && canvas.height !== screen.height                      && this.fullscreenupscale
+        || this.canvasfullscreen && canvas.width !== 240*this.fullscreendownscalefactor && canvas.height !== 135*this.fullscreendownscalefactor && this.fullscreendownscale)
         {
-            
             if(this.canvasfullscreen)
             {
                 if(this.fullscreenupscale)
                 {    
-                    canvas.width = screen.width;
+                    canvas.width  = screen.width;
                     canvas.height = screen.height;
                 }
                 else
                 {
-                    canvas.width = 240*this.fullscreendownscalefactor;
+                    canvas.width  = 240*this.fullscreendownscalefactor;
                     canvas.height = 135*this.fullscreendownscalefactor;
                 }
                 this.ablefullscreen = "Disable";
@@ -114,26 +114,18 @@ class Canvas_Resolution_Asset
             {
                 this.ablefullscreen = "Enable";
             }
-            firstgameframe = false;
-            Tools.requiredDisplayVariableUpdater()
-            MapData.requiredDisplayVariableUpdater()
-        }
-        if(this.canvasfullscreen & keys_input[9] == 1)
-        {
-            Mouse.canvasfullscreen = 
-            Tools.canvasfullscreen = 
-            this.canvasfullscreen = false;
+            
         }
         if(this.canvasfullscreen === false & canvas.width !== 1200 & canvas.height !== 675)
         {
             canvas.width = 1200;
             canvas.height = 675;
             this.ablefullscreen = "Enable";
-            Tools.requiredDisplayVariableUpdater()
-            MapData.requiredDisplayVariableUpdater()
+            
         }
-        return firstgameframe;
-    }
+        Tools.requiredDisplayVariableUpdater()
+        MapData.requiredDisplayVariableUpdater()
+    }  
 }
 
 export{Canvas_Resolution_Asset}
