@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, keys_input, Fullscreen} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, Fullscreen} from "../../../main.js";
 
 class Setting_Menu
 {
@@ -90,7 +90,7 @@ class Setting_Menu
                 ctx.fillText(Fullscreen.fullscreendownscalefactor*20+"%", Tools.resolutionScaler(900), Tools.resolutionScaler(435));
                 if(Fullscreen.fullscreendownscalefactor > 1)
                 {
-                    if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+                    if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
                     {
                         Fullscreen.fullscreendownscalefactor--;
                         GV.firstgameframe = true;
@@ -98,7 +98,7 @@ class Setting_Menu
                 }
                 if(Fullscreen.fullscreendownscalefactor < 5)
                 {
-                    if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+                    if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
                     {
                         if(Fullscreen.fullscreendownscalefactor == 4)
                         {

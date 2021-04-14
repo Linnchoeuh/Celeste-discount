@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, keys_input, Pause, Fullscreen} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, Pause, Fullscreen} from "../../../main.js";
 
 class Game_Menu
 {
@@ -43,7 +43,7 @@ class Game_Menu
                 Player.previousplayerY = Player.playerY;
                 MapData.previousoffsetX = MapData.offsetX;
                 MapData.previousoffsetY = MapData.offsetY;
-                this.vect = Player.velocity(keys_input, this.vect[0], this.vect[1], MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
+                this.vect = Player.velocity(GV.keys_input, this.vect[0], this.vect[1], MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
                 this.stock = MapData.collider(Player.playerX, Player.playerY, this.vect[0], this.vect[1], Pause.pause);
                 MapData.fcamsmoother(Pause.pause);
                 
@@ -71,7 +71,7 @@ class Game_Menu
         
         Fps.nbofframewithoutphysics++;
         
-        GV.keypressed = Pause.Toggle("Pause", GV.keypressed, keys_input, Fps.dt)
+        GV.keypressed = Pause.Toggle("Pause", GV.keypressed, GV.keys_input, Fps.dt)
         if(Pause.pause) //pause
         {
             ctx.fillStyle = "rgb(255,255,255)";

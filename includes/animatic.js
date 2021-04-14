@@ -1,4 +1,4 @@
-import {ctx, Tools} from "../main.js";
+import {ctx, GV, Tools, Mouse} from "../main.js";
 
 
 class Animatic_
@@ -7,19 +7,13 @@ class Animatic_
     {
         this.animation_state = 0;
 
-        this.click = false;
-        this.mousepressed = false;
-
         this.defauloffset_text_type1 = [1.5, 0];
         this.defauloffset_texture_type1 = [0.5, -0.5];
-
-        this.mouseX = 0;
-        this.mouseY = 0;
     }
 
     text_type1(text, posX, posY, width, height, textX, textY, textscale1, textscale2, textscale3, textscale4, offsetX = 0, offsetY = 0)
     {
-        if(Tools.invisibleMouseCollider(posX, posY, width, height)) //play
+        if(Mouse.invisibleMouseCollider(posX, posY, width, height)) //play
         {
             switch(this.animation_state)
             {
@@ -38,7 +32,7 @@ class Animatic_
                     ctx.fillText(text, Tools.resolutionScaler(textX-((textscale4-textscale1)*(this.defauloffset_text_type1[0]-offsetX))), Tools.resolutionScaler(textY+((textscale4-textscale1)*(this.defauloffset_text_type1[1]+offsetY))));
                     break;
             }
-            if(this.click & this.mousepressed === false)
+            if(Mouse.click_left & Mouse.pressed === false)
             {
                 this.animation_state = 0;
                 return true;
@@ -71,7 +65,7 @@ class Animatic_
     {
         ctx.font = "Bold "+Tools.resolutionScaler(textscale)+'px arial';
         ctx.fillText(text, Tools.resolutionScaler(textX), Tools.resolutionScaler(textY));
-        if(Tools.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
+        if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
         {
             switch(this.animation_state)
             {
@@ -102,7 +96,7 @@ class Animatic_
                     ctx.fillRect(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width), Tools.resolutionScaler(line_width));
                     break;
             }
-            if(this.click & this.mousepressed === false)
+            if(Mouse.click_left & Mouse.pressed === false)
             {
                 this.animation_state = 0;
                 return true;
@@ -145,7 +139,7 @@ class Animatic_
 
     texture_type1(texture, posX, posY, width, height, textureX, textureY, texturescale1, texturescale2, texturescale3, texturescale4, offsetX = 0, offsetY = 0, text_show = "", textX = 0, textY = 0, textscale = 10, text_color = "rgb(255,255,255)")
     {
-        if(Tools.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
+        if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
         {
             switch(this.animation_state)
             {
@@ -170,7 +164,7 @@ class Animatic_
                     }
                     break;
             }
-            if(this.click & this.mousepressed === false)
+            if(Mouse.click_left & Mouse.pressed === false)
             {
                 this.animation_state = 0;
                 return true;
@@ -200,7 +194,7 @@ class Animatic_
 
     texture_type2(posX, posY, texture, text, reverse = false, texture_offsetX = 5, texture_offsetY = 5, texture_scaleX = 20, texture_scaleY = 20) //Map editor button
     {
-        if(Tools.invisibleMouseCollider(posX, posY, 30, 30) == true)
+        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30) == true)
         {
             ctx.fillStyle = "rgba(100,100,100,0.4)";
             ctx.strokeStyle = "rgb(255,255,255)";
@@ -227,31 +221,31 @@ class Animatic_
         ctx.lineWidth=1;
         ctx.drawImage(texture, Tools.resolutionScaler(posX+texture_offsetX), Tools.resolutionScaler(posY+texture_offsetY), Tools.resolutionScaler(texture_scaleX), Tools.resolutionScaler(texture_scaleY));
         
-        if(Tools.invisibleMouseCollider(posX, posY, 30, 30))
+        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30))
         {
             ctx.fillStyle = "rgb(0,0,0)";
             ctx.beginPath();
             if(reverse)
             {
-                ctx.moveTo(this.mouseX+Tools.resolutionScaler(10), this.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(15),this.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(text.length*9+15), this.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(text.length*9+20), this.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(text.length*9+20), this.mouseY+Tools.resolutionScaler(2));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(text.length*9+15), this.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(15), this.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(10), this.mouseY+Tools.resolutionScaler(2));
+                ctx.moveTo(GV.mouseX+Tools.resolutionScaler(10), GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15),GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+20), GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+20), GV.mouseY+Tools.resolutionScaler(2));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15), GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(10), GV.mouseY+Tools.resolutionScaler(2));
             }
             else
             {
-                ctx.moveTo(this.mouseX-Tools.resolutionScaler(text.length*9+15), this.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(this.mouseX-Tools.resolutionScaler(text.length*9+10),this.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(-10), this.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(-5), this.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(-5), this.mouseY+Tools.resolutionScaler(2));
-                ctx.lineTo(this.mouseX+Tools.resolutionScaler(-10), this.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(this.mouseX-Tools.resolutionScaler(text.length*9+10), this.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(this.mouseX-Tools.resolutionScaler(text.length*9+15), this.mouseY+Tools.resolutionScaler(2));
+                ctx.moveTo(GV.mouseX-Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+10),GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10), GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5), GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5), GV.mouseY+Tools.resolutionScaler(2));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10), GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+10), GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(2));
             }
             
             ctx.closePath();
@@ -263,14 +257,14 @@ class Animatic_
             ctx.font = Tools.resolutionScaler(15)+'px Lucida Console';
             if(reverse)
             {
-                ctx.fillText(text, this.mouseX+Tools.resolutionScaler(15), this.mouseY);
+                ctx.fillText(text, GV.mouseX+Tools.resolutionScaler(15), GV.mouseY);
             }
             else
             {
-                ctx.fillText(text, this.mouseX-Tools.resolutionScaler(text.length*9+10), this.mouseY);
+                ctx.fillText(text, GV.mouseX-Tools.resolutionScaler(text.length*9+10), GV.mouseY);
             }
             
-            if(this.click & this.mousepressed === false)
+            if(Mouse.click_left & Mouse.pressed === false)
             {
                 this.animation_state = 0;
                 return true;

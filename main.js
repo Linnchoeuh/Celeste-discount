@@ -29,7 +29,7 @@
 //Variables  : two_words
 //Constantes : TWO_WORDS
 //Fonctions  : Two_words
-//Classes    : Two_Words
+//Classes    : Two_Words et objets
 //    Dans une variable : TwoWords
 //Méthodes   : twoWords
 
@@ -39,55 +39,68 @@ const ctx = canvas.getContext("2d", {alpha : false});
 canvas.width = 1200;
 canvas.height = 675;
 
-var keys_input = [0,0,0,0,0,0,0,0,0,0];
+import * as levels from "./includes/levels.js";
+class Globals_Variable
+{
+    constructor()
+    {
+        this.devmode = true;
+        this.godmode = false;
+        this.camsmootherenable = true;
+        this.menu = 1;
+        this.last_menu = -1;
+        this.start = true;
+        this.level = ["testlevel", levels.leveltest1]; 
+        this.levelid = 1;
+        this.editedlevelid = 0;
+        
+        this.firstgameframe = false;
 
-ctx.canvas.addEventListener('mousemove', function(event)
-{
-    mouseX = event.clientX - ctx.canvas.offsetLeft;
-    mouseY = event.clientY - ctx.canvas.offsetTop;
-});
-ctx.canvas.addEventListener('mousedown', function(event)
-{
-    click = true;
-});
-ctx.canvas.addEventListener('mouseup', function(event)
-{
-    click = false;
-});
+        this.keys_input = [0,0,0,0,0,0,0,0,0,0];
+        this.keypressed = false;
+        this.click = false;
+
+        this.mouseX = 0;
+        this.mouseY = 0;
+    }
+}
+const GV = new Globals_Variable()
+
+
 document.addEventListener("keydown", function(event)
 {
     key_press = String.fromCharCode(event.keyCode);
     switch(event.keyCode)
     {
         case 90:
-            keys_input.splice(0, 1, 1); //z
+            GV.keys_input.splice(0, 1, 1); //z
             break
         case 81:
-            keys_input.splice(1, 1, 1); //q
+            GV.keys_input.splice(1, 1, 1); //q
             break
         case 83:
-            keys_input.splice(2, 1, 1); //s
+            GV.keys_input.splice(2, 1, 1); //s
             break
         case 68:
-            keys_input.splice(3, 1, 1); //d
+            GV.keys_input.splice(3, 1, 1); //d
             break
         case 32:
-            keys_input.splice(4, 1, 1); //space
+            GV.keys_input.splice(4, 1, 1); //space
             break
         case 16:
-            keys_input.splice(5, 1, 1); //shift
+            GV.keys_input.splice(5, 1, 1); //shift
             break
         case 80:
-            keys_input.splice(6, 1, 1); //p
+            GV.keys_input.splice(6, 1, 1); //p
             break
         case 67:
-            keys_input.splice(7, 1, 1); //c
+            GV.keys_input.splice(7, 1, 1); //c
             break
         case 13:
-            keys_input.splice(8, 1, 1); //enter
+            GV.keys_input.splice(8, 1, 1); //enter
             break
         case 27:
-            keys_input.splice(9, 1, 1); //escape
+            GV.keys_input.splice(9, 1, 1); //escape
             break
     }
 });
@@ -97,73 +110,60 @@ document.addEventListener("keyup", function(event)
     switch(keynb)
     {
         case 90:
-            keys_input.splice(0, 1, 0);
+            GV.keys_input.splice(0, 1, 0);
             break
         case 81:
-            keys_input.splice(1, 1, 0);
+            GV.keys_input.splice(1, 1, 0);
             break
         case 83:
-            keys_input.splice(2, 1, 0);
+            GV.keys_input.splice(2, 1, 0);
             break
         case 68:
-            keys_input.splice(3, 1, 0);
+            GV.keys_input.splice(3, 1, 0);
             break
         case 32:
-            keys_input.splice(4, 1, 0);
+            GV.keys_input.splice(4, 1, 0);
             break
         case 16:
-            keys_input.splice(5, 1, 0);
+            GV.keys_input.splice(5, 1, 0);
             break
         case 80:
-            keys_input.splice(6, 1, 0);
+            GV.keys_input.splice(6, 1, 0);
             break
         case 67:
-            keys_input.splice(7, 1, 0); //c
+            GV.keys_input.splice(7, 1, 0); //c
             break
         case 13:
-            keys_input.splice(8, 1, 0); //enter
+            GV.keys_input.splice(8, 1, 0); //enter
             break
         case 27:
-            keys_input.splice(9, 1, 0); //escape
+            GV.keys_input.splice(9, 1, 0); //escape
             break        
     }
 });
-document.addEventListener("fullscreenchange", function ()
-{
-    Fullscreen.canvasfullscreen = (document.fullscreen)? true : false;
-}, false);
-document.addEventListener("webkitfullscreenchange", function () {
-    Fullscreen.canvasfullscreen = (document.webkitIsFullScreen) ? true : false;
-}, false);
-
-import * as levels from "./includes/levels.js";
-class Globals_Variable
-{
-    constructor()
-    {
-        this.godmode = false;
-        this.camsmootherenable = true;
-        this.devmode = false;
-        this.menu = 1;
-        this.last_menu = -1;
-        this.start = true;
-        this.level = ["testlevel", levels.leveltest1]; 
-        this.levelid = 1;
-        this.editedlevelid = 0;
-        this.keypressed = false;
-        this.firstgameframe = false;
-    }
-}
-const GV = new Globals_Variable()
 
 
 
 
-export{ctx, GV, keys_input}
+
+
+const Menus_ = {
+    Main : 1,
+    Game : 2,
+    Game_From_Map_Editor : 9
+
+};
+
+
+export{ctx, GV, Menus_};
+
+import{Mouse_Data} from "./includes/mouse.js";
+const Mouse = new Mouse_Data();
+export{Mouse};
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
-const MainLoop = new Timer_Log()
-const Tools = new Tool_Kit(false, 0, 0);
+const MainLoop = new Timer_Log();
+const Tools = new Tool_Kit();
 export{Tools};
 
 import {Map_Data} from "./includes/level_reader.js";
@@ -171,7 +171,7 @@ const MapData = new Map_Data();
 export{MapData};
 
 import {Transition_} from "./includes/gui/transition.js";
-const Transition = new Transition_(ctx);
+const Transition = new Transition_();
 export{Transition};
 
 import {Fps_} from "./includes/display/fps_cap.js";
@@ -179,15 +179,15 @@ const Fps = new Fps_();
 export{Fps};
 
 import {Animatic_} from "./includes/animatic.js";
-const Button1 = new Animatic_();
-const Button2 = new Animatic_();
-const Button3 = new Animatic_();
-const Button4 = new Animatic_();
-const Button5 = new Animatic_();
-const Button6 = new Animatic_();
-const Button7 = new Animatic_();
-const Button8 = new Animatic_();
-const Button9 = new Animatic_();
+const Button1  = new Animatic_();
+const Button2  = new Animatic_();
+const Button3  = new Animatic_();
+const Button4  = new Animatic_();
+const Button5  = new Animatic_();
+const Button6  = new Animatic_();
+const Button7  = new Animatic_();
+const Button8  = new Animatic_();
+const Button9  = new Animatic_();
 const Button10 = new Animatic_();
 const Button11 = new Animatic_();
 export{Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11};
@@ -200,7 +200,7 @@ import {Map_Editor} from "./includes/map_editor.js";
 const MapEditor = new Map_Editor();
 
 import{Pause_} from "./includes/gui/pause.js";
-const Pause = new Pause_()
+const Pause = new Pause_();
 export{Pause};
 
 import {Canvas_Resolution_Asset} from "./includes/gui/fullscreen_asset.js";
@@ -228,14 +228,11 @@ var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
-var click = false;
 
-var mouseX = 0;
-var mouseY = 0;
-var MapDatamousetranslationX = mouseX;
-var MapDatamousetranslationY = mouseY;
-var previousmouseX = mouseX;
-var previousmouseY = mouseY;
+var MapDatamousetranslationX = Mouse.x;
+var MapDatamousetranslationY = Mouse.y;
+var previousmouseX = Mouse.x;
+var previousmouseY = Mouse.y;
 
 var mousepressed = false;
 
@@ -251,11 +248,6 @@ var edition_mode = 0;
 var sub_edition_mode = 0;
 var spawnmodifier = false;
 var spawnmodifpossible = true;
-
-
-// Buttons
-
-var animaticmousevalue = [0, 0];
 
 
 // MapData editor
@@ -335,35 +327,15 @@ function main()
     requestAnimationFrame(main);
 
     Tools.canvasfullscreen = Fullscreen.canvasfullscreen;
-    Tools.mouseX           = mouseX;
-    Tools.mouseY           = mouseY;
-
-    Button1.click = Button2.click = 
-    Button3.click = Button4.click = 
-    Button5.click = Button6.click = 
-    Button7.click = Button8.click = 
-    Button9.click = Button10.click = 
-    Button11.click = click;
-
-    Button1.mouseX = Button2.mouseX = 
-    Button3.mouseX = Button4.mouseX = 
-    Button5.mouseX = Button6.mouseX = 
-    Button7.mouseX = Button8.mouseX = 
-    Button9.mouseX = Button10.mouseX = 
-    Button11.mouseX = animaticmousevalue[0];
-
-    Button1.mouseY = Button2.mouseY = 
-    Button3.mouseY = Button4.mouseY = 
-    Button5.mouseY = Button6.mouseY = 
-    Button7.mouseY = Button8.mouseY = 
-    Button9.mouseY = Button10.mouseY = 
-    Button11.mouseY = animaticmousevalue[1];
+    Tools.mouseX           = Mouse.x;
+    Tools.mouseY           = Mouse.y;
     
-    GV.firstgameframe = Fullscreen.Double_Click_Toggle(click, GV.firstgameframe);
-    animaticmousevalue = Fullscreen.Mouse_adapter(mouseX, mouseY, canvas, screen);
-    GV.firstgameframe = Fullscreen.Screen_Scaler(canvas, screen, GV.firstgameframe, keys_input);
+    Fullscreen.varUpdater()
+    Mouse.varUpdater()
+    Mouse.ResolutionAdapter();
+    GV.firstgameframe = Fullscreen.doubleClickToggle(Mouse.click_left, GV.firstgameframe);
+    GV.firstgameframe = Fullscreen.screenScaler(canvas, screen, GV.firstgameframe, GV.keys_input);
     ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
-
     
     if(Fps.Graphic_Cap(Fps.cap30fps/*75*/))
     {
@@ -409,12 +381,7 @@ function main()
                 {
                     openFileOption();
                     // console.log(document.getElementById('fileItem').files[0])
-                    Button1.click = Button2.click = 
-                    Button3.click = Button4.click = 
-                    Button5.click = Button6.click = 
-                    Button7.click = Button8.click = 
-                    Button9.click = Button10.click = 
-                    Button11.click = click = false;
+                    Mouse.click_left = false;
                 }
                 break
             case 6: //MapData creator init GV.menu
@@ -503,10 +470,10 @@ function main()
                 
                 ctx.font = "Bold "+Tools.resolutionScaler(20)+'px arial';
                 ctx.fillStyle = "rgb(255,255,255)";
-                ctx.fillText("["+Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", mouseX+Tools.resolutionScaler(10), mouseY-Tools.resolutionScaler(10));
+                ctx.fillText("["+Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", Mouse.x+Tools.resolutionScaler(10), Mouse.y-Tools.resolutionScaler(10));
                 ctx.strokeStyle = "rgb(0,0,0)";
                 ctx.lineWidth = Tools.resolutionScaler(1);
-                ctx.strokeText("["+Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", mouseX+Tools.resolutionScaler(10), mouseY-Tools.resolutionScaler(10));
+                ctx.strokeText("["+Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", Mouse.x+Tools.resolutionScaler(10), Mouse.y-Tools.resolutionScaler(10));
                 
                 if(Pause.pause === false)
                 {
@@ -661,58 +628,58 @@ function main()
                         mousepressed = true;
                     }
 
-                    if(keys_input[5] === 0 & animaticmousevalue[0]-previousmouseX === 0 & animaticmousevalue[1]-previousmouseY === 0 & click & spawnmodifier === false)
+                    if(GV.keys_input[5] === 0 & Mouse.animatic_mouse_value[0]-previousmouseX === 0 & Mouse.animatic_mouse_value[1]-previousmouseY === 0 & Mouse.click_left & spawnmodifier === false)
                     {
-                        MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
-                        MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                        MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
+                        MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
                         mousepressed = true;
                     }
                     
-                    if(keys_input[5] === 1)
+                    if(GV.keys_input[5] === 1)
                     {
                         MapData_move_speed = 0;
-                        if(click)
+                        if(Mouse.click_left)
                         {
                             if(mousepressed === false)
                             {
-                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
-                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
                                 mousepressed = true;
                             }
-                            if(MapEditor.offsetX >= MapEditor.MapDatalimit[0]*71 & animaticmousevalue[0]-previousmouseX <= 0)
+                            if(MapEditor.offsetX >= MapEditor.MapDatalimit[0]*71 & Mouse.animatic_mouse_value[0]-previousmouseX <= 0)
                             {
                                 MapEditor.offsetX = MapEditor.MapDatalimit[0]*71;
-                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
                             }
-                            else if(MapEditor.offsetX <= -1129 & animaticmousevalue[0]-previousmouseX >= 0)
+                            else if(MapEditor.offsetX <= -1129 & Mouse.animatic_mouse_value[0]-previousmouseX >= 0)
                             {
                                 MapEditor.offsetX = -1129;
-                                MapDatamousetranslationX = (animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX;
+                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
                             }
                             else
                             {
-                                MapEditor.offsetX = Math.round(MapDatamousetranslationX-(animaticmousevalue[0]*(1200/canvas.width)));
+                                MapEditor.offsetX = Math.round(MapDatamousetranslationX-(Mouse.animatic_mouse_value[0]*(1200/canvas.width)));
                             }
 
-                            if(MapEditor.offsetY >= MapEditor.MapDatalimit[1]*71 & animaticmousevalue[1]-previousmouseY <= 0)
+                            if(MapEditor.offsetY >= MapEditor.MapDatalimit[1]*71 & Mouse.animatic_mouse_value[1]-previousmouseY <= 0)
                             {
                                 MapEditor.offsetY = MapEditor.MapDatalimit[1]*71;
-                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
                             }
-                            else if(MapEditor.offsetY <= -604 & animaticmousevalue[1]-previousmouseY >= 0)
+                            else if(MapEditor.offsetY <= -604 & Mouse.animatic_mouse_value[1]-previousmouseY >= 0)
                             {
                                 MapEditor.offsetY = -604;
-                                MapDatamousetranslationY = (animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY;
+                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
                             }
                             else
                             {
-                                MapEditor.offsetY = Math.round(MapDatamousetranslationY-(animaticmousevalue[1]*(675/(canvas.height))));
+                                MapEditor.offsetY = Math.round(MapDatamousetranslationY-(Mouse.animatic_mouse_value[1]*(675/(canvas.height))));
                             }
 
                         }
                         ctx.fillStyle = "rgba(50,50,50,0.6)";
-                        ctx.fillRect(Math.round((animaticmousevalue[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
-                                     Math.round((animaticmousevalue[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
+                        ctx.fillRect(Math.round((Mouse.animatic_mouse_value[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
+                                     Math.round((Mouse.animatic_mouse_value[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
                                      Tools.resolutionScalerAddOne(71), Tools.resolutionScalerAddOne(71));
 
                     }
@@ -722,26 +689,26 @@ function main()
                         if(spawnmodifier)
                         {
                             ctx.fillStyle = "rgba(255,25,0,0.2)";
-                            ctx.fillRect(Math.round((animaticmousevalue[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
-                                         Math.round((animaticmousevalue[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
+                            ctx.fillRect(Math.round((Mouse.animatic_mouse_value[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
+                                         Math.round((Mouse.animatic_mouse_value[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
                                          Tools.resolutionScalerAddOne(71), Tools.resolutionScalerAddOne(71));
                             
-                            if(mousepressed === false & click)
+                            if(mousepressed === false & Mouse.click_left)
                             {
-                                MapEditor.spawn = [Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71),
-                                                   Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)];
+                                MapEditor.spawn = [Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71),
+                                                   Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)];
                                 // console.log(MapEditor.spawn);
-                                GV.level[GV.levelid][3][editedGV.levelid][0][3] = Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
-                                GV.level[GV.levelid][3][editedGV.levelid][0][4] = Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
-                                // MapData_pack[3][0][0][3] = Math.round(((animaticmousevalue[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
-                                // MapData_pack[3][0][0][4] = Math.round(((animaticmousevalue[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
+                                GV.level[GV.levelid][3][editedGV.levelid][0][3] = Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
+                                GV.level[GV.levelid][3][editedGV.levelid][0][4] = Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
+                                // MapData_pack[3][0][0][3] = Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
+                                // MapData_pack[3][0][0][4] = Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
                                 spawnmodifier = false;
                                 // GV.start = true;
                             }
                         }
 
                     }
-                    if(keys_input[0] === 1 & MapEditor.offsetY > -604)
+                    if(GV.keys_input[0] === 1 & MapEditor.offsetY > -604)
                     {
                         MapEditor.offsetY -= MapData_move_speed;
                         if(MapEditor.offsetY < -604)
@@ -749,7 +716,7 @@ function main()
                             MapEditor.offsetY = -604;
                         }
                     }
-                    if(keys_input[2] === 1 & MapEditor.offsetY < ((MapEditor.MapDatalimit[1])*71))
+                    if(GV.keys_input[2] === 1 & MapEditor.offsetY < ((MapEditor.MapDatalimit[1])*71))
                     {
                         MapEditor.offsetY += MapData_move_speed;
                         if(MapEditor.offsetY > ((MapEditor.MapDatalimit[1])*71))
@@ -757,7 +724,7 @@ function main()
                             MapEditor.offsetY = ((MapEditor.MapDatalimit[1])*71);
                         }
                     }
-                    if(keys_input[3] === 1 & MapEditor.offsetX < ((MapEditor.MapDatalimit[0])*71))
+                    if(GV.keys_input[3] === 1 & MapEditor.offsetX < ((MapEditor.MapDatalimit[0])*71))
                     {
                         MapEditor.offsetX += MapData_move_speed;
                         if(MapEditor.offsetX > ((MapEditor.MapDatalimit[0])*71))
@@ -765,7 +732,7 @@ function main()
                             MapEditor.offsetX = ((MapEditor.MapDatalimit[0])*71);
                         }
                     }
-                    if(keys_input[1] === 1)
+                    if(GV.keys_input[1] === 1)
                     {
                         MapEditor.offsetX -= MapData_move_speed;
                         if(MapEditor.offsetX < -1129)
@@ -783,9 +750,9 @@ function main()
                     ctx.fillText("Press P to show the GV.menu", Tools.resolutionScaler(875), Tools.resolutionScaler(640)); //mouse pos
                     ctx.fillText("Press H to get the control ", Tools.resolutionScaler(875), Tools.resolutionScaler(665)); //mouse pos
                 }
-                if(keys_input[6] === 1 & Pause.pkey === false | Pause.pause) //Pause.pause
+                if(GV.keys_input[6] === 1 & Pause.pkey === false | Pause.pause) //Pause.pause
                 {
-                    GV.keypressed = Pause.Toggle("Pause", GV.keypressed, keys_input, Fps.dt)
+                    GV.keypressed = Pause.Toggle("Pause", GV.keypressed, GV.keys_input, Fps.dt)
 
                     ctx.fillStyle = "rgb(255,255,255)";
 
@@ -809,7 +776,7 @@ function main()
                     if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                     {
                         GV.firstgameframe = true;
-                        Fullscreen.Toggle(canvas);
+                        Fullscreen.toggle(canvas);
                     }
 
                     if(Button4.text_type1("Modify MapData properties", 0, 370, 470, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "bop") //back to GV.menu
@@ -833,12 +800,12 @@ function main()
                 
                 break
         }
-        if(keys_input[7] === 1 | command === "true") //To enter some usefull commands ingame
+        if(GV.keys_input[7] === 1 | command === "true") //To enter some usefull commands ingame
         {
             push++
             if(push > 60 | GV.devmode)
             {
-                if(keys_input[7] === 1)
+                if(GV.keys_input[7] === 1)
                 {
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
                     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -884,25 +851,12 @@ function main()
         {
             push = 0;
         }
-        if(click)
-        {
-            mousepressed = true;
-            Fullscreen.doubleclickfullscreenmousepressed = true;
-        }
-        else
-        {
-            mousepressed = false;
-            Fullscreen.doubleclickfullscreenmousepressed = false;
-        }
-        Button1.mousepressed = Button2.mousepressed = 
-        Button3.mousepressed = Button4.mousepressed = 
-        Button5.mousepressed = Button6.mousepressed = 
-        Button7.mousepressed = Button8.mousepressed = 
-        Button9.mousepressed = Button10.mousepressed = 
-        Button11.mousepressed = mousepressed;
-        for(let i = 0; i < keys_input.length; ++i)
+
+        Mouse.mousePressed()
+
+        for(let i = 0; i < GV.keys_input.length; ++i)
         {    
-            if(keys_input[i] === 0)
+            if(GV.keys_input[i] === 0)
             {
                 GV.keypressed = false;
                 Pause.pkey = false;
@@ -910,7 +864,7 @@ function main()
             else
             {
                 GV.keypressed = true;
-                if(keys_input[6] === 1)
+                if(GV.keys_input[6] === 1)
                 {
                     Pause.pkey = true;
                 }
@@ -924,18 +878,18 @@ function main()
         {
             ctx.fillStyle = "rgb(255,255,255)";
 
-            Tools.logText("x : "+mouseX, 1125, 25); //mouse pos
-            Tools.logText("y : "+mouseY, 1125, 50)
+            Tools.logText("x : "+Mouse.x, 1125, 25); //mouse pos
+            Tools.logText("y : "+Mouse.y, 1125, 50)
 
             Tools.logText(key_press, 1100, 75); //key pressed
             Tools.logText("|", 1141, 75);
             Tools.logText(keynb, 1152, 75);
 
-            Tools.logText("Click : "+click, 1091, 100); //click
+            Tools.logText("Click : "+Mouse.click_left, 1091, 100); //Mouse.click_left
 
             Tools.logText("Fullscreen : "+Fullscreen.canvasfullscreen, 1043, 125); //fullscreen
 
-            Tools.logText("Inputs : "+keys_input, 945, 150); //input
+            Tools.logText("Inputs : "+GV.keys_input, 945, 150); //input
 
             if(GV.menu === 2 | GV.menu === 9 | 1)
             {
@@ -972,7 +926,7 @@ function main()
                 Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
-                Tools.logText(Transition.transition_state+"   "+Transition.Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(Transition.transition_state+"   "+Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
             if(GV.menu === 7)
             {
@@ -996,8 +950,8 @@ function main()
             Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
             Tools.logText("-Player display : "+Number.parseFloat(Player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
         }
-        previousmouseX = animaticmousevalue[0];
-        previousmouseY = animaticmousevalue[1];
+        previousmouseX = Mouse.animatic_mouse_value[0];
+        previousmouseY = Mouse.animatic_mouse_value[1];
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));

@@ -1,4 +1,16 @@
-import {Tools, MapData} from "../../main.js";
+import {Tools, MapData, Mouse} from "../../main.js";
+
+var canvasfullscreen = false;
+
+document.addEventListener("fullscreenchange", function ()
+{
+    canvasfullscreen = (document.fullscreen)? true : false;
+}, false);
+document.addEventListener("webkitfullscreenchange", function () {
+    canvasfullscreen = (document.webkitIsFullScreen) ? true : false;
+}, false);
+
+
 class Canvas_Resolution_Asset
 {
     constructor()
@@ -6,14 +18,21 @@ class Canvas_Resolution_Asset
         this.canvasfullscreen = false;
         this.doubleclicktiming = 0;
         this.firstclick = false;
-        this.doubleclickfullscreenmousepressed = false;
+        Mouse.double_click_fullscreen_mouse_pressed = false;
         this.fullscreenupscale = true;
         this.fullscreendownscalefactor = 5;
         this.ablefullscreen = "Enable";
         this.fullscreendownscale = false;
+
+        
     }
 
-    Toggle(elem)
+    varUpdater()
+    {
+        this.canvasfullscreen = canvasfullscreen;
+    }
+
+    toggle(elem)
     {
         if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
             if (elem.requestFullScreen) {
@@ -25,7 +44,9 @@ class Canvas_Resolution_Asset
             } else if (elem.mozRequestFullScreen) {
                 elem.mozRequestFullScreen();
             }
-            Tools.canvasfullscreen = this.canvasfullscreen = true;
+            Mouse.canvasfullscreen = 
+            Tools.canvasfullscreen = 
+            this.canvasfullscreen = true;
         } else {
             if (document.cancelFullScreen) {
                 document.cancelFullScreen();
@@ -36,20 +57,15 @@ class Canvas_Resolution_Asset
             } else if (document.mozCancelFullScreen) {
                 document.mozCancelFullScreen();
             }
-            Tools.canvasfullscreen = this.canvasfullscreen = false;
+            Mouse.canvasfullscreen = 
+            Tools.canvasfullscreen = 
+            this.canvasfullscreen = false;
         }
     }
 
-    Mouse_adapter(mouseX, mouseY, canvas, screen)
-    {
-        if(this.canvasfullscreen)
-        {
-            return [mouseX*(canvas.width / screen.width), mouseY*(canvas.height / screen.height)];
-        }
-        return [mouseX, mouseY];
-    }
+    
 
-    Double_Click_Toggle(click, firstgameframe, enabler = true)
+    doubleClickToggle(click, firstgameframe, enabler = true)
     {
         if(enabler)
         {
@@ -62,11 +78,11 @@ class Canvas_Resolution_Asset
                 if(this.firstclick === false)
                 {
                     this.doubleclicktiming = Date.now();
-                    this.firstclick = this.doubleclickfullscreenmousepressed = true;
+                    this.firstclick = Mouse.double_click_fullscreen_mouse_pressed = true;
                 }
-                else if(click && this.doubleclickfullscreenmousepressed === false)
+                else if(click && Mouse.double_click_fullscreen_mouse_pressed === false)
                 {
-                    this.Toggle(canvas);
+                    this.toggle(canvas);
                     this.firstclick = false;
                     return true;
                 }
@@ -75,7 +91,7 @@ class Canvas_Resolution_Asset
         return firstgameframe;
     }
 
-    Screen_Scaler(canvas, screen, firstgameframe, keys_input)
+    screenScaler(canvas, screen, firstgameframe, keys_input)
     {
         if(firstgameframe)
         {
@@ -104,7 +120,9 @@ class Canvas_Resolution_Asset
         }
         if(this.canvasfullscreen & keys_input[9] == 1)
         {
-            Tools.canvasfullscreen = this.canvasfullscreen = false;
+            Mouse.canvasfullscreen = 
+            Tools.canvasfullscreen = 
+            this.canvasfullscreen = false;
         }
         if(this.canvasfullscreen === false & canvas.width !== 1200 & canvas.height !== 675)
         {
