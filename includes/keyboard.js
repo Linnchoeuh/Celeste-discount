@@ -1,5 +1,3 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, Fullscreen} from "../main.js";
-
 var key_input;
 var key_id;
 var keys_input = {
@@ -93,8 +91,8 @@ document.addEventListener("keyup", function(event)
 
 class Keyboard_Data{
     constructor(){
-        this.key_input = key_input;
-        this.key_id = key_id;
+        this.key_input  = key_input;
+        this.key_id     = key_id;
         this.keys_input = keys_input;
         this.no_key_pressed_object = 
         this.keys_pressed =
@@ -111,14 +109,18 @@ class Keyboard_Data{
             "escape" : false,
             "e" : false
         };
-        this.any_key_press = false;
+        this.any_key_press   = false;
         this.any_key_pressed = false;
+        this.array_of_keys_from_keys_input   = Object.keys(this.keys_input);
+        this.array_of_values_from_keys_input = Object.values(this.keys_input);
     };
 
     varUpdater(){        
         this.key_input = key_input;
         this.key_id = key_id;
         this.keys_input = keys_input;
+        this.array_of_keys_from_keys_input = Object.keys(this.keys_input);
+        this.array_of_values_from_keys_input = Object.values(this.keys_input);
         this.any_key_press = false;
         if(Object.values(this.keys_input).toString() !== Object.values(this.no_key_pressed_object).toString()){
             this.any_key_press = true;
@@ -126,7 +128,10 @@ class Keyboard_Data{
     };
 
     keyPressed(){
-        this.keys_pressed = this.keys_input;
+        this.keys_pressed = {};
+        for (let i = 0; i < this.array_of_keys_from_keys_input.length; i++){
+            this.keys_pressed[this.array_of_keys_from_keys_input[i]] = this.array_of_values_from_keys_input[i]
+        }
         this.any_key_pressed = false;
         if(Object.values(this.keys_pressed).toString() !== Object.values(this.no_key_pressed_object).toString()){
             this.any_key_pressed = true;

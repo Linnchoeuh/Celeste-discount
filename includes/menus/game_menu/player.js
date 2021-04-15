@@ -1,4 +1,4 @@
-import {ctx, Tools, GV} from "../../../main.js";
+import {ctx, Tools, GV, Keyboard} from "../../../main.js";
 import {Timer_Log} from "../../tools.js";
 
 function texture_loader(path)
@@ -119,11 +119,11 @@ class Player_Data
         // collisions[7] = pré a ca droite
 
         // input[0] = z
-        // input[1] = q
+        // Keyboard.keys_input.q = q
         // input[2] = s
-        // input[3] = d
-        // input[4] = space
-        // input[5] = maj
+        // Keyboard.keys_input.d = d
+        // Keyboard.keys_input.space = space
+        // Keyboard.keys_input.shift = maj
         // input[6] = p  (reservé)
         // input[7] = c  (reservé)
         // input[8] = enter
@@ -150,7 +150,7 @@ class Player_Data
             {
                 if(this.wallleave >= this.wallleavemax) //moving
                 {   
-                    if(input[1] != input[3])
+                    if(Keyboard.keys_input.q !== Keyboard.keys_input.d)
                     {
                         this.animationmoving = true;
                         switch(collisions[0])
@@ -181,14 +181,14 @@ class Player_Data
                                 case 1:
                                     this.vector_X -= this.groundfriction;
                                     
-                                    if(input[1] === 1 && collisions[3] === 0)
+                                    if(Keyboard.keys_input.q && collisions[3] === 0)
                                     {
                                         this.ground_slideposition = -1;
                                     }
                                     break;
                                 case 0:
                                     this.vector_X -= this.airfriction;
-                                    if(input[1] === 1)
+                                    if(Keyboard.keys_input.q)
                                     {
                                         this.vector_X -= this.aerialmoving;
                                     }
@@ -205,14 +205,14 @@ class Player_Data
                             {
                                 case 1:
                                     this.vector_X += this.groundfriction;
-                                    if(input[3] === 1 && collisions[2] === 0)
+                                    if(Keyboard.keys_input.d && collisions[2] === 0)
                                     {
                                         this.ground_slideposition = 1;
                                     }
                                     break;
                                 case 0:
                                     this.vector_X += this.airfriction;
-                                    if(input[3] === 1)
+                                    if(Keyboard.keys_input.d)
                                     {
                                         this.vector_X += this.aerialmoving;
                                     }
@@ -225,15 +225,15 @@ class Player_Data
                         }
                     }
 
-                    if(input[3] === 1 && input[1] === 0 && collisions[0] === 1 || this.vector_X > 0 && collisions[0] === 0) //moving right
+                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions[0] === 1 || this.vector_X > 0 && collisions[0] === 0) //moving right
                     {
                         this.lastdirection = 1;
                     }
-                    else if(input[1] === 1 && input[3] === 0 && collisions[0] === 1 || this.vector_X < 0 && collisions[0] === 0)
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions[0] === 1 || this.vector_X < 0 && collisions[0] === 0)
                     {
                         this.lastdirection = -1;
                     }
-                    if     (input[3] === 1 && input[1] === 0 && this.vector_X >= 0 && collisions[3] === 0 && this.vector_X < this.maxcurrentvelocity) //moving right
+                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && collisions[3] === 0 && this.vector_X < this.maxcurrentvelocity) //moving right
                     {
                         this.speed = this.vector_X += this.currentacceleration;
                         if(this.vector_X > this.maxcurrentvelocity)
@@ -242,7 +242,7 @@ class Player_Data
                         }
 
                     }
-                    else if(input[1] === 1 && input[3] === 0 && this.vector_X <= 0 && collisions[2] === 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && collisions[2] === 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
                     {
                         this.speed = this.vector_X -= this.currentacceleration;
                         if(this.vector_X < -this.maxcurrentvelocity)
@@ -254,8 +254,8 @@ class Player_Data
 
                 }
                 
-                if(input[4] === 1 && collisions[1] === 0 && this.walljump === 0 && this.releasejump === true && this.jump === true || 
-                    this.vector_Y >= this.jumptolerance && this.releasejump === true && input[4] === 1 && this.walljump === 0 && this.jumpavaiblelity === true) //jump
+                if(Keyboard.keys_input.space && collisions[1] === 0 && this.walljump === 0 && this.releasejump === true && this.jump === true || 
+                    this.vector_Y >= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
                 {
                     this.vector_Y = this.jumpforce;
                     this.releasejump = false;
@@ -268,7 +268,7 @@ class Player_Data
                     this.jump_animation_postion = 2;
                 }
 
-                if(input[4] === 0 && this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
+                if(Keyboard.keys_input.space === false && this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
                 {
                     this.walljumpcheck = true;
                 }
@@ -287,21 +287,21 @@ class Player_Data
                         this.walljump = 0;
                         this.wallleave = this.wallleavemax;
                     }
-                    if(this.walljump != 0)
+                    if(this.walljump !== 0)
                     {
                         if(this.walljump === 1 || this.walljump === -1)
                         {
                             this.vector_Y = -this.walljumpslide;
                             this.jump = false;
                         }
-                        if(input[1] === 1 || input[3] === 1)
+                        if(Keyboard.keys_input.q || Keyboard.keys_input.d)
                         {
                             this.wallleave += 1;
-                            if(input[3] === 1)
+                            if(Keyboard.keys_input.d)
                             {
                                 this.lastdirection = 1;
                             }
-                            else if(input[1] === 1)
+                            else if(Keyboard.keys_input.q)
                             {
                                 this.lastdirection = -1;
                             }
@@ -311,7 +311,7 @@ class Player_Data
                             this.wallleave = 0;
                         }
                         
-                        if(this.walljumpcheck === true && collisions[0] === 0 && collisions[1] === 0 && input[4] === 1)
+                        if(this.walljumpcheck === true && collisions[0] === 0 && collisions[1] === 0 && Keyboard.keys_input.space)
                         {
                             this.vector_X = -this.walljump*this.walljumpx;
                             this.vector_Y = this.walljumpy;
@@ -325,20 +325,20 @@ class Player_Data
                             this.lastactwalljump = true;
                         }
                     }
-                    else if(this.walljump != 1 && this.walljump != -1)
+                    else if(this.walljump !== 1 && this.walljump !== -1)
                     {
                         this.wallleave = this.wallleavemax;
                         this.jump = false;
                     }
                 }
                 
-                if(this.dashbuttonrelease === false && input[5] === 0) // dash
+                if(this.dashbuttonrelease === false && Keyboard.keys_input.shift === false) // dash
                 {
                     this.dashbuttonrelease = true;
                 }
                 if(this.dashcooldown === 0 && this.lastactwalljump === false)
                 {    
-                    if(input[5] === 1 && this.dashbuttonrelease === true || this.dashcount != 0)
+                    if(Keyboard.keys_input.shift && this.dashbuttonrelease === true || this.dashcount !== 0)
                     {
                         if(this.dashcount === 0)
                         {
@@ -371,7 +371,7 @@ class Player_Data
                         this.vector_Y = 0;
                         this.jump = false;
                     }
-                    if(input[4] === 0 && this.vector_Y > 0 && this.lastactwalljump === false)
+                    if(Keyboard.keys_input.space === false && this.vector_Y > 0 && this.lastactwalljump === false)
                     {
                         this.vector_Y /= this.jumpattenuation;
                         this.jump = false;
@@ -391,7 +391,7 @@ class Player_Data
                     this.jumpavaiblelity = true;
                     
                 }
-                if(input[4] === 0)
+                if(Keyboard.keys_input.space === false)
                 {
                     this.releasejump = true;
                 }
@@ -413,11 +413,11 @@ class Player_Data
                     {
                         this.vector_Y = 0;
                     }
-                    if(input[3] === 1 && collisions[3] === 0) //right
+                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
                     {
                         this.vector_X = 1;
                     }
-                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
+                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
                     {
                         this.vector_X = -1;
                     }
@@ -426,7 +426,7 @@ class Player_Data
                         this.vector_X = 0;
                     }
                 }
-                else if(input[5] === 1)
+                else if(Keyboard.keys_input.shift)
                 {
                     if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
                     {
@@ -440,11 +440,11 @@ class Player_Data
                     {
                         this.vector_Y = 0;
                     }
-                    if(input[3] === 1 && collisions[3] === 0) //right
+                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
                     {
                         this.vector_X = 25;
                     }
-                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
+                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
                     {
                         this.vector_X = -25;
                     }
@@ -467,11 +467,11 @@ class Player_Data
                     {
                         this.vector_Y = 0;
                     }
-                    if(input[3] === 1 && collisions[3] === 0) //right
+                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
                     {
                         this.vector_X = 10;
                     }
-                    else if(input[1] === 1 && collisions[2] === 0 && input[3] === 0) //left
+                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
                     {
                         this.vector_X = -10;
                     }
@@ -482,11 +482,11 @@ class Player_Data
                 }
             }
             
-            if(offsetX_on != 0)
+            if(offsetX_on !== 0)
             {
                 this.playerX += this.vector_X;
             }
-            if(offsetY_on != 0)
+            if(offsetY_on !== 0)
             {
                 this.playerY -= this.vector_Y;
             }

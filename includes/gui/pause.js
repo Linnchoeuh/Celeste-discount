@@ -16,7 +16,7 @@ class Pause_
 
     toggle(text)
     {
-        console.log(Keyboard.keys_input.p, Keyboard.keys_pressed.p, this.pause)
+        // console.log(Keyboard.keys_input.p, Keyboard.keys_pressed.p, this.pause)
         if(Keyboard.keys_input.p && Keyboard.keys_pressed.p === false && this.pause === false)
         {
             // console.log("oui")

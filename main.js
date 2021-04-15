@@ -274,7 +274,7 @@ function main(){
             case 1: //Main menu
                 MainMenu.displayMenu();
                 break;
-            case 2: case 9: //Game 
+            case 2: case 9: //Game
                 GameMenu.displayMenu();
                 break;
             case 3 : case 4: case 8://Setting
@@ -290,10 +290,10 @@ function main(){
                 MapEditorMenu.displayMenu();
                 break;
         }
-        if(GV.keys_input[7] === 1 | command === "true"){ //To enter some usefull commands ingame
+        if(Keyboard.keys_input.c | command === "true"){ //To enter some usefull commands ingame
             push++
             if(push > 60*Fps.dt | GV.devmode){
-                if(GV.keys_input[7] === 1){
+                if(Keyboard.keys_input.c){
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
                     ctx.fillRect(0,0,canvas.width,canvas.height);
                     ctx.fillStyle = "rgb(255,255,255)";
@@ -354,7 +354,7 @@ function main(){
 
             Tools.logText("Fullscreen : "+Fullscreen.canvasfullscreen, 1043, 125); //fullscreen
 
-            Tools.logText("Inputs : "+GV.keys_input, 945, 150); //input
+            Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 945, 150); //input
 
             if(GV.menu === 2 | GV.menu === 9 | 1){
                 ctx.fillStyle = "rgb(255,255,255)";
