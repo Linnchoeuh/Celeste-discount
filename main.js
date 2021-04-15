@@ -43,7 +43,7 @@ import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
     constructor(){
-        this.devmode = true;
+        this.devmode = false;
         this.godmode = false;
         this.camsmootherenable = true;
         this.menu = 1;
