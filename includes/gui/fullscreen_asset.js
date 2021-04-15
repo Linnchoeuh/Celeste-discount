@@ -1,4 +1,4 @@
-import {GV, Tools, MapData, Mouse} from "../../main.js";
+import {Tools, MapData, Mouse} from "../../main.js";
 
 var canvasfullscreen = false;
 
@@ -18,15 +18,12 @@ class Canvas_Resolution_Asset
         this.canvasfullscreen = false;
         this.doubleclicktiming = 0;
         this.firstclick = false;
-        Mouse.double_click_fullscreen_mouse_pressed = false;
         this.fullscreenupscale = true;
         this.fullscreendownscalefactor = 5;
         this.ablefullscreen = "Enable";
         this.fullscreendownscale = false;
         this.double_click_toggle = true;
         this.first_game_frame = false;
-
-        
     }
 
     varUpdater()

@@ -71,7 +71,7 @@ class Game_Menu
         
         Fps.nbofframewithoutphysics++;
         
-        GV.keypressed = Pause.Toggle("Pause", GV.keypressed, GV.keys_input, Fps.dt)
+        Pause.toggle("Pause")
         if(Pause.pause) //pause
         {
             ctx.fillStyle = "rgb(255,255,255)";
@@ -114,7 +114,7 @@ class Game_Menu
                 if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 222, 380, 40, -180+(Pause.pauseframe*20), 250, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
                 {
                     GV.firstgameframe = true;
-                    Fullscreen.Toggle(canvas)
+                    Fullscreen.toggle(canvas)
                 }
                 if(Button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu7") //back to GV.menu
                 {

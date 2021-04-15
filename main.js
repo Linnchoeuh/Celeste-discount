@@ -39,12 +39,11 @@ const ctx = canvas.getContext("2d", {alpha : false});
 canvas.width = 1200;
 canvas.height = 675;
 
-import * as levels from "./includes/levels.js";
+import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
-    constructor()
-    {
-        this.devmode = false;
+    constructor(){
+        this.devmode = true;
         this.godmode = false;
         this.camsmootherenable = true;
         this.menu = 1;
@@ -56,93 +55,12 @@ class Globals_Variable
 
         this.keys_input = [0,0,0,0,0,0,0,0,0,0];
         this.keypressed = false;
-        this.click = false;
 
-        this.mouseX = 0;
-        this.mouseY = 0;
+        this.return_arrow = new Image();
+        this.return_arrow.src = "graphics/ui/return_arrow.png";
     }
 }
 const GV = new Globals_Variable()
-
-
-document.addEventListener("keydown", function(event)
-{
-    key_press = String.fromCharCode(event.keyCode);
-    switch(event.keyCode)
-    {
-        case 90:
-            GV.keys_input.splice(0, 1, 1); //z
-            break
-        case 81:
-            GV.keys_input.splice(1, 1, 1); //q
-            break
-        case 83:
-            GV.keys_input.splice(2, 1, 1); //s
-            break
-        case 68:
-            GV.keys_input.splice(3, 1, 1); //d
-            break
-        case 32:
-            GV.keys_input.splice(4, 1, 1); //space
-            break
-        case 16:
-            GV.keys_input.splice(5, 1, 1); //shift
-            break
-        case 80:
-            GV.keys_input.splice(6, 1, 1); //p
-            break
-        case 67:
-            GV.keys_input.splice(7, 1, 1); //c
-            break
-        case 13:
-            GV.keys_input.splice(8, 1, 1); //enter
-            break
-        case 27:
-            GV.keys_input.splice(9, 1, 1); //escape
-            break
-    }
-});
-document.addEventListener("keyup", function(event)
-{
-    keynb = event.keyCode
-    switch(keynb)
-    {
-        case 90:
-            GV.keys_input.splice(0, 1, 0);
-            break
-        case 81:
-            GV.keys_input.splice(1, 1, 0);
-            break
-        case 83:
-            GV.keys_input.splice(2, 1, 0);
-            break
-        case 68:
-            GV.keys_input.splice(3, 1, 0);
-            break
-        case 32:
-            GV.keys_input.splice(4, 1, 0);
-            break
-        case 16:
-            GV.keys_input.splice(5, 1, 0);
-            break
-        case 80:
-            GV.keys_input.splice(6, 1, 0);
-            break
-        case 67:
-            GV.keys_input.splice(7, 1, 0); //c
-            break
-        case 13:
-            GV.keys_input.splice(8, 1, 0); //enter
-            break
-        case 27:
-            GV.keys_input.splice(9, 1, 0); //escape
-            break        
-    }
-});
-
-
-
-
 
 
 const Menus_ = {
@@ -159,12 +77,16 @@ import{Mouse_Data} from "./includes/mouse.js";
 const Mouse = new Mouse_Data();
 export{Mouse};
 
+import{Keyboard_Data} from "./includes/keyboard.js";
+const Keyboard = new Keyboard_Data();
+export{Keyboard};
+
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 const MainLoop = new Timer_Log();
 const Tools = new Tool_Kit();
 export{Tools};
 
-import {Map_Data} from "./includes/level_reader.js";
+import {Map_Data} from "./includes/menus/game_menu/level_reader.js";
 const MapData = new Map_Data();
 export{MapData};
 
@@ -176,7 +98,7 @@ import {Fps_} from "./includes/display/fps_cap.js";
 const Fps = new Fps_();
 export{Fps};
 
-import {Animatic_} from "./includes/animatic.js";
+import {Animatic_} from "./includes/gui/animatic.js";
 const Button1  = new Animatic_();
 const Button2  = new Animatic_();
 const Button3  = new Animatic_();
@@ -190,11 +112,11 @@ const Button10 = new Animatic_();
 const Button11 = new Animatic_();
 export{Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11};
 
-import {Player_Data} from "./includes/player.js";
+import {Player_Data} from "./includes/menus/game_menu/player.js";
 const Player = new Player_Data();
 export{Player};
 
-import {Map_Editor} from "./includes/map_editor.js";
+import {Map_Editor} from "./includes/menus/map_editor_menu/map_editor.js";
 const MapEditor = new Map_Editor();
 
 import{Pause_} from "./includes/gui/pause.js";
@@ -214,6 +136,15 @@ const GameMenu = new Game_Menu();
 import{Setting_Menu} from "./includes/menus/setting_menu/setting_menu.js";
 const SettingMenu = new Setting_Menu();
 
+import{Map_Editor_Create_Or_Load_Menu} from "./includes/menus/map_editor_menu/map_editor_new_or_load_menu.js";
+const MapEditorCreateOrLoadMenu = new Map_Editor_Create_Or_Load_Menu();
+
+import{Map_Editor_Set_New_Map_Properties} from "./includes/menus/map_editor_menu/map_editor_set_new_map_properties.js";
+const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
+
+import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
+const MapEditorMenu = new Map_Editor_Menu();
+
 var command = "false"; //command
 var push = 0;
 
@@ -221,8 +152,8 @@ var push = 0;
 
 
 
-var return_arrow = Tools.textureLoader("graphics/ui/return_arrow.png");
-var no_preview   = Tools.textureLoader("graphics/ui/no_preview.png");
+
+
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";
@@ -311,511 +242,65 @@ var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,5
                                                                                                  //        [Decorations[x,y]]
                                                                                                  //    ]
                                                                                                  //]
-var previousMapDatapropertiesvalue = "";
 
 
-function openFileOption()
-{
-    document.getElementById("file1").click();
-}
 
-function main()
-{
+
+
+function main(){
+    MainLoop.startTime();
     requestAnimationFrame(main);
-    MainLoop.startTime()
-
+    
     Mouse.canvasfullscreen = 
     Tools.canvasfullscreen = 
     Fullscreen.canvasfullscreen;
     
-    Fullscreen.varUpdater()
-    Mouse.varUpdater()
+    Keyboard.varUpdater();
+    Mouse.varUpdater();
+    Fullscreen.varUpdater();
     
     Mouse.resolutionAdapter();
     Fullscreen.doubleClickToggle();
     Fullscreen.screenScaler();
     ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
     
-    if(Fps.Graphic_Cap(Fps.cap30fps/*75*/))
-    {
+    if(Fps.Graphic_Cap(Fps.cap30fps/*75*/)){
         ctx.fillStyle = 'rgba(0,0,0,0)';
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        Fps.Log()
-        Transition.dt = Fps.dt
+        Fps.Log();
+        Transition.dt = Fps.dt;
         
-        switch(GV.menu) 
-        {
+        switch(GV.menu) {
             case 1: //Main menu
-                MainMenu.displayMenu()
+                MainMenu.displayMenu();
                 break;
             case 2: case 9: //Game 
-                GameMenu.displayMenu()
-                break
-            case 3 : case 4: case 8://Setting
-                SettingMenu.displayMenu()
+                GameMenu.displayMenu();
                 break;
-            case 5:
-                if(GV.last_menu != 5)
-                {
-                    GV.last_menu = 5;
-                }
-                ctx.fillStyle = "rgb(255,255,255)";
-                ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
-                ctx.fillText("MapData editor", Tools.resolutionScaler(345), Tools.resolutionScaler(75));
-
-                if(Button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | Transition.transition_state === "finish" & Transition.selectedaction === "menu1")
-                {
-                    ctx.fillStyle = "rgb(255,255,255)";
-                    stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 1)
-                    GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                }
-
-                if(Button2.text_type1("New", 0, 225, 320, 100, 20, 300, 80, 85, 90, 95, 3.6, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu6") //create a new file
-                {
-                    stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 6)
-                    GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                }
-
-                if(Button3.text_type1("Load", 0, 400, 320, 100, 20, 475, 80, 85, 90, 95, 3.6, 0.4)) //load a file
-                {
-                    openFileOption();
-                    // console.log(document.getElementById('fileItem').files[0])
-                    Mouse.click_left = false;
-                }
-                break
-            case 6: //MapData creator init GV.menu
-                if(GV.last_menu != 6)
-                {
-                    MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]]
-                    GV.last_menu = 6
-                }
-                ctx.fillStyle = "rgb(255,255,255)";
-                ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
-                ctx.fillText("MapData properties", Tools.resolutionScaler(250), Tools.resolutionScaler(75));
-                if(Button1.texture_type1(return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Cancel", 50, 70, 20) | Transition.transition_state === "finish" & Transition.selectedaction === "menu5")
-                {
-                    stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 5)
-                    GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                }
-                ctx.drawImage(no_preview, Tools.resolutionScaler(262), Tools.resolutionScaler(255), Tools.resolutionScaler(75), Tools.resolutionScaler(75));
-                ctx.strokeStyle = "rgb(255,255,255)";
-                ctx.strokeRect(Tools.resolutionScaler(12),Tools.resolutionScaler(130),Tools.resolutionScaler(576),Tools.resolutionScaler(324));
-                if(Button2.text_type2("Name : "+MapData_pack[3][0][0][0], 600, 130, 600, 60, 620, 180, 40))
-                {
-                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][0];
-                    MapData_pack[3][0][0][0] = prompt("Name level:");
-                    if(MapData_pack[3][0][0][0] === null)
-                    {
-                        MapData_pack[3][0][0][0] = previousMapDatapropertiesvalue;
-                    }
-                }
-                ctx.fillStyle = "rgb(255,255,255)";
-                if(Button3.text_type2("MapData width : "+MapData_pack[3][0][0][1], 600, 230, 600, 60, 620, 280, 40))
-                {
-                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][1];
-                    MapData_pack[3][0][0][1] = prompt("Set width:");
-                    if(MapData_pack[3][0][0][1] === null)
-                    {
-                        MapData_pack[3][0][0][1] = previousMapDatapropertiesvalue;
-                    }
-                    MapData_pack[3][0][0][1] = Number(MapData_pack[3][0][0][1])
-                    if(isNaN(MapData_pack[3][0][0][1]))
-                    {
-                        alert("Invalid value.")
-                        MapData_pack[3][0][0][1] = previousMapDatapropertiesvalue;
-                    }
-                }
-                ctx.fillStyle = "rgb(255,255,255)";
-                if(Button4.text_type2("MapData height : "+MapData_pack[3][0][0][2], 600, 330, 600, 60, 620, 380, 40))
-                {
-                    previousMapDatapropertiesvalue = MapData_pack[3][0][0][2];
-                    MapData_pack[3][0][0][2] = prompt("Set height:");
-                    if(MapData_pack[3][0][0][2] === null)
-                    {
-                        MapData_pack[3][0][0][2] = previousMapDatapropertiesvalue;
-                    }
-                    MapData_pack[3][0][0][2] = Number(MapData_pack[3][0][0][2])
-                    if(isNaN(MapData_pack[3][0][0][2]))
-                    {
-                        alert("Invalid value.")
-                        MapData_pack[3][0][0][2] = previousMapDatapropertiesvalue;
-                    }
-                }
-                ctx.fillStyle = "rgb(255,255,255)";
-                if(Button5.text_type2("Create", 0, 470, 1200, 205, 250, 650, 225, "rgb(255,255,255)", 5) | Transition.transition_state === "finish" & Transition.selectedaction === "menu7")
-                {
-                    stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 7)
-                    GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                }
-                break
-            case 7:
-                if(GV.last_menu != 7)
-                {
-                    MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[]]]];
-                    editedGV.levelid = 0;
-                    MapData_pack = GV.level[GV.levelid];
-                    GV.start = true;
-                    Pause.pause = false;
-                    edition_mode = 0;
-                    GV.last_menu = 7;
-                }
-                if(GV.start)
-                {
-                    // MapEditor.load(MapData_pack);
-                    MapEditor.load(GV.level[GV.levelid], editedGV.levelid);
-                    GV.start = false;
-                }
-                MapEditor.display(spawnmodifier);
-                
-                ctx.font = "Bold "+Tools.resolutionScaler(20)+'px arial';
-                ctx.fillStyle = "rgb(255,255,255)";
-                ctx.fillText("["+Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", Mouse.x+Tools.resolutionScaler(10), Mouse.y-Tools.resolutionScaler(10));
-                ctx.strokeStyle = "rgb(0,0,0)";
-                ctx.lineWidth = Tools.resolutionScaler(1);
-                ctx.strokeText("["+Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71)+";"+Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)+"]", Mouse.x+Tools.resolutionScaler(10), Mouse.y-Tools.resolutionScaler(10));
-                
-                if(Pause.pause === false)
-                {
-                    if(Button1.texture_type2(1160, 10, MapEditor.add_block_icon, "Add"))
-                    {
-                        edition_mode = 0;
-                        sub_edition_mode = 0;
-                        mousepressed = false;
-                    }
-                    if(Button2.texture_type2(1160, 50, MapEditor.modification_icon, "Modifications"))
-                    {
-                        edition_mode = 1;
-                        sub_edition_mode = 0;
-                        mousepressed = false;
-                    }
-                    if(Button3.texture_type2(1160, 90, MapEditor.remove_block_icon, "Delete"))
-                    {
-                        edition_mode = 2;
-                        sub_edition_mode = 0;
-                        mousepressed = false;
-                    }
-                    ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
-                    ctx.fillStyle = "rgba(255,255,255,0.7)";
-                    switch(edition_mode)
-                    {
-                        case 0:
-                            ctx.fillText("Add", Tools.resolutionScaler(10), Tools.resolutionScaler(30)); //Text in the top left
-                            ctx.font = "Bold "+Tools.resolutionScaler(15)+'px arial';
-                            
-                            switch(sub_edition_mode)
-                            {
-                                case 0:
-                                    ctx.fillText("block", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 1:
-                                    ctx.fillText("water", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 2:
-                                    ctx.fillText("ennemies", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 3:
-                                    ctx.fillText("interactive blocks", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 4:
-                                    ctx.fillText("decorations", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                            }
-                            ctx.fillStyle = "rgb(255,255,150)";
-                            ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(13), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(Button4.texture_type2(1160, 170, MapEditor.add_block_icon, "Add blocks"))
-                            {
-                                sub_edition_mode = 0;
-                            }
-                            if(Button5.texture_type2(1160, 210, MapEditor.add_water_icon, "Add water"))
-                            {
-                                sub_edition_mode = 1;
-                            }
-                            if(Button6.texture_type2(1160, 250, MapEditor.add_ennemy_icon, "Add ennemies"))
-                            {
-                                sub_edition_mode = 2;
-                            }
-                            if(Button7.texture_type2(1160, 290, MapEditor.add_interactive_block_icon, "Add interactive blocks"))
-                            {
-                                sub_edition_mode = 3;
-                            }
-                            if(Button8.texture_type2(1160, 330, MapEditor.add_decoration_icon, "Add decorations"))
-                            {
-                                sub_edition_mode = 4;
-                            }
-                            break
-                        case 1:
-                            ctx.fillText("Modifications", Tools.resolutionScaler(10), Tools.resolutionScaler(30)); //Text in the top left
-                            ctx.font = "Bold "+Tools.resolutionScaler(15)+'px arial';
-                            switch(sub_edition_mode)
-                            {
-                                case 0:
-                                    ctx.fillText("Move objects", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 1:
-                                    ctx.fillText("Move decorations", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 2:
-                                    ctx.fillText("Modify properties", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                            }
-                            ctx.fillStyle = "rgb(255,255,150)";
-                            ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(53), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(Button4.texture_type2(1160, 170, MapEditor.move_block_icon, "Move objects"))
-                            {
-                                sub_edition_mode = 0;
-                            }
-                            if(Button5.texture_type2(1160, 210, MapEditor.move_decoration_icon, "Move decorations"))
-                            {
-                                sub_edition_mode = 1;
-                            }
-                            if(Button6.texture_type2(1160, 250, MapEditor.modification_icon, "Modify properties"))
-                            {
-                                sub_edition_mode = 2;
-                            }
-                            break
-                        
-                        case 2:
-                            ctx.fillText("Delete", Tools.resolutionScaler(10), Tools.resolutionScaler(30)); //Text in the top left
-                            ctx.font = "Bold "+Tools.resolutionScaler(15)+'px arial';
-                            switch(sub_edition_mode)
-                            {
-                                case 0:
-                                    ctx.fillText("blocks", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                                case 1:
-                                    ctx.fillText("decorations", Tools.resolutionScaler(10), Tools.resolutionScaler(50)); //Subtext in the top left
-                                    break;
-                            }
-                            ctx.fillStyle = "rgb(255,255,150)";
-                            ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(93), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                            if(Button4.texture_type2(1160, 170, MapEditor.remove_block_icon, "Remove blocks"))
-                            {
-                                sub_edition_mode = 0;
-                            }
-                            if(Button5.texture_type2(1160, 210, MapEditor.remove_decoration_icon, "Remove decorations"))
-                            {
-                                sub_edition_mode = 1;
-                            }
-                            break
-                    }
-                    ctx.fillStyle = "rgb(255,255,255)";
-                    ctx.fillRect(Tools.resolutionScaler(1194), Tools.resolutionScaler(173+sub_edition_mode*40), Tools.resolutionScaler(2), Tools.resolutionScaler(24));
-                    
-                    if(Button3.texture_type2(90, 635, MapEditor.play_icon, "Test the MapData", true) | Transition.transition_state === "finish" & Transition.selectedaction === "menu9")
-                    {
-                        switch(Transition.transition_state)
-                        {
-                            case "false":
-                                Transition.transition_state = "true";
-                                Transition.selectedaction = "menu9";
-                                break;
-                            case "finish":
-                                GV.menu = 9;
-                                Transition.transition_state = "false";
-                                Transition.selectedaction = "N/A";
-                                break;
-                        }
-                        mousepressed = true;
-                    }
-                    if(Button2.texture_type2(50, 635, MapEditor.end_block_icon, "Add end GV.level zone", true))
-                    {
-                        mousepressed = true;
-                    }
-                    if(Button1.texture_type2(10, 635, MapEditor.spawn_icon, "Set spawn point", true))
-                    {
-                        spawnmodifier = true
-                        mousepressed = true;
-                    }
-
-                    if(GV.keys_input[5] === 0 & Mouse.animatic_mouse_value[0]-previousmouseX === 0 & Mouse.animatic_mouse_value[1]-previousmouseY === 0 & Mouse.click_left & spawnmodifier === false)
-                    {
-                        MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
-                        MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
-                        mousepressed = true;
-                    }
-                    
-                    if(GV.keys_input[5] === 1)
-                    {
-                        MapData_move_speed = 0;
-                        if(Mouse.click_left)
-                        {
-                            if(mousepressed === false)
-                            {
-                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
-                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
-                                mousepressed = true;
-                            }
-                            if(MapEditor.offsetX >= MapEditor.MapDatalimit[0]*71 & Mouse.animatic_mouse_value[0]-previousmouseX <= 0)
-                            {
-                                MapEditor.offsetX = MapEditor.MapDatalimit[0]*71;
-                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
-                            }
-                            else if(MapEditor.offsetX <= -1129 & Mouse.animatic_mouse_value[0]-previousmouseX >= 0)
-                            {
-                                MapEditor.offsetX = -1129;
-                                MapDatamousetranslationX = (Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX;
-                            }
-                            else
-                            {
-                                MapEditor.offsetX = Math.round(MapDatamousetranslationX-(Mouse.animatic_mouse_value[0]*(1200/canvas.width)));
-                            }
-
-                            if(MapEditor.offsetY >= MapEditor.MapDatalimit[1]*71 & Mouse.animatic_mouse_value[1]-previousmouseY <= 0)
-                            {
-                                MapEditor.offsetY = MapEditor.MapDatalimit[1]*71;
-                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
-                            }
-                            else if(MapEditor.offsetY <= -604 & Mouse.animatic_mouse_value[1]-previousmouseY >= 0)
-                            {
-                                MapEditor.offsetY = -604;
-                                MapDatamousetranslationY = (Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY;
-                            }
-                            else
-                            {
-                                MapEditor.offsetY = Math.round(MapDatamousetranslationY-(Mouse.animatic_mouse_value[1]*(675/(canvas.height))));
-                            }
-
-                        }
-                        ctx.fillStyle = "rgba(50,50,50,0.6)";
-                        ctx.fillRect(Math.round((Mouse.animatic_mouse_value[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
-                                     Math.round((Mouse.animatic_mouse_value[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
-                                     Tools.resolutionScalerAddOne(71), Tools.resolutionScalerAddOne(71));
-
-                    }
-                    else
-                    {
-                        MapData_move_speed = Math.round(20/Fps.dt);
-                        if(spawnmodifier)
-                        {
-                            ctx.fillStyle = "rgba(255,25,0,0.2)";
-                            ctx.fillRect(Math.round((Mouse.animatic_mouse_value[0]-Tools.resolutionScaler(35-MapEditor.offsetX%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetX%71), 
-                                         Math.round((Mouse.animatic_mouse_value[1]-Tools.resolutionScaler(35-MapEditor.offsetY%71))/Tools.resolutionScaler(71))*Tools.resolutionScaler(71)-Tools.resolutionScaler(MapEditor.offsetY%71), 
-                                         Tools.resolutionScalerAddOne(71), Tools.resolutionScalerAddOne(71));
-                            
-                            if(mousepressed === false & Mouse.click_left)
-                            {
-                                MapEditor.spawn = [Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71),
-                                                   Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71)];
-                                // console.log(MapEditor.spawn);
-                                GV.level[GV.levelid][3][editedGV.levelid][0][3] = Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
-                                GV.level[GV.levelid][3][editedGV.levelid][0][4] = Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
-                                // MapData_pack[3][0][0][3] = Math.round(((Mouse.animatic_mouse_value[0]*(1200/canvas.width))+MapEditor.offsetX-35)/71);
-                                // MapData_pack[3][0][0][4] = Math.round(((Mouse.animatic_mouse_value[1]*(675/canvas.height))+MapEditor.offsetY-35)/71);
-                                spawnmodifier = false;
-                                // GV.start = true;
-                            }
-                        }
-
-                    }
-                    if(GV.keys_input[0] === 1 & MapEditor.offsetY > -604)
-                    {
-                        MapEditor.offsetY -= MapData_move_speed;
-                        if(MapEditor.offsetY < -604)
-                        {
-                            MapEditor.offsetY = -604;
-                        }
-                    }
-                    if(GV.keys_input[2] === 1 & MapEditor.offsetY < ((MapEditor.MapDatalimit[1])*71))
-                    {
-                        MapEditor.offsetY += MapData_move_speed;
-                        if(MapEditor.offsetY > ((MapEditor.MapDatalimit[1])*71))
-                        {
-                            MapEditor.offsetY = ((MapEditor.MapDatalimit[1])*71);
-                        }
-                    }
-                    if(GV.keys_input[3] === 1 & MapEditor.offsetX < ((MapEditor.MapDatalimit[0])*71))
-                    {
-                        MapEditor.offsetX += MapData_move_speed;
-                        if(MapEditor.offsetX > ((MapEditor.MapDatalimit[0])*71))
-                        {
-                            MapEditor.offsetX = ((MapEditor.MapDatalimit[0])*71);
-                        }
-                    }
-                    if(GV.keys_input[1] === 1)
-                    {
-                        MapEditor.offsetX -= MapData_move_speed;
-                        if(MapEditor.offsetX < -1129)
-                        {
-                            MapEditor.offsetX = -1129;
-                        }
-                    }
-                }
-                
-
-                if(Pause.pause === false)
-                {
-                    ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
-                    ctx.fillStyle = "rgba(255,255,255,0.7)";
-                    ctx.fillText("Press P to show the GV.menu", Tools.resolutionScaler(875), Tools.resolutionScaler(640)); //mouse pos
-                    ctx.fillText("Press H to get the control ", Tools.resolutionScaler(875), Tools.resolutionScaler(665)); //mouse pos
-                }
-                if(GV.keys_input[6] === 1 & Pause.pkey === false | Pause.pause) //Pause.pause
-                {
-                    GV.keypressed = Pause.Toggle("Pause", GV.keypressed, GV.keys_input, Fps.dt)
-
-                    ctx.fillStyle = "rgb(255,255,255)";
-
-                    if(Button1.text_type1("Resume", 0, 145, 195, 40, -180+(Pause.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
-                    {
-                        Pause.endpause = true;
-                    }
-
-                    if(Button2.text_type1("Setting", 0, 222, 175, 40, -180+(Pause.pauseframe*20), 250, 30, 33, 36, 40, 3.7, 0.3) | Transition.transition_state === "finish" & Transition.selectedaction === "menu8") //setting
-                    {
-                        stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 8)
-                        GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                        if(stock[4])
-                        {
-                            Pause.endpause = false;
-                            Pause.pause = true;
-                            Pause.pauseframe = 10;
-                        }
-                    }
-
-                    if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 295, 380, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 4.5, 0.4)) //fullscreen
-                    {
-                        GV.firstgameframe = true;
-                        Fullscreen.toggle(canvas);
-                    }
-
-                    if(Button4.text_type1("Modify MapData properties", 0, 370, 470, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "bop") //back to GV.menu
-                    {
-                    }
-                    if(Button5.text_type1("Change MapData", 0, 445, 285, 40, -180+(Pause.pauseframe*20), 475, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "bop") //back to GV.menu
-                    {
-                    }
-                    if(Button6.text_type1("Quit", 0, 520, 125, 40, -180+(Pause.pauseframe*20), 550, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu5") //back to GV.menu
-                    {
-                        stock = Transition.Switcher(Transition.transition_state, GV.menu, Transition.selectedaction, 5)
-                        GV.menu = stock[0]; Transition.transition_state = stock[1]; Transition.selectedaction = stock[2];
-                        if(stock[4])
-                        {
-                            Pause.endpause = false;
-                            Pause.pause = false;
-                            Pause.pauseframe = 0;
-                        }
-                    }
-                }
-                
-                break
+            case 3 : case 4: case 8://Setting
+                SettingMenu.displayMenu();
+                break;
+            case 5: //Map editor select menu
+                MapEditorCreateOrLoadMenu.displayMenu();
+                break;
+            case 6: //Map editor init menu
+                MapEditorSetNewMapProperties.displayMenu();
+                break;
+            case 7: //Map editor edit menu
+                MapEditorMenu.displayMenu();
+                break;
         }
-        if(GV.keys_input[7] === 1 | command === "true") //To enter some usefull commands ingame
-        {
+        if(GV.keys_input[7] === 1 | command === "true"){ //To enter some usefull commands ingame
             push++
-            if(push > 60 | GV.devmode)
-            {
-                if(GV.keys_input[7] === 1)
-                {
+            if(push > 60*Fps.dt | GV.devmode){
+                if(GV.keys_input[7] === 1){
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
                     ctx.fillRect(0,0,canvas.width,canvas.height);
                     ctx.fillStyle = "rgb(255,255,255)";
                     ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
                     ctx.fillText("Release C", Tools.resolutionScaler(385), Tools.resolutionScaler(350));
                     command = "true";
-                }    
-                else
-                {
-                    command = "";
+                }else{
                     command = prompt("Enter a command:");
                     switch(command)
                     {
@@ -845,44 +330,25 @@ function main()
                     keynb = "N/A";
                 }
             }
-        }
-        else
-        {
+        }else{
             push = 0;
         }
-
+        // console.log(Keyboard.any_key_press, Keyboard.any_key_pressed)
         Mouse.mousePressed()
+        Keyboard.keyPressed()
 
-        for(let i = 0; i < GV.keys_input.length; ++i)
-        {    
-            if(GV.keys_input[i] === 0)
-            {
-                GV.keypressed = false;
-                Pause.pkey = false;
-            }
-            else
-            {
-                GV.keypressed = true;
-                if(GV.keys_input[6] === 1)
-                {
-                    Pause.pkey = true;
-                }
-                break;
-            }
-        }
         Transition.displayer()
         ctx.font = Tools.resolutionScaler(20)+'px arial';
         ctx.lineWidth = Tools.resolutionScaler(1);
-        if(GV.devmode)
-        {
+        if(GV.devmode){
             ctx.fillStyle = "rgb(255,255,255)";
 
             Tools.logText("x : "+Mouse.x, 1125, 25); //mouse pos
             Tools.logText("y : "+Mouse.y, 1125, 50)
 
-            Tools.logText(key_press, 1100, 75); //key pressed
+            Tools.logText(Keyboard.key_input, 1100, 75); //key pressed
             Tools.logText("|", 1141, 75);
-            Tools.logText(keynb, 1152, 75);
+            Tools.logText(Keyboard.key_id, 1152, 75);
 
             Tools.logText("Click : "+Mouse.click_left, 1091, 100); //Mouse.click_left
 
@@ -890,8 +356,7 @@ function main()
 
             Tools.logText("Inputs : "+GV.keys_input, 945, 150); //input
 
-            if(GV.menu === 2 | GV.menu === 9 | 1)
-            {
+            if(GV.menu === 2 | GV.menu === 9 | 1){
                 ctx.fillStyle = "rgb(255,255,255)";
 
                 Tools.logText("Collisions : "+MapData.collisions, 963, 175); //collisions
@@ -927,8 +392,7 @@ function main()
                 
                 Tools.logText(MapData.i_define+"   "+Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
-            if(GV.menu === 7)
-            {
+            if(GV.menu === 7){
                 
                 Tools.logText("OX : "+Math.round(MapEditor.offsetX), 985, 275); //offset
                 Tools.logText("|", 1080, 275);
@@ -937,8 +401,7 @@ function main()
                 Tools.logText(Transition.currentfadestate+"    " , 1000, 500); //-------------------------------------------------------test var-----------------------------------------------
             }
         }
-        if(Fps.showfps)
-        {    
+        if(Fps.showfps){    
             ctx.fillStyle = "rgb(0,255,0)";
             Tools.logText(Fps.fps+" GFPS "+Number.parseFloat(Fps.dt).toPrecision(3)+" DT", 20, 25, "rgb(0,255,0)", "rgb(0,100,0)"); //GFPS = Frame d'affichage
             Tools.logText(Fps.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique

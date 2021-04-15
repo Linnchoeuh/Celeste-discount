@@ -4,17 +4,15 @@ class Setting_Menu
 {
     constructor()
     {
-        this.return_arrow = Tools.textureLoader("graphics/ui/return_arrow.png");
         this.plus         = Tools.textureLoader("graphics/ui/plus.png");
         this.minus        = Tools.textureLoader("graphics/ui/minus.png");
     }
-    displayMenu()
-    {
+    displayMenu(){
         if(GV.last_menu != 3)
         {
             GV.last_menu = 3;
         }
-        if(Button1.texture_type1(this.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+        if(Button1.texture_type1(GV.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
         {
             switch(Transition.transition_state)
             {
