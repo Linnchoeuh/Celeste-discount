@@ -1,5 +1,5 @@
-var key_input;
-var key_id;
+var key_input = "N/A";
+var key_id = "N/A";
 var keys_input = {
     "z" : false,
     "q" : false,
@@ -91,12 +91,10 @@ document.addEventListener("keyup", function(event)
 
 class Keyboard_Data{
     constructor(){
-        this.key_input  = key_input;
-        this.key_id     = key_id;
-        this.keys_input = keys_input;
-        this.no_key_pressed_object = 
-        this.keys_pressed =
-        {
+        this.key_input  = key_input; //Last key pressed
+        this.key_id     = key_id; //Keycode of the last key pressed
+        this.keys_input = keys_input; //Object of all used keys in the game and when they're activated
+        this.no_key_pressed_object = { //constant
             "z" : false,
             "q" : false,
             "s" : false,
@@ -109,8 +107,10 @@ class Keyboard_Data{
             "escape" : false,
             "e" : false
         };
-        this.any_key_press   = false;
-        this.any_key_pressed = false;
+        this.keys_pressed = {} //Object of all the keys used in game that refer if a key is pressed more than one frame
+        
+        this.any_key_press   = false; //Become true when a key in the object keys_input is true
+        this.any_key_pressed = false; //become true when a key in the object keys_pressed is true
         this.array_of_keys_from_keys_input   = Object.keys(this.keys_input);
         this.array_of_values_from_keys_input = Object.values(this.keys_input);
     };

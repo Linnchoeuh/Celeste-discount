@@ -118,15 +118,15 @@ class Player_Data
         // collisions[6] = pré a ca gauche
         // collisions[7] = pré a ca droite
 
-        // input[0] = z
+        // Keyboard.keys_input.z = z
         // Keyboard.keys_input.q = q
-        // input[2] = s
+        // Keyboard.keys_input.s = s
         // Keyboard.keys_input.d = d
         // Keyboard.keys_input.space = space
         // Keyboard.keys_input.shift = maj
         // input[6] = p  (reservé)
         // input[7] = c  (reservé)
-        // input[8] = enter
+        // Keyboard.keys_input.return = enter
         // input [9] = escape (reservé)
 
 
@@ -399,13 +399,13 @@ class Player_Data
             }
             else //movement in godmode
             {    
-                if(input[8] === 1)
+                if(Keyboard.keys_input.return)
                 {
-                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
+                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
                     {
                         this.vector_Y = 1;
                     }
-                    else if(input[2] === 1 && collisions[0] === 0) //down
+                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
                     {
                         this.vector_Y = -1;
                     }
@@ -428,11 +428,11 @@ class Player_Data
                 }
                 else if(Keyboard.keys_input.shift)
                 {
-                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
+                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
                     {
                         this.vector_Y = 25;
                     }
-                    else if(input[2] === 1 && collisions[0] === 0) //down
+                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
                     {
                         this.vector_Y = -25;
                     }
@@ -455,11 +455,11 @@ class Player_Data
                 }
                 else
                 {    
-                    if(input[0] === 1 && collisions[1] === 0 && input[2] === 0) //up
+                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
                     {
                         this.vector_Y = 10;
                     }
-                    else if(input[2] === 1 && collisions[0] === 0) //down
+                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
                     {
                         this.vector_Y = -10;
                     }

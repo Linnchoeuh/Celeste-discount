@@ -84,7 +84,7 @@ export{Keyboard};
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 const MainLoop = new Timer_Log();
 const Tools = new Tool_Kit();
-export{Tools};
+export{Tools, MainLoop};
 
 import {Map_Data} from "./includes/menus/game_menu/level_reader.js";
 const MapData = new Map_Data();
@@ -145,8 +145,13 @@ const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
 import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
 const MapEditorMenu = new Map_Editor_Menu();
 
-var command = "false"; //command
-var push = 0;
+import{Command_} from "./includes/command.js";
+const Command = new Command_();
+
+import{Log_Display} from "./includes/log_display.js";
+const LogDisplay = new Log_Display();
+
+
 
 
 
@@ -265,9 +270,10 @@ function main(){
     ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
     
     if(Fps.Graphic_Cap(Fps.cap30fps/*75*/)){
-        ctx.fillStyle = 'rgba(0,0,0,0)';
         ctx.clearRect(0,0,canvas.width,canvas.height);
+        // Fps.varUpdater()
         Fps.Log();
+        MainLoop.endLogTime()
         Transition.dt = Fps.dt;
         
         switch(GV.menu) {
@@ -290,135 +296,21 @@ function main(){
                 MapEditorMenu.displayMenu();
                 break;
         }
-        if(Keyboard.keys_input.c | command === "true"){ //To enter some usefull commands ingame
-            push++
-            if(push > 60*Fps.dt | GV.devmode){
-                if(Keyboard.keys_input.c){
-                    ctx.fillStyle = "rgba(0,0,0,0.5)";
-                    ctx.fillRect(0,0,canvas.width,canvas.height);
-                    ctx.fillStyle = "rgb(255,255,255)";
-                    ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
-                    ctx.fillText("Release C", Tools.resolutionScaler(385), Tools.resolutionScaler(350));
-                    command = "true";
-                }else{
-                    command = prompt("Enter a command:");
-                    switch(command)
-                    {
-                        case null:
-                            break
-                        case "devmode true": case "devmode enable":
-                            GV.devmode = true;
-                            break
-                        case "devmode false": case "devmode disable":
-                            GV.devmode = false;
-                            break
-                        case "godmode true": case "godmode enable":
-                            GV.godmode = true;
-                            break
-                        case "godmode false": case "godmode disable" :
-                            GV.godmode = false;
-                            break
-                        case "reset":
-                            
-                            break
-                        default:
-                            alert("invalid command")
-                            break
-                    }
-                    push = 0;
-                    key_press = "N/A";
-                    keynb = "N/A";
-                }
-            }
-        }else{
-            push = 0;
-        }
-        // console.log(Keyboard.any_key_press, Keyboard.any_key_pressed)
+        
         Mouse.mousePressed()
         Keyboard.keyPressed()
 
         Transition.displayer()
-        ctx.font = Tools.resolutionScaler(20)+'px arial';
-        ctx.lineWidth = Tools.resolutionScaler(1);
-        if(GV.devmode){
-            ctx.fillStyle = "rgb(255,255,255)";
+        Command.commandTrigger()
+        
 
-            Tools.logText("x : "+Mouse.x, 1125, 25); //mouse pos
-            Tools.logText("y : "+Mouse.y, 1125, 50)
-
-            Tools.logText(Keyboard.key_input, 1100, 75); //key pressed
-            Tools.logText("|", 1141, 75);
-            Tools.logText(Keyboard.key_id, 1152, 75);
-
-            Tools.logText("Click : "+Mouse.click_left, 1091, 100); //Mouse.click_left
-
-            Tools.logText("Fullscreen : "+Fullscreen.canvasfullscreen, 1043, 125); //fullscreen
-
-            Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 945, 150); //input
-
-            if(GV.menu === 2 | GV.menu === 9 | 1){
-                ctx.fillStyle = "rgb(255,255,255)";
-
-                Tools.logText("Collisions : "+MapData.collisions, 963, 175); //collisions
-
-                Tools.logText("PX : "+Math.round(Player.playerX), 985, 200); //px
-                Tools.logText("|", 1080, 200);
-                Tools.logText("OffOnX : "+MapData.offsetX_on, 1092, 200);
-                
-                Tools.logText("PY : "+Math.round(Player.playerY), 985, 225); //py
-                Tools.logText("|", 1080, 225);
-                Tools.logText("OffOnY : "+MapData.offsetY_on, 1092, 225);
-                
-                Tools.logText("VX : "+Math.round(GameMenu.vect[0]), 985, 250); //vect
-                Tools.logText("|", 1080, 250);
-                Tools.logText("VY : "+GameMenu.vect[1], 1092, 250);
-                
-                Tools.logText("OX : "+Math.round(MapData.offsetX), 985, 275); //offset
-                Tools.logText("|", 1080, 275);
-                Tools.logText("OY : "+MapData.offsetY, 1092, 275);
-                
-                Tools.logText("BU : ["+MapData.bestup[0]+"]px ; ["+MapData.bestup[1]+"]py", 970, 300);
-                Tools.logText("["+MapData.bestup[2]+"]ox ; ["+MapData.bestup[3]+"]oy", 1015, 325);
-                
-                Tools.logText("BD : ["+MapData.bestdown[0]+"]px ; ["+MapData.bestdown[1]+"]py", 970, 350);
-                Tools.logText("["+MapData.bestdown[2]+"]ox ; ["+MapData.bestdown[3]+"]oy", 1015, 375);
-                
-                Tools.logText("BL : ["+MapData.bestleft[0]+"]px ; ["+MapData.bestleft[1]+"]py", 970, 400);
-                Tools.logText("["+MapData.bestleft[2]+"]ox ; ["+MapData.bestleft[3]+"]oy", 1015, 425);
-                
-                Tools.logText("BR : ["+MapData.bestright[0]+"]px ; ["+MapData.bestright[1]+"]py", 970, 450);
-                Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
-                
-                
-                Tools.logText(MapData.i_define+"   "+Transition.selectedaction+"      "+Fps.fps/Fps.pfpslog , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
-            }
-            if(GV.menu === 7){
-                
-                Tools.logText("OX : "+Math.round(MapEditor.offsetX), 985, 275); //offset
-                Tools.logText("|", 1080, 275);
-                Tools.logText("OY : "+MapEditor.offsetY, 1092, 275);
-
-                Tools.logText(Transition.currentfadestate+"    " , 1000, 500); //-------------------------------------------------------test var-----------------------------------------------
-            }
-        }
-        if(Fps.showfps){    
-            ctx.fillStyle = "rgb(0,255,0)";
-            Tools.logText(Fps.fps+" GFPS "+Number.parseFloat(Fps.dt).toPrecision(3)+" DT", 20, 25, "rgb(0,255,0)", "rgb(0,100,0)"); //GFPS = Frame d'affichage
-            Tools.logText(Fps.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique
-            Tools.logText("Main : "+Number.parseFloat(MainLoop.log).toPrecision(3)+" ms", 20, 75, "rgb(0,255,0)", "rgb(0,100,0)"); //Temps de latence entre le début et la fin de la frame
-            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Player display : "+Number.parseFloat(Player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
-        }
-        previousmouseX = Mouse.animatic_mouse_value[0];
-        previousmouseY = Mouse.animatic_mouse_value[1];
+        LogDisplay.displayLog()
+        Fps.display()
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));
     }
-    MainLoop.endLogTime()
+    
 }
 
 main();

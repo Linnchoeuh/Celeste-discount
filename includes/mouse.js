@@ -44,6 +44,8 @@ class Mouse_Data
         
         this.x = 0;
         this.y = 0;
+        this.previous_x = 0;
+        this.previous_y = 0;
         this.click = false;
         this.pressed = false;
         this.click_left = false;
@@ -54,6 +56,8 @@ class Mouse_Data
 
     varUpdater()
     {        
+        this.previous_x = this.x;
+        this.previous_y = this.y;
         this.x = mouse_x;
         this.y = mouse_y;
         this.click = mouse_click;

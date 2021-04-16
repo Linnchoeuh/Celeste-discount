@@ -1,3 +1,4 @@
+import{ctx, Tools, Player, MapData, MainLoop} from "../../main.js"
 class Fps_
 {
     constructor()
@@ -7,6 +8,7 @@ class Fps_
         this.frametime = 0
         this.dt = 0;
         this.date = Date.now();
+        this.date_now = Date.now();
         this.previousdate = this.date;
 
         this.showfps = true;
@@ -25,24 +27,56 @@ class Fps_
         this.nbofframewithoutphysics = 0;
     }
 
-    Log()
-    {
+    display(){
+        if(this.showfps){    
+            ctx.font = Tools.resolutionScaler(20)+'px arial';
+            Tools.logText(this.fps+" GFPS "+Number.parseFloat(this.dt).toPrecision(3)+" DT", 20, 25, "rgb(0,255,0)", "rgb(0,100,0)"); //GFPS = Frame d'affichage
+            Tools.logText(this.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique
+            Tools.logText("Main : "+Number.parseFloat(MainLoop.log).toPrecision(3)+" ms", 20, 75, "rgb(0,255,0)", "rgb(0,100,0)"); //Temps de latence entre le début et la fin de la frame
+            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText("-Player display : "+Number.parseFloat(Player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
+        }
+    }
+
+    // varUpdater(){
+    //     this.date_now = Date.now()
+    // }
+
+    // Log(){
+    //     this.frameaverageaccumulation++;
+    //     if(this.date+1000 <= this.date_now){
+    //         this.date = this.date_now;
+    //         this.fps = this.frameaverageaccumulation;
+    //         this.dt = this.fps/60;
+    //         this.frameaverageaccumulation = 0;
+    //     }
+    // }
+
+    // Physic_log(){
+    //     this.pfps++;
+    //     if(this.dateseconds+1000 <= this.date_now){
+    //         this.dateseconds = this.date_now;
+    //         this.pfpslog = this.pfps;
+    //         this.pfps = 0;
+    //     }
+    // }
+
+    Log(){
         this.frameaverageaccumulation++;
-        if(this.date+1000 <= Date.now())
-        {
+        if(this.date+1000 <= Date.now()){
             this.date = Date.now();
             this.fps = this.frameaverageaccumulation;
             this.dt = this.fps/60;
             this.frameaverageaccumulation = 0;
         }
-        
     }
 
-    Physic_log()
-    {
+    Physic_log(){
         this.pfps++;
-        if(this.dateseconds+1000 <= Date.now())
-        {
+        if(this.dateseconds+1000 <= Date.now()){
             this.dateseconds = Date.now();
             this.pfpslog = this.pfps;
             this.pfps = 0;
