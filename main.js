@@ -143,8 +143,8 @@ const MapEditorCreateOrLoadMenu = new Map_Editor_Create_Or_Load_Menu();
 import{Map_Editor_Set_New_Map_Properties} from "./includes/menus/map_editor_menu/map_editor_set_new_map_properties.js";
 const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
 
-import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
-const MapEditorMenu = new Map_Editor_Menu();
+// import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
+// const MapEditorMenu = new Map_Editor_Menu();
 
 import{Command_} from "./includes/command.js";
 const Command = new Command_();
