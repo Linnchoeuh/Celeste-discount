@@ -137,11 +137,11 @@ const GameMenu = new Game_Menu();
 import{Setting_Menu} from "./includes/menus/setting_menu/setting_menu.js";
 const SettingMenu = new Setting_Menu();
 
-import{Map_Editor_Create_Or_Load_Menu} from "./includes/menus/map_editor_menu/map_editor_new_or_load_menu.js";
-const MapEditorCreateOrLoadMenu = new Map_Editor_Create_Or_Load_Menu();
+// import{Map_Editor_Create_Or_Load_Menu} from "./includes/menus/map_editor_menu/map_editor_new_or_load_menu.js";
+// const MapEditorCreateOrLoadMenu = new Map_Editor_Create_Or_Load_Menu();
 
-import{Map_Editor_Set_New_Map_Properties} from "./includes/menus/map_editor_menu/map_editor_set_new_map_properties.js";
-const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
+// import{Map_Editor_Set_New_Map_Properties} from "./includes/menus/map_editor_menu/map_editor_set_new_map_properties.js";
+// const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
 
 // import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
 // const MapEditorMenu = new Map_Editor_Menu();
