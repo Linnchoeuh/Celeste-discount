@@ -149,8 +149,8 @@ const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
 // import{Command_} from "./includes/command.js";
 // const Command = new Command_();
 
-// import{Log_Display} from "./includes/log_display.js";
-// const LogDisplay = new Log_Display();
+import{Log_Display} from "./includes/log_display.js";
+const LogDisplay = new Log_Display();
 
 
 
