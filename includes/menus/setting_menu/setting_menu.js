@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, Fullscreen} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, Fullscreen, Keyboard} from "../../../main.js";
 
 class Setting_Menu
 {
@@ -12,7 +12,7 @@ class Setting_Menu
         {
             GV.last_menu = 3;
         }
-        if(Button1.texture_type1(GV.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+        if(Button1.texture_type1(GV.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) || Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2" || Keyboard.keys_input.back && Keyboard.keys_pressed.back === false)
         {
             switch(Transition.transition_state)
             {
@@ -88,16 +88,16 @@ class Setting_Menu
                 ctx.fillText(Fullscreen.fullscreendownscalefactor*20+"%", Tools.resolutionScaler(900), Tools.resolutionScaler(435));
                 if(Fullscreen.fullscreendownscalefactor > 1)
                 {
-                    if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+                    if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70, 0, -0.5))
                     {
                         Fullscreen.fullscreendownscalefactor--;
-                        Fullscreen.first_game_frame = true;
+                        Fullscreen.screenScaler();
                     }
                     Fullscreen.firstclick = false;
                 }
                 if(Fullscreen.fullscreendownscalefactor < 5)
                 {
-                    if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70) | GV.keys_input[5] === 1 & GV.keypressed === false | Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2")
+                    if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70, 0, -0.5))
                     {
                         if(Fullscreen.fullscreendownscalefactor >= 4)
                         {
@@ -107,7 +107,7 @@ class Setting_Menu
                         {
                             Fullscreen.fullscreendownscalefactor++;
                         }
-                        Fullscreen.first_game_frame = true;
+                        Fullscreen.screenScaler();
                         Fullscreen.firstclick = false;
                     }
                 }
@@ -131,7 +131,7 @@ class Setting_Menu
                     document.getElementById("canvas").style.imageRendering = "crisp-edges";
                     document.getElementById("canvas").style.imageRendering = "pixelated";
                 }
-                Fullscreen.first_game_frame = true;
+                Fullscreen.screenScaler();
             }
             ctx.fillStyle = "rgb(255,50,75)";
         }
@@ -145,7 +145,7 @@ class Setting_Menu
             {
                 Fullscreen.fullscreenupscale = true;
             }
-            Fullscreen.first_game_frame = true;
+            Fullscreen.screenScaler();
         }
         if(Fullscreen.fullscreendownscale === false)
         {
@@ -168,7 +168,6 @@ class Setting_Menu
             else
             {
                 Fps.cap30fps = 30;
-                // previousgfpsframetiming = gfpsframetiming = Date.now();
             }
             Fps.gfpsintervaltiming = 0;
         }

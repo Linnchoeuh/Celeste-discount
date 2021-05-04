@@ -31,6 +31,11 @@ class Player_Data
         this.right = true;
         this.walljump = 0;
         this.walljumpcheck = false;
+
+        this.hit_box_scaler = 0
+        this.hit_box = 0;
+        this.hit_box_offset = 0;
+        this.pre_player_scaling = 70;
         
         
         this.lastdirection = 1;
@@ -46,10 +51,9 @@ class Player_Data
         this.dashend = 10; //choisir la vitesse du joeur a la fin du dash (valeures admises [0;70])
         
 
-        // this.speed; //Permet juste de stocker un calcul pour la vitesse (Ne pas toucher)
         
 
-        this.jumpforce = 35; //Puissance du saut (valeures admises ]0;+inf[)
+        this.jumpforce = 30; //Puissance du saut (valeures admises ]0;+inf[)
         this.jumptolerance = -10; //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
         this.jumpattenuation = 1.5; // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
                                     // (valeures admises [1;+inf[) plus la valeure est vers l'inf plus le ralentissement sera prononcé
@@ -66,14 +70,14 @@ class Player_Data
         this.wallleavemax = 5; //Nombre de frame requise pour quitter un mur lorsque qu'on est en position pour faire un walljump (valeures admises ]0;+inf[)
         this.wallleave = this.wallleavemax+1; //(Ne pas toucher)
         this.walljumpx = 15; //(valeures admises [0;70]) 0 équivaut a pas déplacment horizontal
-        this.walljumpy = 35; //(valeures admises [0;70]) 0 équivaut a pas déplacment vertical
+        this.walljumpy = 25; //(valeures admises [0;70]) 0 équivaut a pas déplacment vertical
         this.walljumpslide = 4; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
 
         this.groundfriction = 0.8; //Ralentissement de la vitesse joueur lorsqu'il est au sol (valeures admises ]0;+inf[)
         this.airfriction = 0.2; //Ralentissement de la vitesse joueur lorsqu'il est en l'air (valeures admises ]0;+inf[)
         
         
-        this.gravity = 3; //Permet d'ajuster la vitesse de chute du joueur (valeures admises ]0;70])
+        this.gravity = 1.5; //Permet d'ajuster la vitesse de chute du joueur (valeures admises ]0;70])
         this.maxgravityspeed = 20; //Permet de donner une vitesse de chute max (ne jamais dépasser 70px/frame) (valeures admises ]0;70])
 
 
@@ -109,10 +113,10 @@ class Player_Data
 
         this.dashaanimation = texture_loader("graphics/player/dash/dash.png");
 
-        // collisions[0] = en dessous
-        // collisions[1] = au dessus
-        // collisions[2] = a ca gauche
-        // collisions[3] = a ca droite
+        // collisions.Bottom = en dessous
+        // collisions.Top = au dessus
+        // collisions.Left = a ca gauche
+        // collisions.Right = a ca droite
         // collisions[4] = pré en dessous
         // collisions[5] = pré au dessus
         // collisions[6] = pré a ca gauche
@@ -129,19 +133,22 @@ class Player_Data
         // Keyboard.keys_input.return = enter
         // input [9] = escape (reservé)
 
-
+        this.godmode_speed_vector = 10;
     }
 
-    spawn(coords)
-    {
+    spawn(coords){
         this.playerX = coords[0];
         this.playerY = coords[1]-1;
     }
 
-    velocity(input, vx, vy, collisions, offsetX_on, offsetY_on, distanceground, pause)
-    {
+    modifyHitBox(ratio, hitbox = 24, offset = 0){
+        this.hit_box_scaler = ratio
+        this.hit_box = hitbox*this.hit_box_scaler;
+        this.hit_box_offset = offset*this.hit_box_scaler;
+    }
+
+    velocity(collisions, offsetX_on, offsetY_on, distanceground, pause){
         this.PhysicsLoop.startTime()
-        this.vector_Y = -vy;
         if(pause === false)
         {     
             this.ground_slideposition = 0;
@@ -153,13 +160,13 @@ class Player_Data
                     if(Keyboard.keys_input.q !== Keyboard.keys_input.d)
                     {
                         this.animationmoving = true;
-                        switch(collisions[0])
+                        switch(collisions.Bottom)
                         {
-                            case 0:
+                            case false:
                                 this.maxcurrentvelocity = this.maxaerialvelocity;
                                 this.currentacceleration = this.aerialacceleration;
                                 break
-                            case 1:
+                            case true:
                                 this.maxcurrentvelocity = this.maxgroundvelocity;
                                 this.currentacceleration = this.groundacceleration;
                                 break
@@ -174,19 +181,19 @@ class Player_Data
                     if(this.dashcount === 0) //no move
                     {
                         
-                        if(this.vector_X > 0 || collisions[3] === 1) //Ralenti si le perso allait a droite
+                        if(this.vector_X > 0 || collisions.Right) //Ralenti si le perso allait a droite
                         {
-                            switch(collisions[0])
+                            switch(collisions.Bottom)
                             {
-                                case 1:
+                                case true:
                                     this.vector_X -= this.groundfriction;
                                     
-                                    if(Keyboard.keys_input.q && collisions[3] === 0)
+                                    if(Keyboard.keys_input.q && collisions.Right === false)
                                     {
                                         this.ground_slideposition = -1;
                                     }
                                     break;
-                                case 0:
+                                case false:
                                     this.vector_X -= this.airfriction;
                                     if(Keyboard.keys_input.q)
                                     {
@@ -194,23 +201,23 @@ class Player_Data
                                     }
                                     break;
                             }
-                            if(this.vector_X < 0 || collisions[3] === 1)
+                            if(this.vector_X < 0 || collisions.Right)
                             {
                                 this.vector_X = 0;
                             }
                         }
-                        else if(this.vector_X < 0 || collisions[2] === 1) //Ralenti si le perso allait a gauche
+                        else if(this.vector_X < 0 || collisions.Left) //Ralenti si le perso allait a gauche
                         {
-                            switch(collisions[0])
+                            switch(collisions.Bottom)
                             {
-                                case 1:
+                                case true:
                                     this.vector_X += this.groundfriction;
-                                    if(Keyboard.keys_input.d && collisions[2] === 0)
+                                    if(Keyboard.keys_input.d && collisions.Left === false)
                                     {
                                         this.ground_slideposition = 1;
                                     }
                                     break;
-                                case 0:
+                                case false:
                                     this.vector_X += this.airfriction;
                                     if(Keyboard.keys_input.d)
                                     {
@@ -218,22 +225,22 @@ class Player_Data
                                     }
                                     break;
                             }
-                            if(this.vector_X > 0 || collisions[2] === 1)
+                            if(this.vector_X > 0 || collisions.Left)
                             {
                                 this.vector_X = 0;
                             }
                         }
                     }
 
-                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions[0] === 1 || this.vector_X > 0 && collisions[0] === 0) //moving right
+                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions.Bottom || this.vector_X > 0 && collisions.Bottom === false) //moving right
                     {
                         this.lastdirection = 1;
                     }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions[0] === 1 || this.vector_X < 0 && collisions[0] === 0)
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions.Bottom || this.vector_X < 0 && collisions.Bottom === false)
                     {
                         this.lastdirection = -1;
                     }
-                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && collisions[3] === 0 && this.vector_X < this.maxcurrentvelocity) //moving right
+                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && collisions.Right === false && this.vector_X < this.maxcurrentvelocity) //moving right
                     {
                         this.speed = this.vector_X += this.currentacceleration;
                         if(this.vector_X > this.maxcurrentvelocity)
@@ -242,7 +249,7 @@ class Player_Data
                         }
 
                     }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && collisions[2] === 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && collisions.Left === false && this.vector_X > -this.maxcurrentvelocity) //moving left
                     {
                         this.speed = this.vector_X -= this.currentacceleration;
                         if(this.vector_X < -this.maxcurrentvelocity)
@@ -250,20 +257,18 @@ class Player_Data
                             this.speed = this.vector_X = -this.maxcurrentvelocity;
                         }
                     }
-                    
-
                 }
                 
-                if(Keyboard.keys_input.space && collisions[1] === 0 && this.walljump === 0 && this.releasejump === true && this.jump === true || 
-                    this.vector_Y >= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
+                if(Keyboard.keys_input.space && collisions.Top === false && this.walljump === 0 && this.releasejump === true && this.jump === true || 
+                    this.vector_Y <= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
                 {
-                    this.vector_Y = this.jumpforce;
+                    this.vector_Y = -this.jumpforce;
                     this.releasejump = false;
                     this.jump_animation_postion = 1;
                     this.jumpavaiblelity = false
                     this.walljumpcheck = false;
                 }
-                else if(this.vector_Y > 0)
+                else if(this.vector_Y < 0)
                 {
                     this.jump_animation_postion = 2;
                 }
@@ -272,13 +277,13 @@ class Player_Data
                 {
                     this.walljumpcheck = true;
                 }
-                if(collisions[0] === 0 && this.vector_Y <= 0 || this.lastactwalljump === true) //walljump
+                if(collisions.Bottom === false && this.vector_Y >= 0 || this.lastactwalljump === true) //walljump
                 {
-                    if(collisions[2] === 1 && distanceground > 71 || collisions[2] === 1 && distanceground === false) //left
+                    if(collisions.Left && distanceground > 71 || collisions.Left && distanceground === false) //left
                     {
                         this.walljump = -1;
                     }
-                    else if(collisions[3] === 1 && distanceground > 71 || collisions[3] === 1 && distanceground === false) //right
+                    else if(collisions.Right && distanceground > 71 || collisions.Right && distanceground === false) //right
                     {
                         this.walljump = 1;
                     }
@@ -291,7 +296,7 @@ class Player_Data
                     {
                         if(this.walljump === 1 || this.walljump === -1)
                         {
-                            this.vector_Y = -this.walljumpslide;
+                            this.vector_Y = this.walljumpslide;
                             this.jump = false;
                         }
                         if(Keyboard.keys_input.q || Keyboard.keys_input.d)
@@ -311,10 +316,10 @@ class Player_Data
                             this.wallleave = 0;
                         }
                         
-                        if(this.walljumpcheck === true && collisions[0] === 0 && collisions[1] === 0 && Keyboard.keys_input.space)
+                        if(this.walljumpcheck === true && collisions.Bottom === false && collisions.Top === false && Keyboard.keys_input.space)
                         {
                             this.vector_X = -this.walljump*this.walljumpx;
-                            this.vector_Y = this.walljumpy;
+                            this.vector_Y = -this.walljumpy;
                             this.lastdirection = -this.walljump*1;
                             
                             this.jump = false;
@@ -345,7 +350,7 @@ class Player_Data
                             this.dashbuttonrelease = false;
                         }
                         this.dashcount += 1
-                        if(this.dashcount >= this.dashduration || collisions[2] === 1 && this.vector_X < 0 || collisions[3] === 1 && this.vector_X > 0)
+                        if(this.dashcount >= this.dashduration || collisions.Left && this.vector_X < 0 || collisions.Right && this.vector_X > 0)
                         {
                             this.vector_X = this.dashend*this.lastdirection;
                             this.vector_Y = 0;
@@ -364,27 +369,26 @@ class Player_Data
                     this.dashcooldown -= 1;
                 }
 
-                if(collisions[0] === 0 && this.walljump === 0 && this.dashcount === 0) //gravity
+                if(this.walljump === 0 && this.dashcount === 0) //gravity
                 {
-                    if(collisions[1] === 1)
+                    if(collisions.Top)
                     {
                         this.vector_Y = 0;
                         this.jump = false;
                     }
-                    if(Keyboard.keys_input.space === false && this.vector_Y > 0 && this.lastactwalljump === false)
+                    if(Keyboard.keys_input.space === false && this.vector_Y < 0 && this.lastactwalljump === false)
                     {
                         this.vector_Y /= this.jumpattenuation;
                         this.jump = false;
                     }
-                    if(-this.maxgravityspeed < this.vector_Y)
+                    if(this.maxgravityspeed > this.vector_Y)
                     {
-                        this.vector_Y -= 2;
+                        this.vector_Y += this.gravity;
                     }
                 }
 
-                if(collisions[0] === 1 && this.jump === false)
+                if(collisions.Bottom && this.jump === false)
                 {
-                    this.vector_Y = 0;
                     this.wallleave = this.wallleavemax;
                     this.jump = true;
                     this.lastactwalljump = false;
@@ -399,86 +403,42 @@ class Player_Data
             }
             else //movement in godmode
             {    
+                
                 if(Keyboard.keys_input.return)
                 {
-                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
-                    {
-                        this.vector_Y = 1;
-                    }
-                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
-                    {
-                        this.vector_Y = -1;
-                    }
-                    else //neutral y
-                    {
-                        this.vector_Y = 0;
-                    }
-                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
-                    {
-                        this.vector_X = 1;
-                    }
-                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
-                    {
-                        this.vector_X = -1;
-                    }
-                    else //neutral x
-                    {
-                        this.vector_X = 0;
-                    }
+                    this.godmode_speed_vector = 1;
                 }
                 else if(Keyboard.keys_input.shift)
                 {
-                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
-                    {
-                        this.vector_Y = 25;
-                    }
-                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
-                    {
-                        this.vector_Y = -25;
-                    }
-                    else //neutral y
-                    {
-                        this.vector_Y = 0;
-                    }
-                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
-                    {
-                        this.vector_X = 25;
-                    }
-                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
-                    {
-                        this.vector_X = -25;
-                    }
-                    else //neutral x
-                    {
-                        this.vector_X = 0;
-                    }
+                    this.godmode_speed_vector = 25;
                 }
                 else
                 {    
-                    if(Keyboard.keys_input.z && collisions[1] === 0 && Keyboard.keys_input.s === false) //up
-                    {
-                        this.vector_Y = 10;
-                    }
-                    else if(Keyboard.keys_input.s && collisions[0] === 0) //down
-                    {
-                        this.vector_Y = -10;
-                    }
-                    else //neutral y
-                    {
-                        this.vector_Y = 0;
-                    }
-                    if(Keyboard.keys_input.d && collisions[3] === 0) //right
-                    {
-                        this.vector_X = 10;
-                    }
-                    else if(Keyboard.keys_input.q && collisions[2] === 0 && Keyboard.keys_input.d === false) //left
-                    {
-                        this.vector_X = -10;
-                    }
-                    else //neutral x
-                    {
-                        this.vector_X = 0;
-                    }
+                    this.godmode_speed_vector = 10;
+                }
+                if(Keyboard.keys_input.z && Keyboard.keys_input.s === false) //up
+                {
+                    this.vector_Y = -this.godmode_speed_vector;
+                }
+                else if(Keyboard.keys_input.s && Keyboard.keys_input.z === false) //down
+                {
+                    this.vector_Y = this.godmode_speed_vector;
+                }
+                else //neutral y
+                {
+                    this.vector_Y = 0;
+                }
+                if(Keyboard.keys_input.d && Keyboard.keys_input.q === false) //right
+                {
+                    this.vector_X = this.godmode_speed_vector;
+                }
+                else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false) //left
+                {
+                    this.vector_X = -this.godmode_speed_vector;
+                }
+                else //neutral x
+                {
+                    this.vector_X = 0;
                 }
             }
             
@@ -488,11 +448,10 @@ class Player_Data
             }
             if(offsetY_on !== 0)
             {
-                this.playerY -= this.vector_Y;
+                this.playerY += this.vector_Y;
             }
         }
         this.physics_loop_log = this.PhysicsLoop.endLogTime();
-        return [this.vector_X,-this.vector_Y];
     }
     
     display(collisions, pause, dt, camsmootherX, camsmootherY, px, py)
@@ -501,10 +460,10 @@ class Player_Data
         switch(this.walljump)
         {
             case 1:
-                ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                 break;
             case -1:
-                ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                 break;
             case 0:
                 switch(this.lastdirection)
@@ -512,12 +471,12 @@ class Player_Data
                     case 1:
                         if(this.dashcount === 0)
                         { 
-                            if(collisions[0] === 1)
+                            if(collisions.Bottom)
                             {    
-                                if(this.animationmoving === true && collisions[3] === 0 && this.ground_slideposition === 0)
+                                if(this.animationmoving === true && collisions.Right === false && this.ground_slideposition === 0)
                                 {       
                                     this.movingleftframe = 0;
-                                    ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.movingrightframe += 1/dt;
@@ -529,19 +488,19 @@ class Player_Data
                                 }
                                 else if(this.ground_slideposition === 1)
                                 {
-                                    ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                                 else
                                 {
                                     this.movingrightframe = 0;
-                                    ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
-                                    ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.fallingframe += 1/dt;
@@ -554,11 +513,11 @@ class Player_Data
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.jumpframe += 1/dt;
@@ -572,18 +531,18 @@ class Player_Data
                         }
                         else
                         {
-                            ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                            ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                         }
                         break
                     case -1:
                         if(this.dashcount === 0)
                         {    
-                            if(collisions[0] === 1)
+                            if(collisions.Bottom)
                             {
-                                if(this.animationmoving === true && collisions[2] === 0 && this.ground_slideposition === 0)
+                                if(this.animationmoving === true && collisions.Left === false && this.ground_slideposition === 0)
                                 {
                                     this.movingrightframe = 0;
-                                    ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.movingleftframe += 1/dt;
@@ -595,19 +554,19 @@ class Player_Data
                                 }
                                 else if(this.ground_slideposition === -1)
                                 {
-                                    ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                                 else
                                 {
                                     this.movingleftframe = 0;
-                                    ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                             }
                             else
                             {
                                 if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
                                 {
-                                    ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.fallingframe += 1/dt;
@@ -620,11 +579,11 @@ class Player_Data
                                 else if(this.jump_animation_postion === 1)
                                 {
                                     this.jumpframe = 0;
-                                    ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                 }
                                 else if(this.jump_animation_postion === 2)
                                 {
-                                    ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                                    ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                                     if(pause === false)
                                     {
                                         this.jumpframe += 1/dt;
@@ -638,7 +597,7 @@ class Player_Data
                         }
                         else
                         {
-                            ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), Tools.resolutionScaler(71), Tools.resolutionScaler(71));
+                            ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
                         }
                         break
                 }

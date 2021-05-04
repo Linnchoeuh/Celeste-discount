@@ -44,7 +44,7 @@ class Globals_Variable
 {
     constructor(){
         this.devmode = false;
-        this.godmode = false;
+        this.godmode = true;
         this.camsmootherenable = true;
         this.menu = 1;
         this.last_menu = -1;
@@ -83,20 +83,25 @@ export{Keyboard};
 
 import {Tool_Kit, Timer_Log} from "./includes/tools.js";
 const MainLoop = new Timer_Log();
+const MainLoopWithLog = new Timer_Log();
 const Tools = new Tool_Kit();
-export{Tools, MainLoop};
+export{Tools, MainLoop, MainLoopWithLog};
+
+import {Player_Data} from "./includes/menus/game_menu/player.js";
+const Player = new Player_Data();
+export{Player};
 
 import {Map_Data} from "./includes/menus/game_menu/level_reader.js";
 const MapData = new Map_Data();
 export{MapData};
 
-import {Transition_} from "./includes/gui/transition.js";
-const Transition = new Transition_();
-export{Transition};
-
 import {Fps_} from "./includes/display/fps_cap.js";
 const Fps = new Fps_();
 export{Fps};
+
+import {Transition_} from "./includes/gui/transition.js";
+const Transition = new Transition_();
+export{Transition};
 
 import {Animatic_} from "./includes/gui/animatic.js";
 const Button1  = new Animatic_();
@@ -111,10 +116,6 @@ const Button9  = new Animatic_();
 const Button10 = new Animatic_();
 const Button11 = new Animatic_();
 export{Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11};
-
-import {Player_Data} from "./includes/menus/game_menu/player.js";
-const Player = new Player_Data();
-export{Player};
 
 import {Map_Editor} from "./includes/menus/map_editor_menu/map_editor.js";
 const MapEditor = new Map_Editor();
@@ -185,51 +186,7 @@ var spawnmodifpossible = true;
 
 
 // MapData editor
-var block = {
-    "x" : 0,
-    "y" : 0,
-    "Type" : {
-        "Main" : 0,
-        "Sub" : 0
-    },
-    "Collisions" : {
-        "Top" : true,
-        "Bottom" : true,
-        "Left" : true,
-        "Right" : true,
-    }
-};
 
-var other_element = {
-    "x" : 0,
-    "y" : 0,
-    "Type" : 0
-};
-
-var MapData_element = {
-    "Name" : "",
-    "MapData_limit" : {
-        "x" : 50,
-        "y" : 50
-    },
-    "Player_spawn" : {
-        "x" : 0,
-        "y" : 0
-    },
-    "Blocks" : [block],
-    "Water" : [],
-    "Interactive_blocks" : [],
-    "Ennemies" : [],
-    "Decorations" : [],
-
-};
-
-var MapData_pack = {
-    "MapData_certificate" : "CelesteDiscountMapDataApprovedCerticate",
-    "MapData_count" : 1,
-    "Name" : "",
-    "MapDatas" : [MapData_element]
-};
 // console.log(MapData_pack.MapDatas[0].Blocks[0].Collisions.Top)
 var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[],[]]]]; //[MapDataCertifcate, number of MapData, name of the MapData pack,
                                                                                                  //    [MapDatas
@@ -249,34 +206,29 @@ var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,5
                                                                                                  //]
 
 
-
-
-
 function main(){
-    MainLoop.startTime();
     requestAnimationFrame(main);
+
+    if(Fps.Graphic_Cap(Fps.cap30fps)){
+        MainLoop.startTime();
+        MainLoopWithLog.startTime();
+        ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
     
-    Mouse.canvasfullscreen = 
-    Tools.canvasfullscreen = 
-    Fullscreen.canvasfullscreen;
-    
-    Keyboard.varUpdater();
-    Mouse.varUpdater();
-    Fullscreen.varUpdater();
-    
-    Mouse.resolutionAdapter();
-    Fullscreen.doubleClickToggle();
-    Fullscreen.screenScaler();
-    ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
-    
-    if(Fps.Graphic_Cap(Fps.cap30fps/*75*/)){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        // Fps.varUpdater()
-        Fps.Log();
-        MainLoop.endLogTime()
-        Transition.dt = Fps.dt;
+        Mouse.canvasfullscreen = 
+        Tools.canvasfullscreen = 
+        Fullscreen.canvasfullscreen;
+        Player.pre_player_scaling = MapData.pre_block_scaling;
         
-        switch(GV.menu) {
+        Keyboard.varUpdater();
+        Mouse.varUpdater();
+        Fullscreen.varUpdater();
+        
+        Fullscreen.fullscreenChecker();
+        Fullscreen.doubleClickToggle();
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        Fps.varUpdater();
+        Fps.Log();
+        switch(GV.menu){
             case 1: //Main menu
                 MainMenu.displayMenu();
                 break;
@@ -295,22 +247,29 @@ function main(){
             case 7: //Map editor edit menu
                 MapEditorMenu.displayMenu();
                 break;
-        }
+        };
         
-        Mouse.mousePressed()
-        Keyboard.keyPressed()
-
-        Transition.displayer()
-        Command.commandTrigger()
+        Mouse.mousePressed();
+        Keyboard.keyPressed();
         
 
-        LogDisplay.displayLog()
-        Fps.display()
+        Transition.displayer();
+        Command.commandTrigger();
+        
+
+        
+        MainLoop.endLogTime();
+
+        LogDisplay.displayLog();
+        Fps.display();
+        
         ctx.fillStyle = "rgb(255,255,255)";
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));
-    }
+        MainLoopWithLog.endLogTime();
+    };
+
     
-}
+};
 
 main();

@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, Pause, Fullscreen} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Transition, Fps, Player, MapData, Pause, Fullscreen, Keyboard} from "../../../main.js";
 
 class Game_Menu
 {
@@ -18,7 +18,6 @@ class Game_Menu
     {
         if(GV.last_menu != 2)
         {
-            // previousgfpsframetiming = gfpsframetiming = Date.now();
             Fps.gfpsintervaltiming = 0;
             GV.start = true;
             this.vect = [0, 0];
@@ -43,12 +42,10 @@ class Game_Menu
                 Player.previousplayerY = Player.playerY;
                 MapData.previousoffsetX = MapData.offsetX;
                 MapData.previousoffsetY = MapData.offsetY;
-                this.vect = Player.velocity(GV.keys_input, this.vect[0], this.vect[1], MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
-                this.stock = MapData.collider(Player.playerX, Player.playerY, this.vect[0], this.vect[1], Pause.pause);
+                Player.velocity(MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
+                MapData.collider(Pause.pause);
                 MapData.fcamsmoother(Pause.pause);
                 
-                Player.playerX = this.stock[0];
-                Player.playerY = this.stock[1];
                 this.playerinterpoX = Tools.lerp(Player.playerX-Player.previousplayerX, Fps.pfpslog/Fps.fps);
                 this.playerinterpoY = Tools.lerp(Player.playerY-Player.previousplayerY, Fps.pfpslog/Fps.fps);
                 this.camerainterpoX = Tools.lerp(MapData.offsetX-MapData.previousoffsetX, Fps.pfpslog/Fps.fps);
@@ -61,13 +58,13 @@ class Game_Menu
         }
         
         
-        MapData.display(   Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
+        MapData.display(Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,        Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
                        MapData.previousoffsetX+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previousoffsetY+this.camerainterpoY*Fps.nbofframewithoutphysics, 
                        MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics);
         
         Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
                        MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics,
-                       Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,     Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics);
+                       Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics);
         
         Fps.nbofframewithoutphysics++;
         
@@ -98,7 +95,7 @@ class Game_Menu
                     GV.firstgameframe = true;
                     Fullscreen.toggle(canvas);
                 }
-                if(Button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu1") //back to GV.menu
+                if(Button4.text_type1("Back to menu", 0, 370, 305, 40, -180+(Pause.pauseframe*20), 400, 30, 33, 36, 40, 3.8, 0.4) || Transition.transition_state === "finish" && Transition.selectedaction === "menu1" || Keyboard.keys_input.back && Keyboard.keys_pressed.back === false) //back to GV.menu
                 {
                     this.stock = Transition.Switcher(GV.menu, 1);
                     GV.menu = this.stock[0]
@@ -116,7 +113,7 @@ class Game_Menu
                     GV.firstgameframe = true;
                     Fullscreen.toggle(canvas)
                 }
-                if(Button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) | Transition.transition_state === "finish" & Transition.selectedaction === "menu7") //back to GV.menu
+                if(Button4.text_type1("Back to edition", 0, 295, 330, 40, -180+(Pause.pauseframe*20), 325, 30, 33, 36, 40, 3.8, 0.4) || Transition.transition_state === "finish" && Transition.selectedaction === "menu7" || Keyboard.keys_input.back && Keyboard.keys_pressed.back === false) //back to GV.menu
                 {
                     this.stock = Transition.Switcher(GV.menu, 7, true)
                     GV.menu = this.stock[0]; GV.last_menu = this.stock[1];

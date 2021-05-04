@@ -11,7 +11,8 @@ var keys_input = {
     "c" : false,
     "return" : false,
     "escape" : false,
-    "e" : false
+    "e" : false,
+    "back" : false
 };
 
 document.addEventListener("keydown", function(event)
@@ -50,6 +51,9 @@ document.addEventListener("keydown", function(event)
         case 27:
             keys_input.escape = true;
             break;
+        case 8:
+            keys_input.back   = true;
+            break;
     }
 });
 document.addEventListener("keyup", function(event)
@@ -86,6 +90,9 @@ document.addEventListener("keyup", function(event)
         case 27:
             keys_input.escape = false;
             break;
+        case 8:
+            keys_input.back   = false;
+            break;
     }
 });
 
@@ -105,9 +112,10 @@ class Keyboard_Data{
             "c" : false,
             "return" : false,
             "escape" : false,
-            "e" : false
+            "e" : false,
+            "back" : false
         };
-        this.keys_pressed = {} //Object of all the keys used in game that refer if a key is pressed more than one frame
+        this.keys_pressed = {}; //Object of all the keys used in game that refer if a key is pressed more than one frame
         
         this.any_key_press   = false; //Become true when a key in the object keys_input is true
         this.any_key_pressed = false; //become true when a key in the object keys_pressed is true
@@ -124,19 +132,18 @@ class Keyboard_Data{
         this.any_key_press = false;
         if(Object.values(this.keys_input).toString() !== Object.values(this.no_key_pressed_object).toString()){
             this.any_key_press = true;
-        }
+        };
     };
 
     keyPressed(){
-        this.keys_pressed = {};
         for (let i = 0; i < this.array_of_keys_from_keys_input.length; i++){
-            this.keys_pressed[this.array_of_keys_from_keys_input[i]] = this.array_of_values_from_keys_input[i]
-        }
+            this.keys_pressed[this.array_of_keys_from_keys_input[i]] = this.array_of_values_from_keys_input[i];
+        };
         this.any_key_pressed = false;
         if(Object.values(this.keys_pressed).toString() !== Object.values(this.no_key_pressed_object).toString()){
             this.any_key_pressed = true;
-        }
+        };
     };
-}
+};
 
 export{Keyboard_Data};

@@ -194,7 +194,7 @@ class Animatic_
 
     texture_type2(posX, posY, texture, text, reverse = false, texture_offsetX = 5, texture_offsetY = 5, texture_scaleX = 20, texture_scaleY = 20) //Map editor button
     {
-        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30) == true)
+        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30))
         {
             ctx.fillStyle = "rgba(100,100,100,0.4)";
             ctx.strokeStyle = "rgb(255,255,255)";

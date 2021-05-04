@@ -1,9 +1,8 @@
-import {ctx} from "../../main.js";
+import {ctx, Fps} from "../../main.js";
 class Transition_
 {
     constructor()
     {
-        this.dt = 1;
         this.currentfadestate = 0;
         this.transition_state = "false"
         this.selectedaction = "N/A"
@@ -15,15 +14,15 @@ class Transition_
         {    
             if(0.05*this.currentfadestate > 0 & 0.05*this.currentfadestate < 1)    
             {    
-                ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate/this.dt)+")";
+                ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate/Fps.dt)+")";
                 ctx.fillRect(0,0,canvas.width,canvas.height);
-                this.currentfadestate -= 1/this.dt;
+                this.currentfadestate -= 1/Fps.dt;
             }
             else if(0.05*this.currentfadestate >= 1)
             {
                 ctx.fillStyle = "rgb(0,0,0)";
                 ctx.fillRect(0,0,canvas.width,canvas.height);
-                this.currentfadestate -= 1/this.dt;
+                this.currentfadestate -= 1/Fps.dt;
             }
         }
         else
@@ -32,7 +31,7 @@ class Transition_
             {    
                 ctx.fillStyle = "rgba(0,0,0,"+(0.05*this.currentfadestate)+")";
                 ctx.fillRect(0,0,canvas.width,canvas.height);
-                this.currentfadestate += 1/this.dt;
+                this.currentfadestate += 1/Fps.dt;
                 this.transition_state = "true";
             }
             else

@@ -1,275 +1,1115 @@
-var leveltest1 = ["CelesteDiscountMapApprovedCerticate", 1, "", [[["",30,30,10,28],[
-  [9,11,[1,3],[1,1,1,1]]
-, [17,11,[1,3],[1,1,1,1]]
-, [0,11,[1,5],[1,1,1,1]]
-, [13,7,[1,3],[1,1,1,1]]
-, [13,8,[1,11],[1,1,1,1]]
-, [1,11,[1,5],[1,1,1,1]]
-, [2,11,[1,2],[1,1,1,1]]
-, [0,10,[1,5],[1,1,1,1]]
-, [1,10,[1,2],[1,1,1,1]]
-, [0,9,[1,2],[1,1,1,1]]
-, [24,11,[1,3],[1,1,1,1]]
+var block = {
+  "x" : 0,
+  "y" : 0,
+  "Type" : {
+      "Main" : 0,
+      "Sub" : 0
+  },
+  "Collisions" : {
+      "Top" : true,
+      "Bottom" : true,
+      "Left" : true,
+      "Right" : true,
+  }
+};
 
-, [0,12,[1,5],[1,1,1,1]]
-, [1,12,[1,5],[1,1,1,1]]
-, [2,12,[1,5],[1,1,1,1]]
-, [3,12,[1,1],[1,1,1,1]]
-, [4,12,[1,1],[1,1,1,1]]
-, [5,12,[1,1],[1,1,1,1]]
-, [6,12,[1,1],[1,1,1,1]]
-, [7,12,[1,1],[1,1,1,1]]
-, [8,12,[1,1],[1,1,1,1]]
-, [9,12,[1,5],[1,1,1,1]]
-, [10,12,[1,1],[1,1,1,1]]
-, [11,12,[1,1],[1,1,1,1]]
-, [12,12,[1,1],[1,1,1,1]]
-, [13,12,[1,1],[1,1,1,1]]
-, [14,12,[1,1],[1,1,1,1]]
-, [15,12,[1,1],[1,1,1,1]]
-, [16,12,[1,1],[1,1,1,1]]
-, [17,12,[1,5],[1,1,1,1]]
-, [18,12,[1,1],[1,1,1,1]]
-, [19,12,[1,1],[1,1,1,1]]
-, [20,12,[1,5],[1,1,1,1]]
-, [21,12,[1,5],[1,1,1,1]]
-, [22,12,[1,5],[1,1,1,1]]
-, [23,12,[1,1],[1,1,1,1]]
-, [24,12,[1,5],[1,1,1,1]]
-, [25,12,[1,1],[1,1,1,1]]
-, [26,12,[1,2],[1,1,1,1]]
+var other_element = {
+  "x" : 0,
+  "y" : 0,
+  "Type" : 0
+};
 
-, [0,13,[1,5],[1,1,1,1]]
-, [1,13,[1,5],[1,1,1,1]]
-, [2,13,[1,5],[1,1,1,1]]
-, [3,13,[1,5],[1,1,1,1]]
-, [4,13,[1,5],[1,1,1,1]]
-, [5,13,[1,5],[1,1,1,1]]
-, [6,13,[1,5],[1,1,1,1]]
-, [7,13,[1,5],[1,1,1,1]]
-, [8,13,[1,5],[1,1,1,1]]
-, [9,13,[1,5],[1,1,1,1]]
-, [10,13,[1,5],[1,1,1,1]]
-, [11,13,[1,5],[1,1,1,1]]
-, [12,13,[1,5],[1,1,1,1]]
-, [13,13,[1,5],[1,1,1,1]]
-, [14,13,[1,5],[1,1,1,1]]
-, [15,13,[1,5],[1,1,1,1]]
-, [16,13,[1,5],[1,1,1,1]]
-, [17,13,[1,5],[1,1,1,1]]
-, [18,13,[1,5],[1,1,1,1]]
-, [19,13,[1,5],[1,1,1,1]]
-, [20,13,[1,5],[1,1,1,1]]
-, [21,13,[1,5],[1,1,1,1]]
-, [22,13,[1,5],[1,1,1,1]]
-, [23,13,[1,5],[1,1,1,1]]
-, [24,13,[1,5],[1,1,1,1]]
-, [25,13,[1,5],[1,1,1,1]]
-, [26,13,[1,6],[1,1,1,1]]
+var MapData_element = {
+  "Name" : "",
+  "MapData_limit" : {
+      "x" : 50,
+      "y" : 50
+  },
+  "Player_spawn" : {
+      "x" : 0,
+      "y" : 0
+  },
+  "Blocks" : [block],
+  "Water" : [],
+  "Interactive_blocks" : [],
+  "Ennemies" : [],
+  "Decorations" : [],
 
-, [0,14,[1,5],[1,1,1,1]]
-, [1,14,[1,9],[1,1,1,1]]
-, [2,14,[1,9],[1,1,1,1]]
-, [3,14,[1,9],[1,1,1,1]]
-, [4,14,[1,9],[1,1,1,1]]
-, [5,14,[1,9],[1,1,1,1]]
-, [6,14,[1,9],[1,1,1,1]]
-, [7,14,[1,9],[1,1,1,1]]
-, [8,14,[1,9],[1,1,1,1]]
-, [9,14,[1,9],[1,1,1,1]]
-, [10,14,[1,9],[1,1,1,1]]
-, [11,14,[1,9],[1,1,1,1]]
-, [12,14,[1,9],[1,1,1,1]]
-, [13,14,[1,9],[1,1,1,1]]
-, [14,14,[1,9],[1,1,1,1]]
-, [15,14,[1,9],[1,1,1,1]]
-, [16,14,[1,9],[1,1,1,1]]
-, [17,14,[1,9],[1,1,1,1]]
-, [18,14,[1,9],[1,1,1,1]]
-, [19,14,[1,9],[1,1,1,1]]
-, [20,14,[1,9],[1,1,1,1]]
-, [21,14,[1,9],[1,1,1,1]]
-, [22,14,[1,9],[1,1,1,1]]
-, [23,14,[1,9],[1,1,1,1]]
-, [24,14,[1,9],[1,1,1,1]]
-, [25,14,[1,9],[1,1,1,1]]
-, [26,14,[1,10],[1,1,1,1]]
-, [2,7,[1,11],[1,1,1,1]]
+};
 
-, [21,11,[1,5],[1,1,1,1]]
-, [22,11,[1,6],[1,1,1,1]]
-, [21,10,[1,4],[1,1,1,1]]
-, [22,10,[1,6],[1,1,1,1]]
-, [21,9,[1,0],[1,1,1,1]]
-, [22,9,[1,2],[1,1,1,1]]
-, [21,6,[1,11],[1,1,1,1]]
-, [21,5,[1,7],[1,1,1,1]]
-, [21,4,[1,3],[1,1,1,1]]
-, [20,11,[1,0],[1,1,1,1]]
+var MapData_pack = {
+  "MapData_certificate" : "CelesteDiscountMapDataApprovedCerticate",
+  "MapData_count" : 1,
+  "Name" : "",
+  "MapDatas" : [MapData_element]
+};
 
-, [1,6,[1,15],[1,1,1,1]]
-, [2,5,[1,15],[1,1,1,1]]
-, [3,4,[1,15],[1,1,1,1]]
-, [4,3,[1,15],[1,1,1,1]]
-, [5,2,[1,15],[1,1,1,1]]
-, [6,1,[1,15],[1,1,1,1]]
-, [7,2,[1,15],[1,1,1,1]]
-, [8,3,[1,15],[1,1,1,1]]
-, [7,0,[1,15],[1,1,1,1]]
-, [9,4,[1,15],[1,1,1,1]]
-, [10,5,[1,15],[1,1,1,1]]
-, [5,7,[1,11],[1,1,1,1]]
-, [5,6,[1,3],[1,1,1,1]]
-, [7,7,[1,12],[1,1,1,1]]
-, [8,7,[1,10],[1,1,1,1]]
-, [8,6,[1,3],[1,1,1,1]]
-, [30,5,[1,12],[1,1,1,1]]
-, [8,30,[1,1],[1,1,1,1]]
-, [15,30,[1,1],[1,1,1,1]]
-, [16,30,[1,1],[1,1,1,1]]
-, [17,30,[1,1],[1,1,1,1]]
-, [18,30,[1,1],[1,1,1,1]]
-, [19,30,[1,5],[1,1,1,1]]
-, [19,29,[1,0],[1,1,1,1]]
-, [20,28,[1,0],[1,1,1,1]]
-, [21,27,[1,0],[1,1,1,1]]
-, [22,26,[1,0],[1,1,1,1]]
-, [23,25,[1,0],[1,1,1,1]]
-, [24,24,[1,0],[1,1,1,1]]
-, [25,23,[1,0],[1,1,1,1]]
-, [26,22,[1,0],[1,1,1,1]]
-, [27,21,[1,0],[1,1,1,1]]
-, [28,20,[1,0],[1,1,1,1]]
-, [29,19,[1,0],[1,1,1,1]]
-, [30,18,[1,0],[1,1,1,1]]
-, [14,30,[1,1],[1,1,1,1]]
-, [13,30,[1,1],[1,1,1,1]]
-, [12,30,[1,1],[1,1,1,1]]
-, [11,30,[1,1],[1,1,1,1]]
-, [10,30,[1,1],[1,1,1,1]]
-, [9,30,[1,1],[1,1,1,1]]
-, [7,30,[1,1],[1,1,1,1]]
-, [6,30,[1,1],[1,1,1,1]]
-, [5,30,[1,1],[1,1,1,1]]
-, [4,30,[1,1],[1,1,1,1]]
-, [3,30,[1,1],[1,1,1,1]]
-, [2,30,[1,1],[1,1,1,1]]
-, [1,30,[1,1],[1,1,1,1]]
-, [0,30,[1,5],[1,1,1,1]]
-, [0,29,[1,6],[1,1,1,1]]
-, [0,28,[1,6],[1,1,1,1]]
-, [0,27,[1,6],[1,1,1,1]]
-, [0,26,[1,6],[1,1,1,1]]
-, [0,25,[1,6],[1,1,1,1]]
-, [0,24,[1,6],[1,1,1,1]]
-, [0,23,[1,6],[1,1,1,1]]
-, [0,22,[1,6],[1,1,1,1]]
-, [0,21,[1,6],[1,1,1,1]]
-, [0,20,[1,6],[1,1,1,1]]
-, [0,19,[1,6],[1,1,1,1]]
-, [0,18,[1,6],[1,1,1,1]]
-, [0,17,[1,6],[1,1,1,1]]
-, [0,16,[1,6],[1,1,1,1]]
-, [0,15,[1,6],[1,1,1,1]]
-, [4,26,[1,11],[1,1,1,1]]
-, [4,25,[1,7],[1,1,1,1]]
-, [4,24,[1,7],[1,1,1,1]]
-, [4,23,[1,7],[1,1,1,1]]
-, [4,22,[1,7],[1,1,1,1]]
-, [4,21,[1,7],[1,1,1,1]]
-, [4,20,[1,4],[1,1,1,1]]
-, [4,19,[1,0],[1,1,1,1]]
-, [5,19,[1,1],[1,1,1,1]]
-, [6,19,[1,14],[1,1,1,1]]
-, [5,20,[1,10],[1,1,1,1]]
+var leveltest1 = {"MapData_certificate" : "CelesteDiscountMapDataApprovedCerticate",
+"Map_count" : 1,
+"Name" : "",
+"MapDatas" : [{
+  "Name" : "",
+  "Map_limit" : {
+    "x" : 30,
+    "y" : 30
+  },
+  "Player_spawn" : {
+      "x" : 10,
+      "y" : 25
+  },
+  "Blocks" : [{"x" : 9, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 7,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 8,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 10,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 10,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 9,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 3, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 9, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 10, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 11, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 12, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 14, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 15, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 16, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 18, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 19, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 12,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 3, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 9, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 10, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 11, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 12, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 14, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 15, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 16, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 18, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 19, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 13,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 3, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 9, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 10, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 11, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 12, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 14, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 15, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 16, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 18, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 19, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 14,
+              "Type"       : {"Main" : 1, "Sub" : 10},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 7,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 10,
+              "Type"       : {"Main" : 1, "Sub" : 4},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 10,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 9,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 9,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 6,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 5,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 4,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 11,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 6,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 5,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 3, "y" : 4,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 3,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 2,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 1,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 2,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 3,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 0,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 9, "y" : 4,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 10, "y" : 5,
+              "Type"       : {"Main" : 1, "Sub" : 15},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 7,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 6,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 7,
+              "Type"       : {"Main" : 1, "Sub" : 12},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 7,
+              "Type"       : {"Main" : 1, "Sub" : 10},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 6,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 5,
+              "Type"       : {"Main" : 1, "Sub" : 12},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 8, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 15, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 16, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 18, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 19, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 19, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 18,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 14, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 12, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 11, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 10, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 9, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 7, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 3, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 2, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 1, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 18,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 17,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 16,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 0, "y" : 15,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 4},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 4, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 6, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 14},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 5, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 10},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 13, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 12, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 13},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 11, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 12},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 11},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 7},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 17, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 3},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 19,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 30, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 20,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 4},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 4},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 29, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 21,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 0},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 28, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 22,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 27, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 23,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 26, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 24,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 9},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 25, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 1},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 25,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 10},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 2},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 24, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 26,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 6},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 23, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 27,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 22, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 28,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 21, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 29,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              },
+              {"x" : 20, "y" : 30,
+              "Type"       : {"Main" : 1, "Sub" : 5},
+              "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+              }],
+  "Water" : [],
+  "Interactive_blocks" : [],
+  "Ennemies" : [],
+  "Decorations" : []
+}]
+}
 
-, [13,26,[1,11],[1,1,1,1]]
-, [13,25,[1,7],[1,1,1,1]]
-, [13,24,[1,7],[1,1,1,1]]
-, [13,23,[1,7],[1,1,1,1]]
-, [13,22,[1,7],[1,1,1,1]]
-, [13,21,[1,7],[1,1,1,1]]
-, [13,20,[1,7],[1,1,1,1]]
-, [13,19,[1,2],[1,1,1,1]]
-, [12,19,[1,13],[1,1,1,1]]
-, [11,19,[1,12],[1,1,1,1]]
-
-, [17,26,[1,11],[1,1,1,1]]
-, [17,25,[1,7],[1,1,1,1]]
-, [17,24,[1,7],[1,1,1,1]]
-, [17,23,[1,7],[1,1,1,1]]
-, [17,22,[1,7],[1,1,1,1]]
-, [17,21,[1,7],[1,1,1,1]]
-, [17,20,[1,7],[1,1,1,1]]
-, [17,19,[1,3],[1,1,1,1]]
-
-, [30,19,[1,5],[1,1,1,1]]
-, [30,20,[1,5],[1,1,1,1]]
-, [30,21,[1,5],[1,1,1,1]]
-, [30,22,[1,5],[1,1,1,1]]
-, [30,23,[1,5],[1,1,1,1]]
-, [30,24,[1,5],[1,1,1,1]]
-, [30,25,[1,5],[1,1,1,1]]
-, [30,26,[1,5],[1,1,1,1]]
-, [30,27,[1,5],[1,1,1,1]]
-, [30,28,[1,5],[1,1,1,1]]
-, [30,29,[1,5],[1,1,1,1]]
-, [30,30,[1,5],[1,1,1,1]]
-, [29,20,[1,5],[1,1,1,1]]
-, [29,21,[1,5],[1,1,1,1]]
-, [29,22,[1,5],[1,1,1,1]]
-, [29,23,[1,5],[1,1,1,1]]
-, [29,24,[1,5],[1,1,1,1]]
-, [29,25,[1,5],[1,1,1,1]]
-, [29,26,[1,5],[1,1,1,1]]
-, [29,27,[1,4],[1,1,1,1]]
-, [29,28,[1,4],[1,1,1,1]]
-, [29,29,[1,5],[1,1,1,1]]
-, [29,30,[1,5],[1,1,1,1]]
-, [28,21,[1,5],[1,1,1,1]]
-, [28,22,[1,5],[1,1,1,1]]
-, [28,23,[1,5],[1,1,1,1]]
-, [28,24,[1,5],[1,1,1,1]]
-, [28,25,[1,5],[1,1,1,1]]
-, [28,26,[1,9],[1,1,1,1]]
-, [28,29,[1,0],[1,1,1,1]]
-, [28,30,[1,5],[1,1,1,1]]
-, [27,22,[1,5],[1,1,1,1]]
-, [27,23,[1,5],[1,1,1,1]]
-, [27,24,[1,5],[1,1,1,1]]
-, [27,25,[1,5],[1,1,1,1]]
-, [27,26,[1,9],[1,1,1,1]]
-, [27,30,[1,1],[1,1,1,1]]
-, [26,23,[1,5],[1,1,1,1]]
-, [26,24,[1,5],[1,1,1,1]]
-, [26,25,[1,5],[1,1,1,1]]
-, [26,26,[1,9],[1,1,1,1]]
-, [26,30,[1,1],[1,1,1,1]]
-, [25,24,[1,5],[1,1,1,1]]
-, [25,25,[1,5],[1,1,1,1]]
-, [25,26,[1,9],[1,1,1,1]]
-, [25,30,[1,1],[1,1,1,1]]
-, [24,25,[1,5],[1,1,1,1]]
-, [24,26,[1,5],[1,1,1,1]]
-, [24,27,[1,10],[1,1,1,1]]
-, [24,29,[1,2],[1,1,1,1]]
-, [24,30,[1,5],[1,1,1,1]]
-, [23,26,[1,5],[1,1,1,1]]
-, [23,27,[1,5],[1,1,1,1]]
-, [23,28,[1,6],[1,1,1,1]]
-, [23,29,[1,5],[1,1,1,1]]
-, [23,30,[1,5],[1,1,1,1]]
-, [22,27,[1,5],[1,1,1,1]]
-, [22,28,[1,5],[1,1,1,1]]
-, [22,29,[1,5],[1,1,1,1]]
-, [22,30,[1,5],[1,1,1,1]]
-, [21,28,[1,5],[1,1,1,1]]
-, [21,29,[1,5],[1,1,1,1]]
-, [21,30,[1,5],[1,1,1,1]]
-, [20,29,[1,5],[1,1,1,1]]
-, [20,30,[1,5],[1,1,1,1]]],[],[],[],[]]]]
 
 
 
 
-export {leveltest1}
+export{leveltest1};

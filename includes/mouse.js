@@ -5,40 +5,33 @@ var mouse_y = 0;
 var mouse_click = false;
 var mouse_click_left = false
 var mouse_click_middle = false
-var mouse_out = false;
 
-canvas.addEventListener('mousemove', function(event)
-{
+canvas.addEventListener('mousemove', function(event){
     mouse_x = event.clientX - canvas.offsetLeft;
     mouse_y = event.clientY - canvas.offsetTop;
 });
-canvas.addEventListener('mousedown', function(event)
-{
+canvas.addEventListener('mousedown', function(event){
     mouse_click = true;
-    switch(event.button)
-    {
+    switch(event.button){
         case 0:
             mouse_click_left = true;
         case 1:
             mouse_click_middle = true;
-    }
+    };
 });
-canvas.addEventListener('mouseup', function(event)
-{
+canvas.addEventListener('mouseup', function(event){
     mouse_click = false;
-    switch(event.button)
-    {
+    switch(event.button){
         case 0:
             mouse_click_left = false;
         case 1:
             mouse_click_middle = false;
-    }
+    };
 });
 
 class Mouse_Data
 {
-    constructor()
-    {
+    constructor(){
         this.canvasfullscreen = false;
         this.double_click_fullscreen_mouse_pressed = false;
         
@@ -52,10 +45,11 @@ class Mouse_Data
         this.click_middle = false;
 
         this.animatic_mouse_value = [0,0];
-    }
+        this.screen_ratio = canvas.width/screen.width;
+        this.ratio = screen.height/675;
+    };
 
-    varUpdater()
-    {        
+    varUpdater(){        
         this.previous_x = this.x;
         this.previous_y = this.y;
         this.x = mouse_x;
@@ -63,54 +57,44 @@ class Mouse_Data
         this.click = mouse_click;
         this.click_left = mouse_click_left;
         this.click_middle = mouse_click_middle;
-    }
+    };
 
-    mousePressed()
-    {
-        if(this.click)
-        {
-            this.pressed = true;
-            this.double_click_fullscreen_mouse_pressed = true;
-        }
-        else
-        {
-            this.pressed = false;
-            this.double_click_fullscreen_mouse_pressed = false;
-        }
-    }
+    requiredDisplayVariableUpdater(){
+        this.screen_ratio = canvas.width/screen.width;
+        this.ratio = screen.height/675;
+    };
 
-    invisibleMouseCollider(posX, posY, width, height)
-    {
-        if(GV.devmode)
-        {
+    mousePressed(){
+        this.pressed =
+        this.double_click_fullscreen_mouse_pressed = this.click;
+    };
+
+    invisibleMouseCollider(posX, posY, width, height){
+        if(GV.devmode){
             ctx.strokeStyle = "rgb(255,255,255)";
-            ctx.strokeRect(Tools.resolutionScaler(posX),Tools.resolutionScaler(posY),Tools.resolutionScaler(width),Tools.resolutionScaler(height));
-        }
-        if(this.canvasfullscreen)
-        {
-            posX = posX*(screen.height/675);
-            posY = posY*(screen.height/675);
-            width = width*(screen.height/675);
-            height = height*(screen.height/675);
-        }
-        if(this.x >= posX & this.y >= posY & this.x <= posX+width & this.y <= posY+height)
-        {
+            ctx.lineWidth = Tools.resolutionScaler(1);
+            ctx.strokeRect(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY),
+                           Tools.resolutionScaler(width),Tools.resolutionScaler(height));
+        };
+        if(this.canvasfullscreen){
+            posX   *= this.ratio;
+            posY   *= this.ratio;
+            width  *= this.ratio;
+            height *= this.ratio;
+        };
+        if(this.x >= posX && this.x <= posX+width && 
+           this.y >= posY && this.y <= posY+height){
             return true;
-        }
+        };
         return false;
     }
 
-    resolutionAdapter()
-    {
-        if(this.canvasfullscreen)
-        {
-            this.animatic_mouse_value = [this.x*(canvas.width / screen.width), this.y*(canvas.height / screen.height)];
-        }
-        else
-        {
-            this.animatic_mouse_value = [this.x, this.y];
-        }
-    }
-}
+    resolutionAdapter(){
+        this.animatic_mouse_value = [this.x, this.y];
+        if(this.canvasfullscreen){
+            this.animatic_mouse_value = [this.x*this.screen_ratio, this.y*this.screen_ratio];
+        };
+    };
+};
 
 export{Mouse_Data};
