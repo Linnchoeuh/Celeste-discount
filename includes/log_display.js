@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Keyboard, Fps, Mouse, MapData, Fullscreen, Player, Transition} from "../../../main.js";
+import {ctx, GV, Tools, Keyboard, Fps, Mouse, MapData, Fullscreen, Player, Transition} from "../main.js";
 
 class Log_Display
 {

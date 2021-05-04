@@ -117,8 +117,8 @@ const Button10 = new Animatic_();
 const Button11 = new Animatic_();
 export{Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11};
 
-// import {Map_Editor} from "./includes/menus/map_editor_menu/map_editor.js";
-// const MapEditor = new Map_Editor();
+import {Map_Editor} from "./includes/menus/map_editor_menu/map_editor.js";
+const MapEditor = new Map_Editor();
 
 import{Pause_} from "./includes/gui/pause.js";
 const Pause = new Pause_();
@@ -143,11 +143,11 @@ const MapEditorCreateOrLoadMenu = new Map_Editor_Create_Or_Load_Menu();
 import{Map_Editor_Set_New_Map_Properties} from "./includes/menus/map_editor_menu/map_editor_set_new_map_properties.js";
 const MapEditorSetNewMapProperties = new Map_Editor_Set_New_Map_Properties();
 
-// import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
-// const MapEditorMenu = new Map_Editor_Menu();
+import{Map_Editor_Menu} from "./includes/menus/map_editor_menu/map_editor_menu.js";
+const MapEditorMenu = new Map_Editor_Menu();
 
-// import{Command_} from "./includes/command.js";
-// const Command = new Command_();
+import{Command_} from "./includes/command.js";
+const Command = new Command_();
 
 import{Log_Display} from "./includes/log_display.js";
 const LogDisplay = new Log_Display();

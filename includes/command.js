@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Keyboard, Fps} from "../../../main.js";
+import {ctx, GV, Tools, Keyboard, Fps} from "../main.js";
 
 class Command_
 {
