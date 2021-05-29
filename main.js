@@ -33,20 +33,16 @@
 //    Dans une variable : TwoWords
 //Méthodes   : twoWords
 
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d", {alpha : false});
-canvas.width = 1200;
-canvas.height = 675;
-
 import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
     constructor(){
-        this.devmode = false;
+        this.canvas_witdh = 1200;
+        this.canvas_height = 675;
+        this.devmode = true;
         this.godmode = true;
-        this.camsmootherenable = true;
-        this.menu = 1;
+        this.camsmootherenable = false;
+        this.menu = 2;
         this.last_menu = -1;
         this.start = true;
         this.level = ["testlevel", levels.leveltest1]; 
@@ -61,6 +57,13 @@ class Globals_Variable
     }
 }
 const GV = new Globals_Variable()
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d", {alpha : false});
+canvas.width  = GV.canvas_witdh;
+canvas.height = GV.canvas_height;
+
+
 
 
 const Menus_ = {

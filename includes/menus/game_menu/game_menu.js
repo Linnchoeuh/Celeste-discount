@@ -30,7 +30,7 @@ class Game_Menu
             Player.reset();
             MapData.reset();
             this.vect = [0, 0];
-            Player.spawn(MapData.start(GV.level[GV.levelid], GV.editedlevelid));
+            MapData.start(GV.level[GV.levelid], GV.editedlevelid);
             GV.start = false;
         }
 
@@ -40,18 +40,16 @@ class Game_Menu
             {
                 Player.previousplayerX = Player.playerX;
                 Player.previousplayerY = Player.playerY;
-                MapData.previousoffsetX = MapData.offsetX;
-                MapData.previousoffsetY = MapData.offsetY;
-                Player.velocity(MapData.collisions, MapData.offsetX_on, MapData.offsetY_on, MapData.bestdown[4], Pause.pause);
+                Player.velocity(MapData.collisions, MapData.offset_x_on, MapData.offset_y_on, MapData.bestdown[4], Pause.pause);
                 MapData.collider(Pause.pause);
                 MapData.fcamsmoother(Pause.pause);
                 
-                this.playerinterpoX = Tools.lerp(Player.playerX-Player.previousplayerX, Fps.pfpslog/Fps.fps);
-                this.playerinterpoY = Tools.lerp(Player.playerY-Player.previousplayerY, Fps.pfpslog/Fps.fps);
-                this.camerainterpoX = Tools.lerp(MapData.offsetX-MapData.previousoffsetX, Fps.pfpslog/Fps.fps);
-                this.camerainterpoY = Tools.lerp(MapData.offsetY-MapData.previousoffsetY, Fps.pfpslog/Fps.fps);
-                this.smoothinterpoX = Tools.lerp(MapData.camsmoother[0]-MapData.previouscamsmoother[0], Fps.pfpslog/Fps.fps);
-                this.smoothinterpoY = Tools.lerp(MapData.camsmoother[1]-MapData.previouscamsmoother[1], Fps.pfpslog/Fps.fps);
+                this.playerinterpoX = Tools.lerp(Player.playerX-Player.previousplayerX,                 Fps.pfpslog/Fps.fps);
+                this.playerinterpoY = Tools.lerp(Player.playerY-Player.previousplayerY,                 Fps.pfpslog/Fps.fps);
+                MapData.camera_interpo_x = Tools.lerp(MapData.offset_x-MapData.previous_offset_x,            Fps.pfpslog/Fps.fps);
+                MapData.camera_interpo_y = Tools.lerp(MapData.offset_y-MapData.previous_offset_y,            Fps.pfpslog/Fps.fps);
+                MapData.smooth_interpo_x = Tools.lerp(MapData.camsmoother_x-MapData.previous_camsmoother_x, Fps.pfpslog/Fps.fps);
+                MapData.smooth_interpo_y = Tools.lerp(MapData.camsmoother_y-MapData.previous_camsmoother_y, Fps.pfpslog/Fps.fps);
                 Fps.executionloop--;
                 Fps.Physic_log();
             }
@@ -59,12 +57,15 @@ class Game_Menu
         
         
         MapData.display(Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,        Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
-                       MapData.previousoffsetX+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previousoffsetY+this.camerainterpoY*Fps.nbofframewithoutphysics, 
-                       MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics);
+                       MapData.previous_offset_x+this.camera_interpo_x*Fps.nbofframewithoutphysics,        MapData.previous_offset_y+this.camera_interpo_y*Fps.nbofframewithoutphysics, 
+                       MapData.previous_camsmoother_x+MapData.smooth_interpo_x*Fps.nbofframewithoutphysics, MapData.previous_camsmoother_y+MapData.smooth_interpo_y*Fps.nbofframewithoutphysics);
         
         Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
-                       MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics,
-                       Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics);
+                       0,0,
+                       MapData.offset_x, MapData.offset_y
+                       /*MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics,
+                       Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
+                       MapData.previous_offset_x+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previous_offset_y+this.camerainterpoY*Fps.nbofframewithoutphysics*/);
         
         Fps.nbofframewithoutphysics++;
         

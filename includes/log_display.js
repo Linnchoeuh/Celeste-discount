@@ -31,21 +31,24 @@ class Log_Display
 
                 Tools.logText("Collisions : "+Object.values(MapData.collisions), 900, 175); //collisions
 
-                Tools.logText("PX : "+Math.round(Player.playerX), 985, 200); //px
+                Tools.logText("PX : "+Math.round(Player.x), 985, 200); //px
                 Tools.logText("|", 1080, 200);
-                Tools.logText("OffOnX : "+MapData.offsetX_on, 1092, 200);
+                Tools.logText("PosX : "+Player.positionning_x, 1092, 200);
                 
-                Tools.logText("PY : "+Math.round(Player.playerY), 985, 225); //py
+                Tools.logText("PY : "+Math.round(Player.y), 985, 225); //py
                 Tools.logText("|", 1080, 225);
-                Tools.logText("OffOnY : "+MapData.offsetY_on, 1092, 225);
+                Tools.logText("PosY : "+Player.positionning_y, 1092, 225);
                 
                 Tools.logText("VX : "+Math.round(Player.vector_X), 985, 250); //vect
                 Tools.logText("|", 1080, 250);
                 Tools.logText("VY : "+Math.round(Player.vector_Y), 1092, 250);
                 
-                Tools.logText("OX : "+Math.round(MapData.offsetX), 985, 275); //offset
+                Tools.logText("OX : "+Math.round(MapData.offset_x), 985, 275); //offset
                 Tools.logText("|", 1080, 275);
-                Tools.logText("OY : "+MapData.offsetY, 1092, 275);
+                Tools.logText("OY : "+Math.round(MapData.offset_y), 1092, 275);
+
+                Tools.logText("[x: ("+MapData.start_square_collisions_test_area[0]+", "+MapData.end_square_collisions_test_area[0]+") | y: ("
+                              +MapData.start_square_collisions_test_area[1]+", "+MapData.end_square_collisions_test_area[1]+")]", 985, 300);
 
                 // Tools.logText("Start zone : ["+MapData.start_square_collisions_test_area[0]+"]px ; ["+MapData.start_square_collisions_test_area[1]+"]py", 970, 300);
                 

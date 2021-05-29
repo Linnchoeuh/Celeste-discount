@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Transition, Fps, Fullscreen, Keyboard} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Transition, Fps, Fullscreen, Keyboard, MapData} from "../../../main.js";
 
 class Setting_Menu
 {
@@ -170,6 +170,18 @@ class Setting_Menu
                 Fps.cap30fps = 30;
             }
             Fps.gfpsintervaltiming = 0;
+        }
+        if(Button9.text_type1("Res modify", 790, 490, 650, 60, 800, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
+        {
+            if(MapData.pre_block_scale === 24)
+            {
+                MapData.pre_block_scale = 12;
+            }
+            else
+            {
+                MapData.pre_block_scale = 24;
+            }
+            MapData.requiredDisplayVariableUpdater()
         }
     }
 }

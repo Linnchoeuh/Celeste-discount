@@ -17,12 +17,14 @@ class Player_Data
         this.physics_loop_log = 0;
         this.display_loop_log = 0;
         
-        this.playerX = 0;
-        this.playerY = 0;
+        this.x = 0;
+        this.y = 0;
+        this.positionning_x = 0;
+        this.positionning_y = 0;
         this.vector_X = 0;
         this.vector_Y = 0;
-        this.previousplayerX = 0;
-        this.previousplayerY = 0;
+        this.previousx = 0;
+        this.previousy = 0;
         this.jump = false;
         this.jumpavaiblelity = true;
         this.releasejump = false;
@@ -136,15 +138,19 @@ class Player_Data
         this.godmode_speed_vector = 10;
     }
 
-    spawn(coords){
-        this.playerX = coords[0];
-        this.playerY = coords[1]-1;
-    }
+    // spawn(coords){
+    //     this.x = coords[0];
+    //     this.y = coords[1]-1;
+    // }
 
     modifyHitBox(ratio, hitbox = 24, offset = 0){
         this.hit_box_scaler = ratio
         this.hit_box = hitbox*this.hit_box_scaler;
         this.hit_box_offset = offset*this.hit_box_scaler;
+    }
+
+    playerPositionner(pos, offset){
+        return pos - offset
     }
 
     velocity(collisions, offsetX_on, offsetY_on, distanceground, pause){
@@ -442,176 +448,174 @@ class Player_Data
                 }
             }
             
-            if(offsetX_on !== 0)
-            {
-                this.playerX += this.vector_X;
-            }
-            if(offsetY_on !== 0)
-            {
-                this.playerY += this.vector_Y;
-            }
+            this.x += this.vector_X;
+            this.y += this.vector_Y;
         }
         this.physics_loop_log = this.PhysicsLoop.endLogTime();
     }
     
-    display(collisions, pause, dt, camsmootherX, camsmootherY, px, py)
+    display(collisions, pause, dt, player_x, player_y, offset_x, offset_y, cam_smoother_x, cam_smoother_y)
     {
         this.DisplayLoop.startTime();
-        switch(this.walljump)
-        {
-            case 1:
-                ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                break;
-            case -1:
-                ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                break;
-            case 0:
-                switch(this.lastdirection)
-                {
-                    case 1:
-                        if(this.dashcount === 0)
-                        { 
-                            if(collisions.Bottom)
-                            {    
-                                if(this.animationmoving === true && collisions.Right === false && this.ground_slideposition === 0)
-                                {       
-                                    this.movingleftframe = 0;
-                                    ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.movingrightframe += 1/dt;
-                                    }
-                                    if(this.movingrightframe >= this.movingframetiminglistlen)
-                                    {
-                                        this.movingrightframe = 0;
-                                    }
-                                }
-                                else if(this.ground_slideposition === 1)
-                                {
-                                    ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                                else
-                                {
-                                    this.movingrightframe = 0;
-                                    ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                            }
-                            else
-                            {
-                                if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
-                                {
-                                    ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.fallingframe += 1/dt;
-                                    }
-                                    if(this.fallingframe >= this.fallingframetiminglistlen)
-                                    {
-                                        this.fallingframe = 0;
-                                    }
-                                }
-                                else if(this.jump_animation_postion === 1)
-                                {
-                                    this.jumpframe = 0;
-                                    ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                                else if(this.jump_animation_postion === 2)
-                                {
-                                    ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.jumpframe += 1/dt;
-                                    }
-                                    if(this.jumpframe >= this.jumpframetiminglistlen)
-                                    {
-                                        this.jumpframe = 0;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                        }
-                        break
-                    case -1:
-                        if(this.dashcount === 0)
-                        {    
-                            if(collisions.Bottom)
-                            {
-                                if(this.animationmoving === true && collisions.Left === false && this.ground_slideposition === 0)
-                                {
-                                    this.movingrightframe = 0;
-                                    ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.movingleftframe += 1/dt;
-                                    }
-                                    if(this.movingleftframe >= this.movingframetiminglistlen)
-                                    {
-                                        this.movingleftframe = 0;
-                                    }
-                                }
-                                else if(this.ground_slideposition === -1)
-                                {
-                                    ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                                else
-                                {
-                                    this.movingleftframe = 0;
-                                    ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                            }
-                            else
-                            {
-                                if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
-                                {
-                                    ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.fallingframe += 1/dt;
-                                    }
-                                    if(this.fallingframe >= this.fallingframetiminglistlen)
-                                    {
-                                        this.fallingframe = 0;
-                                    }
-                                }
-                                else if(this.jump_animation_postion === 1)
-                                {
-                                    this.jumpframe = 0;
-                                    ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                }
-                                else if(this.jump_animation_postion === 2)
-                                {
-                                    ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                                    if(pause === false)
-                                    {
-                                        this.jumpframe += 1/dt;
-                                    }
-                                    if(this.jumpframe >= this.jumpframetiminglistlen)
-                                    {
-                                        this.jumpframe = 0;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-                        }
-                        break
-                }
-                break
-        }
+        this.positionning_x = Tools.resolutionScaler(this.playerPositionner(this.x, offset_x));
+        this.positionning_y = Tools.resolutionScaler(this.playerPositionner(this.y, offset_y));
+        // ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
+
+        // switch(this.walljump)
+        // {
+        //     case 1:
+        //         ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(this.x), Tools.resolutionScaler(this.y), this.pre_player_scaling, this.pre_player_scaling);
+        //         break;
+        //     case -1:
+        //         ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //         break;
+        //     case 0:
+        //         switch(this.lastdirection)
+        //         {
+        //             case 1:
+        //                 if(this.dashcount === 0)
+        //                 { 
+        //                     if(collisions.Bottom)
+        //                     {    
+        //                         if(this.animationmoving === true && collisions.Right === false && this.ground_slideposition === 0)
+        //                         {       
+        //                             this.movingleftframe = 0;
+        //                             ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.movingrightframe += 1/dt;
+        //                             }
+        //                             if(this.movingrightframe >= this.movingframetiminglistlen)
+        //                             {
+        //                                 this.movingrightframe = 0;
+        //                             }
+        //                         }
+        //                         else if(this.ground_slideposition === 1)
+        //                         {
+        //                             ctx.drawImage(this.ground_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                         else
+        //                         {
+        //                             this.movingrightframe = 0;
+        //                             ctx.drawImage(this.initial_pose, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                     }
+        //                     else
+        //                     {
+        //                         if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
+        //                         {
+        //                             ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(this.x), Tools.resolutionScaler(this.y), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.fallingframe += 1/dt;
+        //                             }
+        //                             if(this.fallingframe >= this.fallingframetiminglistlen)
+        //                             {
+        //                                 this.fallingframe = 0;
+        //                             }
+        //                         }
+        //                         else if(this.jump_animation_postion === 1)
+        //                         {
+        //                             this.jumpframe = 0;
+        //                             ctx.drawImage(this.jump_animation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                         else if(this.jump_animation_postion === 2)
+        //                         {
+        //                             ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.jumpframe += 1/dt;
+        //                             }
+        //                             if(this.jumpframe >= this.jumpframetiminglistlen)
+        //                             {
+        //                                 this.jumpframe = 0;
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //                 else
+        //                 {
+        //                     ctx.drawImage(this.dashaanimation, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                 }
+        //                 break
+        //             case -1:
+        //                 if(this.dashcount === 0)
+        //                 {    
+        //                     if(collisions.Bottom)
+        //                     {
+        //                         if(this.animationmoving === true && collisions.Left === false && this.ground_slideposition === 0)
+        //                         {
+        //                             this.movingrightframe = 0;
+        //                             ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.movingleftframe += 1/dt;
+        //                             }
+        //                             if(this.movingleftframe >= this.movingframetiminglistlen)
+        //                             {
+        //                                 this.movingleftframe = 0;
+        //                             }
+        //                         }
+        //                         else if(this.ground_slideposition === -1)
+        //                         {
+        //                             ctx.drawImage(this.ground_slide, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                         else
+        //                         {
+        //                             this.movingleftframe = 0;
+        //                             ctx.drawImage(this.initial_pose, 0, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                     }
+        //                     else
+        //                     {
+        //                         if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
+        //                         {
+        //                             ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.fallingframe += 1/dt;
+        //                             }
+        //                             if(this.fallingframe >= this.fallingframetiminglistlen)
+        //                             {
+        //                                 this.fallingframe = 0;
+        //                             }
+        //                         }
+        //                         else if(this.jump_animation_postion === 1)
+        //                         {
+        //                             this.jumpframe = 0;
+        //                             ctx.drawImage(this.jump_animation, 72, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                         }
+        //                         else if(this.jump_animation_postion === 2)
+        //                         {
+        //                             ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                             if(pause === false)
+        //                             {
+        //                                 this.jumpframe += 1/dt;
+        //                             }
+        //                             if(this.jumpframe >= this.jumpframetiminglistlen)
+        //                             {
+        //                                 this.jumpframe = 0;
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //                 else
+        //                 {
+        //                     ctx.drawImage(this.dashaanimation, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
+        //                 }
+        //                 break
+        //         }
+        //         break
+        // }
         this.display_loop_log = this.DisplayLoop.endLogTime();
     }
 
     reset()
     {
-        this.playerX = 0;
-        this.playerY = 0;
-        this.previousplayerX = 0;
-        this.previousplayerY = 0;
+        this.x = 0;
+        this.y = 0;
+        this.previousx = 0;
+        this.previousy = 0;
         this.jump = false;
         this.jumpavaiblelity = true
         this.releasejump = false;

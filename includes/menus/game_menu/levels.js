@@ -55,7 +55,7 @@ var leveltest1 = {"MapData_certificate" : "CelesteDiscountMapDataApprovedCertica
   },
   "Player_spawn" : {
       "x" : 10,
-      "y" : 25
+      "y" : 10
   },
   "Blocks" : [{"x" : 9, "y" : 11,
               "Type"       : {"Main" : 1, "Sub" : 3},
