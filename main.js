@@ -33,8 +33,6 @@
 //    Dans une variable : TwoWords
 //Méthodes   : twoWords
 
-//test
-
 import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {

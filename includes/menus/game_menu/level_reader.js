@@ -208,26 +208,28 @@ class Map_Data
         this.CollisionsLoop.startTime();
         if(pause === false)    
         {    
-            this.collisions = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
+            this.collisions         = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
             this.invalid_collisions = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
             
             // block the player moving when he reach a border of the canvas
-            if(Player.x+Player.hit_box_offset < 0)
+            if(Player.x+Player.hit_box_offset <= 0)
             {
                 Player.x        = -Player.hit_box_offset;
                 Player.vector_X = 0;
+                this.collisions.Left = true
             }
-            else if(Player.x+Player.hit_box_offset-this.original_block_scale+Player.hit_box > this.map_limit.x*this.original_block_scale)
+            else if(Player.x+Player.hit_box_offset-this.original_block_scale+Player.hit_box >= this.map_limit.x*this.original_block_scale)
             {
                 Player.x        = this.map_limit.x*this.original_block_scale+(this.original_block_scale-(Player.hit_box_offset+Player.hit_box));
                 Player.vector_X = 0;
+                this.collisions.Left = true
             }
-            if(Player.y > this.map_limit.y*this.original_block_scale)
+            if(Player.y >= this.map_limit.y*this.original_block_scale)
             {
                 Player.y        = this.map_limit.y*this.original_block_scale;
                 Player.vector_Y = 0;
             }
-            else if(Player.y < 0)
+            else if(Player.y <= 0)
             {
                 Player.y        =
                 Player.vector_Y = 0;
@@ -251,68 +253,6 @@ class Map_Data
                                                       Math.trunc(this.pre_part_calculed_vertical_end_square_collisions_test_area    /this.original_block_scale)];
 
 
-            this.block_in_test_collision_area_count = 0;
-            this.nearest_vertical_collision   = Player.y/this.original_block_scale
-            this.nearest_horizontal_collision = (Player.x+Player.hit_box_offset)/this.original_block_scale
-
-            for(let i = this.start_square_collisions_test_area[1]; i <= this.end_square_collisions_test_area[1]; i++)
-            {
-                if(i > this.map_limit.y){break;}
-                for(let k = this.start_square_collisions_test_area[0]; k <= this.end_square_collisions_test_area[0]; k++)
-                {
-                    this.block_in_test_collision_area_count++;
-                    this.reversed_k = this.end_square_collisions_test_area[0]-k+this.start_square_collisions_test_area[0];
-                    
-                    if(Player.vector_X > 0 && this.right_collisions_map[i][k] && k-Player.hit_box/this.original_block_scale >= this.nearest_horizontal_collision-Player.vector_X/this.original_block_scale)
-                    {
-                        if(this.nearest_horizontal_collision+Player.hit_box/this.original_block_scale > k)
-                        {
-                            this.nearest_horizontal_collision = k-(Player.hit_box+Player.hit_box_offset)/this.original_block_scale;
-                            this.collisions.Right = true;
-                        };
-                    }
-                    else if(Player.vector_X < 0 && this.left_collisions_map[i][k] && k+(Player.hit_box+Player.hit_box_offset)/this.original_block_scale <= this.nearest_horizontal_collision-Player.vector_X/this.original_block_scale)
-                    {
-                        if(this.nearest_horizontal_collision > k)
-                        {
-                            this.nearest_horizontal_collision = k+(Player.hit_box+Player.hit_box_offset)/this.original_block_scale;
-                            this.collisions.Left = true;
-                        }
-                    }
-                    // console.log(k*this.original_block_scale +" !== "+ (Player.x+Player.hit_box_offset))
-                    if(Player.vector_Y > 0 && this.bottom_collisions_map[i][k] && i-1 >= this.nearest_vertical_collision-Player.vector_Y/this.original_block_scale)
-                    {
-                        if(this.nearest_vertical_collision+1 > i)
-                        {
-                            this.nearest_vertical_collision = i-1;
-                            this.collisions.Bottom = true;
-                            if(k*this.original_block_scale+this.original_block_scale === Player.x+Player.hit_box_offset || k*this.original_block_scale === Player.x+Player.hit_box_offset+Player.hit_box){
-                                this.collisions.Bottom = false;
-                            }
-                        }
-                    }
-                    else if(Player.vector_Y < 0 && this.top_collisions_map[i][k] && i+1 <= this.nearest_vertical_collision-Player.vector_Y/this.original_block_scale)
-                    {
-                        if(this.nearest_vertical_collision > i)
-                        {
-                            this.nearest_vertical_collision = i+1;
-                            this.collisions.Top = true;
-                            if(k*this.original_block_scale+this.original_block_scale === Player.x+Player.hit_box_offset || k*this.original_block_scale === Player.x+Player.hit_box_offset+Player.hit_box){
-                                this.collisions.Top = false;
-                            }
-                        }
-                        
-                    }
-                }
-            }
-            // if(this.invalid_collisions.Top){this.collisions.Top = false;};
-            // if(this.invalid_collisions.Bottom){this.collisions.Bottom = false;};
-            if(this.collisions.Top || this.collisions.Bottom){Player.vector_Y = 0; Player.y = this.nearest_vertical_collision*this.original_block_scale;};
-            if(this.collisions.Left || this.collisions.Right){Player.vector_X = 0; Player.x = this.nearest_horizontal_collision*this.original_block_scale;};
-
-            
-
-            
 
         }
         this.collisions_loop_log = this.CollisionsLoop.endLogTime();
