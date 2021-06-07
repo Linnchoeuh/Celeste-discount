@@ -37,7 +37,7 @@ class Player_Data
         this.hit_box_scaler = 0
         this.horizontal_hit_box = 10;
         this.horizontal_hit_box_offset = 7;
-        this.vertical_hit_box = 24;
+        this.vertical_hit_box = 23;
         this.vertical_hit_box_offset = 0;
 
         this.adapted_horizontal_hit_box = 0;
@@ -468,7 +468,7 @@ class Player_Data
         this.DisplayLoop.startTime();
         this.positionning_x = Tools.resolutionScaler(this.playerPositionner(this.x, offset_x));
         this.positionning_y = Tools.resolutionScaler(this.playerPositionner(this.y, offset_y));
-        // ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
+        ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
 
         // switch(this.walljump)
         // {

@@ -65,7 +65,7 @@ class Log_Display
                 // Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
-                Tools.logText(Player.hit_box , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(Fps.nbofframewithoutphysics , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
             if(GV.menu === 7){
                 

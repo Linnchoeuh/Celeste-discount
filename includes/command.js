@@ -61,7 +61,7 @@ class Command_
                                         alert("Command possible state :\n    -true\n    -false\nThe command devmode let you see many game log \nand remove the 1 second timeout for activate this command entry.");
                                         break;
                                     default:
-                                        alert("Syntax error, you must right : \n    -devmode\n    -devmode true\n    -devmode false\n    devmode state : (give you the state of the command)");
+                                        alert("Syntax error, you must write : \n    -devmode\n    -devmode true\n    -devmode false\n    devmode state : (give you the state of the command)");
                                         break;
                                 }
                                 break;
@@ -87,10 +87,71 @@ class Command_
                                         alert("Command possible state :\n    -true\n    -false\nThe command godmode let you move freely in a game map.");
                                         break;
                                     default:
-                                        alert("Syntax error, you must right : \n    -godmode\n    -godmode true\n    -godmode false\n    godmode state : (give you the state of the command)");
+                                        alert("Syntax error, you must write : \n    -godmode\n    -godmode true\n    -godmode false\n    godmode state : (give you the state of the command)");
                                         break;
                                 }    
                                 break;
+                            case "camera":
+                                switch(this.command_word_list[1]){
+                                    case "smoother":
+                                        switch(this.command_word_list[2]){
+                                            case "":
+                                                if(GV.camsmootherenable){
+                                                    GV.camsmootherenable = false;
+                                                    break;
+                                                }
+                                                GV.camsmootherenable = true;
+                                                break;
+                                            case "true":
+                                                GV.camsmootherenable = true;
+                                                break;
+                                            case "false":
+                                                GV.camsmootherenable = false;
+                                                break;
+                                            case "state":
+                                                alert("Camera smoother = "+GV.camsmootherenable);
+                                                break;
+                                            case "help":
+                                                alert("Command possible state :\n    -true\n    -false\nThe command camera smoother, smoothing the player camera.");
+                                                break;
+                                            default:
+                                                alert("Syntax error, you must write : \n    -camera smoother\n    -camera smoother true\n    -camera smoother false\n    -camera smoother state : (give you the state of the command)");
+                                                break;
+                                        }    
+                                        break;
+                                    case "lock":
+                                        switch(this.command_word_list[2]){
+                                            case "":
+                                                if(GV.camsmootherenable){
+                                                    GV.camsmootherenable = false;
+                                                    break;
+                                                }
+                                                GV.camsmootherenable = true;
+                                                break;
+                                            case "true":
+                                                GV.camsmootherenable = true;
+                                                break;
+                                            case "false":
+                                                GV.camsmootherenable = false;
+                                                break;
+                                            case "state":
+                                                alert("Camera lock = false");
+                                                break;
+                                            case "help":
+                                                alert("Command possible state :\n    -true\n    -false\nThe command camera lock, lock the camera at the current player position.");
+                                                break;
+                                            default:
+                                                alert("Syntax error, you must write : \n    -camera lock\n    -camera lock true\n    -camera lock false\n    -camera lock state : (give you the state of the command)");
+                                                break;
+                                        }    
+                                        break;
+                                    case "help":
+                                        alert("Complete with smoother or lock, \nthen add help after smoother or lock.");
+                                        break;
+                                    default:
+                                        alert("Syntax error, you must write : \n    -camera lock\n    -camera smoother");
+                                        break;
+                                }  
                             case "reset":
                         
                                 break;
@@ -100,6 +161,7 @@ class Command_
                             default:
                                 alert("invalid command");
                                 break;
+                              
                         }
                     }
                     this.push = 0;

@@ -41,7 +41,7 @@ class Globals_Variable
         this.canvas_height = 675;
         this.devmode = true;
         this.godmode = true;
-        this.camsmootherenable = false;
+        this.camsmootherenable = true;
         this.menu = 2;
         this.last_menu = -1;
         this.start = true;

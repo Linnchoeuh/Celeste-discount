@@ -125,7 +125,16 @@ class Map_Data
         Player.y = this.spawn.y*this.original_block_scale;
         this.all_block_map_count = file.MapDatas[editedlevelid].Blocks.length;
         Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, Player.horizontal_hit_box, Player.horizontal_hit_box_offset, Player.vertical_hit_box, Player.vertical_hit_box_offset)
-        
+        // Player.positionning_x = Tools.resolutionScaler(Player.playerPositionner(Player.x, this.offset_x));
+        // Player.positionning_y = Tools.resolutionScaler(Player.playerPositionner(Player.y, this.offset_y));
+        // this.previousoffset = [[Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
+        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y]];
         
         // console.log(file.MapDatas[editedlevelid])
 
@@ -152,10 +161,7 @@ class Map_Data
     
         console.log(this.bottom_collisions_map);
         
-        this.previousoffset = [[this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
-                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
-                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
-                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y]];
+
         
         // console.log(Player.x,py);
 
@@ -195,11 +201,17 @@ class Map_Data
             }
             this.block_map_type_texture[i] = this.cache_data
         }
+        
         // console.log(this.block_map)
         // console.log(this.block_map_snap_position)
         // console.log(this.block_index)
         // console.log(this.block_map_type_texture)
         this.requiredDisplayVariableUpdater();
+
+        this.previousoffset = [[this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
+                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
+                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
+                               [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y]];
     }
 
     collider(pause)
@@ -425,7 +437,7 @@ class Map_Data
         this.CamSmootherLoop.startTime()
         if(pause === false)    
         {     
-            if(GV.camsmootherenable === true) //smooth the camera
+            if(GV.camsmootherenable) //smooth the camera
             {    
                 this.previous_camsmoother_x = this.camsmoother_x;
                 this.previous_camsmoother_y = this.camsmoother_y;
