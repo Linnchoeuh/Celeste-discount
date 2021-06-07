@@ -35,8 +35,15 @@ class Player_Data
         this.walljumpcheck = false;
 
         this.hit_box_scaler = 0
-        this.hit_box = 0;
-        this.hit_box_offset = 0;
+        this.horizontal_hit_box = 10;
+        this.horizontal_hit_box_offset = 7;
+        this.vertical_hit_box = 24;
+        this.vertical_hit_box_offset = 0;
+
+        this.adapted_horizontal_hit_box = 0;
+        this.adapted_horizontal_hit_box_offset = 0;
+        this.adapted_vertical_hit_box = 0;
+        this.adapted_vertical_hit_box_offset = 0;
         this.pre_player_scaling = 70;
         
         
@@ -143,10 +150,12 @@ class Player_Data
     //     this.y = coords[1]-1;
     // }
 
-    modifyHitBox(ratio, hitbox = 24, offset = 0){
+    modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0){
         this.hit_box_scaler = ratio
-        this.hit_box = hitbox*this.hit_box_scaler;
-        this.hit_box_offset = offset*this.hit_box_scaler;
+        this.adapted_horizontal_hit_box        = x_hitbox*this.hit_box_scaler;
+        this.adapted_horizontal_hit_box_offset = x_offset*this.hit_box_scaler;
+        this.adapted_vertical_hit_box          = y_hitbox*this.hit_box_scaler;
+        this.adapted_vertical_hit_box_offset   = y_offset*this.hit_box_scaler;
     }
 
     playerPositionner(pos, offset){

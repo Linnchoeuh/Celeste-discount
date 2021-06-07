@@ -124,10 +124,10 @@ class Map_Data
         Player.x = this.spawn.x*this.original_block_scale;
         Player.y = this.spawn.y*this.original_block_scale;
         this.all_block_map_count = file.MapDatas[editedlevelid].Blocks.length;
-        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, 10, 7)
-        console.log(this.map_limit)
+        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, Player.horizontal_hit_box, Player.horizontal_hit_box_offset, Player.vertical_hit_box, Player.vertical_hit_box_offset)
         
-        console.log(file.MapDatas[editedlevelid])
+        
+        // console.log(file.MapDatas[editedlevelid])
 
         // Préparation des collisions de la map
         for(let i = 0; i < this.map_limit.y+1; i++){
@@ -199,7 +199,6 @@ class Map_Data
         // console.log(this.block_map_snap_position)
         // console.log(this.block_index)
         // console.log(this.block_map_type_texture)
-        
         this.requiredDisplayVariableUpdater();
     }
 
@@ -210,35 +209,39 @@ class Map_Data
         {    
             this.collisions         = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
             this.invalid_collisions = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
+
+            
             
             // block the player moving when he reach a border of the canvas
-            if(Player.x+Player.hit_box_offset <= 0)
+            if(Player.x+Player.adapted_horizontal_hit_box_offset <= 0)
             {
-                Player.x        = -Player.hit_box_offset;
-                Player.vector_X = 0;
-                this.collisions.Left = true
+                Player.x               = -Player.adapted_horizontal_hit_box_offset;
+                Player.vector_X        = 0;
+                this.collisions.Left   = true;
             }
-            else if(Player.x+Player.hit_box_offset-this.original_block_scale+Player.hit_box >= this.map_limit.x*this.original_block_scale)
+            else if(Player.x+Player.adapted_horizontal_hit_box_offset+Player.adapted_horizontal_hit_box >= (this.map_limit.x+1)*this.original_block_scale)
             {
-                Player.x        = this.map_limit.x*this.original_block_scale+(this.original_block_scale-(Player.hit_box_offset+Player.hit_box));
-                Player.vector_X = 0;
-                this.collisions.Left = true
+                Player.x               = (this.map_limit.x+1)*this.original_block_scale-Player.adapted_horizontal_hit_box_offset-Player.adapted_horizontal_hit_box;
+                Player.vector_X        = 0;
+                this.collisions.Right  = true;
             }
-            if(Player.y >= this.map_limit.y*this.original_block_scale)
+            if(Player.y+Player.adapted_vertical_hit_box_offset+Player.adapted_vertical_hit_box >= (this.map_limit.y+1)*this.original_block_scale)
             {
-                Player.y        = this.map_limit.y*this.original_block_scale;
-                Player.vector_Y = 0;
+                Player.y               = (this.map_limit.y+1)*this.original_block_scale-Player.adapted_vertical_hit_box_offset-Player.adapted_vertical_hit_box;
+                Player.vector_Y        = 0;
+                this.collisions.Bottom = true;
             }
-            else if(Player.y <= 0)
+            else if(Player.y+Player.adapted_vertical_hit_box_offset <= 0)
             {
-                Player.y        =
-                Player.vector_Y = 0;
+                Player.y               = -Player.adapted_vertical_hit_box_offset;
+                Player.vector_Y        = 0;
+                this.collisions.Top    = true;
             }
 
-            this.pre_part_calculed_horizontal_start_square_collisions_test_area = Player.x+Player.hit_box_offset;
-            this.pre_part_calculed_horizontal_end_square_collisions_test_area   = Player.x+Player.hit_box_offset+Player.hit_box;
-            this.pre_part_calculed_vertical_start_square_collisions_test_area   = Player.y;
-            this.pre_part_calculed_vertical_end_square_collisions_test_area     = Player.y+this.original_block_scale;
+            this.pre_part_calculed_horizontal_start_square_collisions_test_area = Player.x+Player.adapted_horizontal_hit_box_offset;
+            this.pre_part_calculed_horizontal_end_square_collisions_test_area   = Player.x+Player.adapted_horizontal_hit_box_offset+Player.adapted_horizontal_hit_box;
+            this.pre_part_calculed_vertical_start_square_collisions_test_area   = Player.y+Player.adapted_vertical_hit_box_offset;
+            this.pre_part_calculed_vertical_end_square_collisions_test_area     = Player.y+Player.adapted_vertical_hit_box_offset+Player.adapted_vertical_hit_box;
             
             if(Player.vector_X !== 0){
                 this.pre_part_calculed_horizontal_start_square_collisions_test_area += Player.vector_X;
@@ -265,7 +268,7 @@ class Map_Data
         this.previous_offset_x = this.offset_x;
         this.previous_offset_y = this.offset_y;
 
-        this.offset_x                 = Player.x-(GV.canvas_witdh-Player.hit_box)/2+Player.hit_box_offset;
+        this.offset_x                 = Player.x-(GV.canvas_witdh-Player.adapted_horizontal_hit_box)/2+Player.adapted_horizontal_hit_box_offset;
         if(this.offset_x < 0){this.offset_x = 0;}
         else if(this.offset_x         > this.map_limit.x*this.original_block_scale-GV.canvas_witdh+this.original_block_scale)
         {this.offset_x                = this.map_limit.x*this.original_block_scale-GV.canvas_witdh+this.original_block_scale;};
@@ -292,7 +295,7 @@ class Map_Data
         }
         this.i_define        = 0;
         this.operation_count = 0;
-        // ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
         if(this.i_define < this.pre_snap_offset_smooth_Y)
         {
             this.i_define = Math.round(Math.round(this.interpoled_offset_y-this.interpoled_camsmoother_y)/this.original_block_scale-0.5)
@@ -368,8 +371,8 @@ class Map_Data
                            this.pre_block_scaling,                                     this.pre_block_scaling);
 
             ctx.strokeStyle = "rgb(150,150,150)";
-            ctx.strokeRect(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.hit_box_offset)+Player.positionning_x,   Tools.resolutionScaler(this.interpoled_camsmoother_y)+Player.positionning_y, 
-                           Tools.resolutionScaler(Player.hit_box),                     this.pre_block_scaling);
+            ctx.strokeRect(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.adapted_horizontal_hit_box_offset)+Player.positionning_x,   Tools.resolutionScaler(this.interpoled_camsmoother_y+Player.adapted_vertical_hit_box_offset)+Player.positionning_y, 
+                           Tools.resolutionScaler(Player.adapted_horizontal_hit_box),                     Tools.resolutionScaler(Player.adapted_vertical_hit_box));
             
             ctx.lineWidth   = Tools.resolutionScaler(4);
             ctx.strokeStyle = ctx.fillStyle = "rgb(255,255,0)";
@@ -383,8 +386,8 @@ class Map_Data
             ctx.lineWidth   = Tools.resolutionScaler(3);
             ctx.strokeStyle = ctx.fillStyle = "rgb(150,150,0)";
             ctx.beginPath();
-            ctx.moveTo(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.hit_box_offset)+Player.positionning_x,                 Tools.resolutionScaler(this.interpoled_camsmoother_y)+Player.positionning_y);
-            ctx.lineTo(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.hit_box_offset-Player.vector_X)+Player.positionning_x, Tools.resolutionScaler(this.interpoled_camsmoother_y-Player.vector_Y)+Player.positionning_y);
+            ctx.moveTo(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.adapted_horizontal_hit_box_offset)+Player.positionning_x,                 Tools.resolutionScaler(this.interpoled_camsmoother_y)+Player.positionning_y);
+            ctx.lineTo(Tools.resolutionScaler(this.interpoled_camsmoother_x+Player.adapted_horizontal_hit_box_offset-Player.vector_X)+Player.positionning_x, Tools.resolutionScaler(this.interpoled_camsmoother_y-Player.vector_Y)+Player.positionning_y);
             ctx.stroke();
         }
         this.graphics_loop_log = this.GraphicsLoop.endLogTime()
@@ -396,7 +399,7 @@ class Map_Data
         this.pre_block_scaling_unround = Tools.resolutionScalerUnround(this.original_block_scale);
         this.pre_block_scaling         = Tools.resolutionScaler       (this.original_block_scale);
         this.block_map                 = [];
-        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, 10, 7)
+        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, Player.horizontal_hit_box, Player.horizontal_hit_box_offset, Player.vertical_hit_box, Player.vertical_hit_box_offset)
         if(this.pre_block_scale === 24)
         {
             this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
