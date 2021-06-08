@@ -37,7 +37,7 @@ class Player_Data
         this.hit_box_scaler = 0
         this.horizontal_hit_box = 10;
         this.horizontal_hit_box_offset = 7;
-        this.vertical_hit_box = 23;
+        this.vertical_hit_box = 24;
         this.vertical_hit_box_offset = 0;
 
         this.adapted_horizontal_hit_box = 0;
