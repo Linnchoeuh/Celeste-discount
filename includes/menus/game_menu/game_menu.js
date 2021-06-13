@@ -4,7 +4,6 @@ class Game_Menu
 {
     constructor()
     {
-        this.vect = [0, 0];
         this.stock = [0, 0];
 
         this.playerinterpoX = 0;
@@ -13,6 +12,7 @@ class Game_Menu
         this.camerainterpoY = 0;
         this.smoothinterpoX = 0;
         this.smoothinterpoY = 0;
+        this.physics_speed  = 60;
     }
     displayMenu()
     {
@@ -20,7 +20,6 @@ class Game_Menu
         {
             Fps.gfpsintervaltiming = 0;
             GV.start = true;
-            this.vect = [0, 0];
             GV.last_menu = 2;
             
         }
@@ -29,17 +28,17 @@ class Game_Menu
         {
             Player.reset();
             MapData.reset();
-            this.vect = [0, 0];
             MapData.start(GV.level[GV.levelid], GV.editedlevelid);
             GV.start = false;
         }
 
-        if(Fps.Physics_Refresh_Cap(60)) //gestion de la physique
+        if(Fps.Physics_Refresh_Cap(this.physics_speed)) //gestion de la physique
         {
             for(var i = 0; i <= Fps.executionloop; i++)
             {
                 Player.previousplayerX = Player.playerX;
                 Player.previousplayerY = Player.playerY;
+                
                 Player.velocity(MapData.collisions, MapData.offset_x_on, MapData.offset_y_on, MapData.bestdown[4], Pause.pause);
                 MapData.collider(Pause.pause);
                 MapData.fcamsmoother(Pause.pause);
@@ -51,21 +50,21 @@ class Game_Menu
                 MapData.smooth_interpo_x = Tools.lerp(MapData.camsmoother_x-MapData.previous_camsmoother_x, Fps.pfpslog/Fps.fps);
                 MapData.smooth_interpo_y = Tools.lerp(MapData.camsmoother_y-MapData.previous_camsmoother_y, Fps.pfpslog/Fps.fps);
                 Fps.executionloop--;
+                MapData.previous_offset_x = MapData.offset_x;
+                MapData.previous_offset_y = MapData.offset_y;
                 Fps.Physic_log();
             }
         }
         
         
-        MapData.display(Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,             Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
-                       MapData.previous_offset_x+this.camera_interpo_x*Fps.nbofframewithoutphysics,         MapData.previous_offset_y+this.camera_interpo_y*Fps.nbofframewithoutphysics, 
-                       MapData.previous_camsmoother_x+MapData.smooth_interpo_x*Fps.nbofframewithoutphysics, MapData.previous_camsmoother_y+MapData.smooth_interpo_y*Fps.nbofframewithoutphysics);
+        MapData.display();
         
-        Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
-                       0,0,
-                       MapData.offset_x, MapData.offset_y
-                       /*MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics,
-                       Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
-                       MapData.previous_offset_x+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previous_offset_y+this.camerainterpoY*Fps.nbofframewithoutphysics*/);
+        // Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
+        //                0,0,
+        //                MapData.offset_x, MapData.offset_y
+        //                /*MapData.previouscamsmoother[0]+this.smoothinterpoX*Fps.nbofframewithoutphysics, MapData.previouscamsmoother[1]+this.smoothinterpoY*Fps.nbofframewithoutphysics,
+        //                Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
+        //                MapData.previous_offset_x+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previous_offset_y+this.camerainterpoY*Fps.nbofframewithoutphysics*/);
         
         Fps.nbofframewithoutphysics++;
         

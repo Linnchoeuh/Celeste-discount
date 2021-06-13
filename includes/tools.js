@@ -65,6 +65,7 @@ class Tool_Kit
         return n*time;
     }
 }
+
 class Timer_Log
 {
     constructor()

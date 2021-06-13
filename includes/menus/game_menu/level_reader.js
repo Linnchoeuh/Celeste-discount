@@ -43,8 +43,6 @@ class Map_Data
         this.smooth_interpo_y = 0;
         this.interpoled_camsmoother_x = 0;
         this.interpoled_camsmoother_y = 0;
-        // this.offset_x_on = 0;
-        // this.offset_y_on = 0;
         
         
         this.cache_data = 0;
@@ -277,8 +275,7 @@ class Map_Data
     display()
     {
         this.GraphicsLoop.startTime()
-        this.previous_offset_x = this.offset_x;
-        this.previous_offset_y = this.offset_y;
+
 
         this.offset_x                 = Player.x-(GV.canvas_witdh-Player.adapted_horizontal_hit_box)/2+Player.adapted_horizontal_hit_box_offset;
         if(this.offset_x < 0){this.offset_x = 0;}
@@ -315,7 +312,7 @@ class Map_Data
         for(let i = this.i_define; i < this.pre_snap_offset_smooth_Y+675/this.original_block_scale; i++) //Affichage des textures
         {
             if(i > this.map_limit.y){break;};
-            this.pre_vertical_position_line_block_displayed = i*this.pre_block_scaling_unround-this.offsetsmoothY;
+            this.pre_vertical_position_line_block_displayed = Math.round(i*this.pre_block_scaling_unround-this.offsetsmoothY);
             this.index_value                                = this.block_index[i][this.pre_snap_offset_smooth_X_minus_05];
 
             for (let k = this.index_value; k < this.index_value+1200/this.original_block_scale+1; k++)
@@ -436,21 +433,23 @@ class Map_Data
     {
         this.CamSmootherLoop.startTime()
         if(pause === false)    
-        {     
+        {
             if(GV.camsmootherenable) //smooth the camera
-            {    
+            {
                 this.previous_camsmoother_x = this.camsmoother_x;
                 this.previous_camsmoother_y = this.camsmoother_y;
-                this.camsmoother_x          = Math.round(this.offset_x-((this.previousoffset[0][0] + this.previousoffset[1][0] + this.previousoffset[2][0] + this.previousoffset[3][0] +
-                                                                         this.previousoffset[4][0] + this.previousoffset[5][0] + this.previousoffset[6][0] + this.previousoffset[7][0] )/8));
+
+                this.previousoffset.unshift([Math.round(this.offset_x), Math.round(this.offset_y)]);
+                this.previousoffset.lenght  = 16;
+                this.camsmoother_x          = Math.round(this.offset_x-(this.previousoffset[0][0] + this.previousoffset[1][0] + this.previousoffset[2][0] + this.previousoffset[3][0] +
+                       this.previousoffset[4][0] + this.previousoffset[5][0] + this.previousoffset[6][0] + this.previousoffset[7][0] )/8);
 
                 this.camsmoother_y          = Math.round(this.offset_y-((this.previousoffset[0][1] + this.previousoffset[1][1] + this.previousoffset[2][1] + this.previousoffset[3][1] +
-                                                                         this.previousoffset[4][1] + this.previousoffset[5][1] + this.previousoffset[6][1] + this.previousoffset[7][1] +
-                                                                         this.previousoffset[8][1] + this.previousoffset[9][1] + this.previousoffset[10][1]+ this.previousoffset[11][1]+
-                                                                         this.previousoffset[12][1]+ this.previousoffset[13][1]+ this.previousoffset[14][1]+ this.previousoffset[15][1])/16));
+                       this.previousoffset[4][1] + this.previousoffset[5][1] + this.previousoffset[6][1] + this.previousoffset[7][1] +
+                       this.previousoffset[8][1] + this.previousoffset[9][1] + this.previousoffset[10][1]+ this.previousoffset[11][1]+
+                       this.previousoffset[12][1]+ this.previousoffset[13][1]+ this.previousoffset[14][1]+ this.previousoffset[15][1])/16));
                 
-                this.previousoffset.unshift([this.offset_x, this.offset_y]);
-                this.previousoffset.lenght  = 16;
+                
             }else{
                 this.previous_camsmoother_x = this.camsmoother_x =
                 this.previous_camsmoother_y = this.camsmoother_y = 0;

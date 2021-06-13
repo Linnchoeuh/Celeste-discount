@@ -26,7 +26,7 @@ class Log_Display
 
             Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 800, 150); //input
 
-            if(GV.menu === 2 | GV.menu === 9 | 1){
+            if(GV.menu === 2 || GV.menu === 9 || 1){
                 ctx.fillStyle = "rgb(255,255,255)";
 
                 Tools.logText("Collisions : "+Object.values(MapData.collisions), 900, 175); //collisions
@@ -48,21 +48,17 @@ class Log_Display
                 Tools.logText("OY : "+Math.round(MapData.offset_y), 1092, 275);
 
                 Tools.logText("[x: ("+MapData.start_square_collisions_test_area[0]+", "+MapData.end_square_collisions_test_area[0]+") | y: ("
-                              +MapData.start_square_collisions_test_area[1]+", "+MapData.end_square_collisions_test_area[1]+")]", 985, 300);
+                                     +MapData.start_square_collisions_test_area[1]+", "+MapData.end_square_collisions_test_area[1]+")]", 985, 300);
+
+                Tools.logText("x: "+MapData.camsmoother_x+" | y: "+MapData.camsmoother_y, 985, 325);
+                Tools.logText()
+                Tools.logText("x: "+Number.parseFloat(MapData.camera_interpo_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.camera_interpo_y).toPrecision(3), 985, 375);
+                // Tools.logText("smooth x : "+Math.round(MapData.offset_x)+" : "+Math.round((MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +
+                //     MapData.previousoffset[4][0] + MapData.previousoffset[5][0] + MapData.previousoffset[6][0] + MapData.previousoffset[7][0] )/8)+" : "+
+                //     Math.round(MapData.offset_x-(MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +
+                //         MapData.previousoffset[4][0] + MapData.previousoffset[5][0] + MapData.previousoffset[6][0] + MapData.previousoffset[7][0] )/8), 985, 350)
 
                 // Tools.logText("Start zone : ["+MapData.start_square_collisions_test_area[0]+"]px ; ["+MapData.start_square_collisions_test_area[1]+"]py", 970, 300);
-                
-                // Tools.logText("BU : ["+MapData.bestup[0]+"]px ; ["+MapData.bestup[1]+"]py", 970, 300);
-                // Tools.logText("["+MapData.bestup[2]+"]ox ; ["+MapData.bestup[3]+"]oy", 1015, 325);
-                
-                // Tools.logText("BD : ["+MapData.bestdown[0]+"]px ; ["+MapData.bestdown[1]+"]py", 970, 350);
-                // Tools.logText("["+MapData.bestdown[2]+"]ox ; ["+MapData.bestdown[3]+"]oy", 1015, 375);
-                
-                // Tools.logText("BL : ["+MapData.bestleft[0]+"]px ; ["+MapData.bestleft[1]+"]py", 970, 400);
-                // Tools.logText("["+MapData.bestleft[2]+"]ox ; ["+MapData.bestleft[3]+"]oy", 1015, 425);
-                
-                // Tools.logText("BR : ["+MapData.bestright[0]+"]px ; ["+MapData.bestright[1]+"]py", 970, 450);
-                // Tools.logText("["+MapData.bestright[2]+"]ox ; ["+MapData.bestright[3]+"]oy", 1015, 475);
                 
                 
                 Tools.logText(Fps.nbofframewithoutphysics , 1000, 500); //-------------------------------------------------------test var------------------------------------------------

@@ -54,11 +54,11 @@ class Fps_
         };
     };
 
-    Physic_log(){
+    Physic_log(refresh_rate = 1){
         this.pfps++;
-        if(this.dateseconds+1000 <= this.date_now){
+        if(this.dateseconds+(1000*refresh_rate) <= this.date_now){
             this.dateseconds = this.date_now;
-            this.pfpslog = this.pfps;
+            this.pfpslog = this.pfps/refresh_rate;
             this.pfps = 0;
         };
     };
