@@ -39,14 +39,15 @@ class Game_Menu
                 Player.previousplayerX = Player.playerX;
                 Player.previousplayerY = Player.playerY;
                 
+                MapData.fcamsmoother(Pause.pause);
                 Player.velocity(MapData.collisions, MapData.offset_x_on, MapData.offset_y_on, MapData.bestdown[4], Pause.pause);
                 MapData.collider(Pause.pause);
-                MapData.fcamsmoother(Pause.pause);
+                
                 
                 this.playerinterpoX      = Tools.lerp(Player.playerX       -Player.previousplayerX,         Fps.pfpslog/Fps.fps);
                 this.playerinterpoY      = Tools.lerp(Player.playerY       -Player.previousplayerY,         Fps.pfpslog/Fps.fps);
-                MapData.camera_interpo_x = Tools.lerp(MapData.offset_x     -MapData.previous_offset_x,      Fps.pfpslog/Fps.fps);
-                MapData.camera_interpo_y = Tools.lerp(MapData.offset_y     -MapData.previous_offset_y,      Fps.pfpslog/Fps.fps);
+                MapData.offset_interpo_x = Tools.lerp(MapData.offset_x     -MapData.previous_offset_x,      Fps.pfpslog/Fps.fps);
+                MapData.offset_interpo_y = Tools.lerp(MapData.offset_y     -MapData.previous_offset_y,      Fps.pfpslog/Fps.fps);
                 MapData.smooth_interpo_x = Tools.lerp(MapData.camsmoother_x-MapData.previous_camsmoother_x, Fps.pfpslog/Fps.fps);
                 MapData.smooth_interpo_y = Tools.lerp(MapData.camsmoother_y-MapData.previous_camsmoother_y, Fps.pfpslog/Fps.fps);
                 Fps.executionloop--;
@@ -58,6 +59,7 @@ class Game_Menu
         
         
         MapData.display();
+        // Player.display();
         
         // Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
         //                0,0,

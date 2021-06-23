@@ -30,8 +30,8 @@ class Map_Data
         this.offset_y = 0;
         this.previous_offset_x = 0;
         this.previous_offset_y = 0;
-        this.camera_interpo_x = 0;
-        this.camera_interpo_y = 0;
+        this.offset_interpo_x = 0;
+        this.offset_interpo_y = 0;
         this.interpoled_offset_x = 0;
         this.interpoled_offset_y = 0;
 
@@ -281,14 +281,14 @@ class Map_Data
         if(this.offset_x < 0){this.offset_x = 0;}
         else if(this.offset_x         > this.map_limit.x*this.original_block_scale-GV.canvas_witdh+this.original_block_scale)
         {this.offset_x                = this.map_limit.x*this.original_block_scale-GV.canvas_witdh+this.original_block_scale;};
-        this.interpoled_offset_x      = this.offset_x+this.camera_interpo_x*Fps.nbofframewithoutphysics;
+        this.interpoled_offset_x      = this.offset_x+this.offset_interpo_x*Fps.nbofframewithoutphysics;
         this.interpoled_camsmoother_x = this.camsmoother_x+this.smooth_interpo_x*Fps.nbofframewithoutphysics;
 
         this.offset_y                 = Player.y-(GV.canvas_height-this.original_block_scale)/2;
         if(this.offset_y < 0){this.offset_y = 0;}
         else if(this.offset_y         > this.map_limit.y*this.original_block_scale-GV.canvas_height+this.original_block_scale)
         {this.offset_y                = this.map_limit.y*this.original_block_scale-GV.canvas_height+this.original_block_scale;};
-        this.interpoled_offset_y      = this.offset_y+this.camera_interpo_y*Fps.nbofframewithoutphysics;
+        this.interpoled_offset_y      = this.offset_y+this.offset_interpo_y*Fps.nbofframewithoutphysics;
         this.interpoled_camsmoother_y = this.camsmoother_y+this.smooth_interpo_y*Fps.nbofframewithoutphysics;
         
         this.offsetsmoothX                     = Math.round(Tools.resolutionScaler(this.interpoled_offset_x-this.interpoled_camsmoother_x));

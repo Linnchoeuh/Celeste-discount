@@ -51,8 +51,8 @@ class Log_Display
                                      +MapData.start_square_collisions_test_area[1]+", "+MapData.end_square_collisions_test_area[1]+")]", 985, 300);
 
                 Tools.logText("x: "+MapData.camsmoother_x+" | y: "+MapData.camsmoother_y, 985, 325);
-                Tools.logText()
-                Tools.logText("x: "+Number.parseFloat(MapData.camera_interpo_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.camera_interpo_y).toPrecision(3), 985, 375);
+                Tools.logText("x: "+Number.parseFloat(MapData.interpoled_offset_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.interpoled_offset_y).toPrecision(3), 985, 350)
+                Tools.logText("x: "+Number.parseFloat(MapData.interpoled_offset_x-MapData.interpoled_camsmoother_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.interpoled_offset_y-MapData.interpoled_camsmoother_y).toPrecision(3), 985, 375);
                 // Tools.logText("smooth x : "+Math.round(MapData.offset_x)+" : "+Math.round((MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +
                 //     MapData.previousoffset[4][0] + MapData.previousoffset[5][0] + MapData.previousoffset[6][0] + MapData.previousoffset[7][0] )/8)+" : "+
                 //     Math.round(MapData.offset_x-(MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +

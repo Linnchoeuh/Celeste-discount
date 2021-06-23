@@ -7,6 +7,8 @@ class Tool_Kit
         this.canvasfullscreen = false;   
 
         this.ratio = 1
+        this.cache_fill_color = "rgb(255,255,255)"
+        this.cache_stroke_color = "rgb(0,0,0)"
     }
 
     requiredDisplayVariableUpdater()
@@ -43,11 +45,21 @@ class Tool_Kit
 
     logText(text, posX, posY, fill_color = "rgb(255,255,255)", stroke_color = "rgb(0,0,0)")
     {
-        ctx.fillStyle   = fill_color;
+        if(fill_color !== this.cache_fill_color)
+        {
+            this.cache_fill_color =
+            ctx.fillStyle         = fill_color;
+        };
+        // ctx.fillStyle         = fill_color;
         ctx.fillText(     text, 
                           this.resolutionScaler(posX), 
                           this.resolutionScaler(posY));
-        ctx.strokeStyle = stroke_color;
+        if(fill_color !== this.cache_stroke_color)
+        {
+            this.cache_stroke_color =
+            ctx.strokeStyle         = stroke_color;
+        };
+        // ctx.strokeStyle         = stroke_color;
         ctx.strokeText(   text, 
                           this.resolutionScaler(posX), 
                           this.resolutionScaler(posY));
