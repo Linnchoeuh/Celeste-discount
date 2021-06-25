@@ -1,4 +1,4 @@
-import{ctx, Tools, Player, MapData, MainLoop, MainLoopWithLog} from "../../main.js"
+import{ctx, GV, Tools, Player, MapData, MainLoop, MainLoopWithLog} from "../../main.js"
 class Fps_
 {
     constructor(){
@@ -20,6 +20,7 @@ class Fps_
         this.dateseconds = this.date;
         this.pfps = 0;
         this.pfpslog = 60;
+        this.speed_percentage = 0;
         this.physicframeavaiblity = 0;
         this.pfpsframetiming = this.previouspfpsframetiming = Date.now();
         this.pfpsintervaltiming = 0;
@@ -29,14 +30,15 @@ class Fps_
     display(){
         if(this.showfps){    
             ctx.font = Tools.resolutionScaler(20)+'px arial';
-            Tools.logText(this.fps+" GFPS "+Number.parseFloat(this.dt).toPrecision(3)+" DT", 20, 25, "rgb(0,255,0)", "rgb(0,100,0)"); //GFPS = Frame d'affichage
-            Tools.logText(this.pfpslog+" PFPS ", 20, 50, "rgb(0,255,0)", "rgb(0,100,0)"); // PFPS = frame de physique
-            Tools.logText("Main : "+Number.parseFloat(MainLoop.log).toPrecision(3)+" ms | Main with log : "+Number.parseFloat(MainLoopWithLog.log).toPrecision(3)+" ms", 20, 75, "rgb(0,255,0)", "rgb(0,100,0)"); //Temps de latence entre le début et la fin de la frame
-            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+" ms", 40, 100, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Collisions : "+Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+" ms", 40, 125, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Camsmoother : "+Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Map display : "+Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+" ms", 40, 175, "rgb(0,255,0)", "rgb(0,100,0)");
-            Tools.logText("-Player display : "+Number.parseFloat(Player.display_loop_log).toPrecision(3)+" ms", 40, 200, "rgb(0,255,0)", "rgb(0,100,0)");
+            Tools.logText(this.fps+" GFPS "    +Number.parseFloat(this.dt).toPrecision(3)+" DT",                       20, 25,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //GFPS = Frame d'affichage
+            Tools.logText(this.pfpslog+" PFPS | Game speed : "+Number.parseFloat(this.speed_percentage).toPrecision(5)+" %",                                                                       20, 50,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); // PFPS = frame de physique
+            Tools.logText("Main : "            +Number.parseFloat(MainLoop.log).toPrecision(3)+                 " ms"+
+                          " | Main with log : "+Number.parseFloat(MainLoopWithLog.log).toPrecision(3)+          " ms", 20, 75,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //Temps de latence entre le début et la fin de la frame
+            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+      " ms", 40, 100, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Collisions : "     +Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+  " ms", 40, 125, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Camsmoother : "    +Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Map display : "    +Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+    " ms", 40, 175, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Player display : " +Number.parseFloat(Player.display_loop_log).toPrecision(3)+      " ms", 40, 200, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
         };
     };
 
@@ -50,6 +52,7 @@ class Fps_
             this.date = this.date_now;
             this.fps = this.frameaverageaccumulation;
             this.dt = this.fps/60;
+            
             this.frameaverageaccumulation = 0;
         };
     };
@@ -59,6 +62,7 @@ class Fps_
         if(this.dateseconds+(1000*refresh_rate) <= this.date_now){
             this.dateseconds = this.date_now;
             this.pfpslog = this.pfps/refresh_rate;
+            this.speed_percentage = this.pfpslog/60*100
             this.pfps = 0;
         };
     };
@@ -84,16 +88,23 @@ class Fps_
 
     Physics_Refresh_Cap(frequency = -1){
         if(frequency === -1){
-            return true;
-        };
+            return true;};
         frequency = 1000/frequency;
         this.previouspfpsframetiming = this.pfpsframetiming;
         this.pfpsframetiming = Date.now();
         this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
+        
         if(frequency <= this.pfpsintervaltiming){
+            // this.nbofframewithoutphysics = -this.fps/this.pfpslog;
             this.nbofframewithoutphysics = 0;
-            this.executionloop = this.pfpsintervaltiming/(frequency);
-            this.pfpsintervaltiming -= Math.floor(this.executionloop)*(frequency);
+            if(1 < this.fps/this.pfpslog)
+            {
+                this.nbofframewithoutphysics = -this.fps/this.pfpslog;
+            };
+                
+            
+            this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
+            this.pfpsintervaltiming -= Math.floor(this.executionloop)*frequency;
             return true;
         };
         return false;

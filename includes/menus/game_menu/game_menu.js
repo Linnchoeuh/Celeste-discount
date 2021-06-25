@@ -6,12 +6,6 @@ class Game_Menu
     {
         this.stock = [0, 0];
 
-        this.playerinterpoX = 0;
-        this.camerainterpoX = 0;
-        this.playerinterpoY = 0;
-        this.camerainterpoY = 0;
-        this.smoothinterpoX = 0;
-        this.smoothinterpoY = 0;
         this.physics_speed  = 60;
     }
     displayMenu()
@@ -34,33 +28,38 @@ class Game_Menu
 
         if(Fps.Physics_Refresh_Cap(this.physics_speed)) //gestion de la physique
         {
-            for(var i = 0; i <= Fps.executionloop; i++)
+            for(var i = 0; i < Fps.executionloop; i++)
             {
-                Player.previousplayerX = Player.playerX;
-                Player.previousplayerY = Player.playerY;
+                Player.previous_x = Player.x;
+                Player.previous_y = Player.y;
                 
-                MapData.fcamsmoother(Pause.pause);
+                
                 Player.velocity(MapData.collisions, MapData.offset_x_on, MapData.offset_y_on, MapData.bestdown[4], Pause.pause);
                 MapData.collider(Pause.pause);
+                MapData.fcamsmoother(Pause.pause);
                 
                 
-                this.playerinterpoX      = Tools.lerp(Player.playerX       -Player.previousplayerX,         Fps.pfpslog/Fps.fps);
-                this.playerinterpoY      = Tools.lerp(Player.playerY       -Player.previousplayerY,         Fps.pfpslog/Fps.fps);
+                Player.interpo_x         = Tools.lerp(Player.x             -Player.previous_x,              Fps.pfpslog/Fps.fps);
+                Player.interpo_y         = Tools.lerp(Player.y             -Player.previous_y,              Fps.pfpslog/Fps.fps);
                 MapData.offset_interpo_x = Tools.lerp(MapData.offset_x     -MapData.previous_offset_x,      Fps.pfpslog/Fps.fps);
                 MapData.offset_interpo_y = Tools.lerp(MapData.offset_y     -MapData.previous_offset_y,      Fps.pfpslog/Fps.fps);
                 MapData.smooth_interpo_x = Tools.lerp(MapData.camsmoother_x-MapData.previous_camsmoother_x, Fps.pfpslog/Fps.fps);
                 MapData.smooth_interpo_y = Tools.lerp(MapData.camsmoother_y-MapData.previous_camsmoother_y, Fps.pfpslog/Fps.fps);
-                Fps.executionloop--;
+                // Fps.executionloop--;
                 MapData.previous_offset_x = MapData.offset_x;
                 MapData.previous_offset_y = MapData.offset_y;
                 Fps.Physic_log();
+                
             }
         }
         
         
-        MapData.display();
-        // Player.display();
         
+        MapData.display();
+        
+        Player.display(MapData.interpoled_camsmoother_x,                MapData.interpoled_camsmoother_y,
+                       MapData.interpoled_difference_smoother_offset_x, MapData.interpoled_difference_smoother_offset_y);
+        Fps.nbofframewithoutphysics++;
         // Player.display(MapData.collisions, Pause.pause, Fps.dt, //a opti
         //                0,0,
         //                MapData.offset_x, MapData.offset_y
@@ -68,12 +67,12 @@ class Game_Menu
         //                Player.previousplayerX+this.playerinterpoX*Fps.nbofframewithoutphysics,         Player.previousplayerY+this.playerinterpoY*Fps.nbofframewithoutphysics,
         //                MapData.previous_offset_x+this.camerainterpoX*Fps.nbofframewithoutphysics,        MapData.previous_offset_y+this.camerainterpoY*Fps.nbofframewithoutphysics*/);
         
-        Fps.nbofframewithoutphysics++;
+        
         
         Pause.toggle("Pause")
         if(Pause.pause) //pause
         {
-            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillStyle = GV.ColorPalette_.white
             if(Button1.text_type1("Resume", 0, 145, 195, 40, -180+(Pause.pauseframe*20), 175, 30, 33, 36, 40, 3.6, 0.4)) //resume
             {
                 Pause.endpause = true;

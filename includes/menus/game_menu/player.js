@@ -1,4 +1,4 @@
-import {ctx, Tools, GV, Keyboard} from "../../../main.js";
+import {ctx, Tools, GV, Keyboard, Fps, GameMenu, Pause} from "../../../main.js";
 import {Timer_Log} from "../../tools.js";
 
 function texture_loader(path)
@@ -19,12 +19,16 @@ class Player_Data
         
         this.x = 0;
         this.y = 0;
+        this.interpo_x = 0
+        this.interpo_y = 0
+        this.interpoled_x = 0
+        this.interpoled_y = 0
         this.positionning_x = 0;
         this.positionning_y = 0;
         this.vector_X = 0;
         this.vector_Y = 0;
-        this.previousx = 0;
-        this.previousy = 0;
+        this.previous_x = 0;
+        this.previous_y = 0;
         this.jump = false;
         this.jumpavaiblelity = true;
         this.releasejump = false;
@@ -162,9 +166,11 @@ class Player_Data
         return pos - offset
     }
 
-    velocity(collisions, offsetX_on, offsetY_on, distanceground, pause){
+    velocity(collisions, offsetX_on, offsetY_on, distanceground){
         this.PhysicsLoop.startTime()
-        if(pause === false)
+        // this.x = Math.round(this.x)
+        // this.y = Math.round(this.y)
+        if(Pause.pause === false)
         {     
             this.ground_slideposition = 0;
             this.jump_animation_postion = 0;
@@ -301,6 +307,7 @@ class Player_Data
                     else if(collisions.Right && distanceground > 71 || collisions.Right && distanceground === false) //right
                     {
                         this.walljump = 1;
+                        this.vector_X = 1
                     }
                     else //nothing
                     {
@@ -425,7 +432,7 @@ class Player_Data
                 }
                 else if(Keyboard.keys_input.shift)
                 {
-                    this.godmode_speed_vector = 25;
+                    this.godmode_speed_vector = 120;
                 }
                 else
                 {    
@@ -460,14 +467,22 @@ class Player_Data
             this.x += this.vector_X;
             this.y += this.vector_Y;
         }
-        this.physics_loop_log = this.PhysicsLoop.endLogTime();
+        this.physics_loop_log = this.PhysicsLoop.endLogTime(300*(GameMenu.physics_speed/60));
     }
     
-    display(collisions, pause, dt, player_x, player_y, offset_x, offset_y, cam_smoother_x, cam_smoother_y)
+    display(offset_x, offset_y, difference_x, difference_y)
     {
         this.DisplayLoop.startTime();
-        this.positionning_x = Tools.resolutionScaler(this.playerPositionner(this.x, offset_x));
-        this.positionning_y = Tools.resolutionScaler(this.playerPositionner(this.y, offset_y));
+        this.interpoled_x           = this.x+this.interpo_x*Fps.nbofframewithoutphysics;
+        this.interpoled_y           = this.y+this.interpo_y*Fps.nbofframewithoutphysics;
+        if(GV.camsmootherenable)
+        {
+            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_x, offset_x));
+            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_y, offset_y));
+        }else{
+            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_x-difference_x, offset_x));
+            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_y-difference_y, offset_y));
+        };
         ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
 
         // switch(this.walljump)
@@ -490,7 +505,7 @@ class Player_Data
         //                         {       
         //                             this.movingleftframe = 0;
         //                             ctx.drawImage(this.moving, this.movingrightframetiminglist[Math.floor(this.movingrightframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.movingrightframe += 1/dt;
         //                             }
@@ -514,7 +529,7 @@ class Player_Data
         //                         if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
         //                         {
         //                             ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(this.x), Tools.resolutionScaler(this.y), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.fallingframe += 1/dt;
         //                             }
@@ -531,7 +546,7 @@ class Player_Data
         //                         else if(this.jump_animation_postion === 2)
         //                         {
         //                             ctx.drawImage(this.jump_animation, this.jumprightframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.jumpframe += 1/dt;
         //                             }
@@ -556,7 +571,7 @@ class Player_Data
         //                         {
         //                             this.movingrightframe = 0;
         //                             ctx.drawImage(this.moving, this.movingleftframetiminglist[Math.floor(this.movingleftframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.movingleftframe += 1/dt;
         //                             }
@@ -580,7 +595,7 @@ class Player_Data
         //                         if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
         //                         {
         //                             ctx.drawImage(this.falling, this.fallingleftframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.fallingframe += 1/dt;
         //                             }
@@ -597,7 +612,7 @@ class Player_Data
         //                         else if(this.jump_animation_postion === 2)
         //                         {
         //                             ctx.drawImage(this.jump_animation, this.jumpleftframetiminglist[Math.floor(this.jumpframe)]*24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
-        //                             if(pause === false)
+        //                             if(Pause.pause === false)
         //                             {
         //                                 this.jumpframe += 1/dt;
         //                             }
@@ -621,23 +636,7 @@ class Player_Data
 
     reset()
     {
-        this.x = 0;
-        this.y = 0;
-        this.previousx = 0;
-        this.previousy = 0;
-        this.jump = false;
-        this.jumpavaiblelity = true
-        this.releasejump = false;
-        this.jumpcount = 0;
-        this.left = true;
-        this.right = true;
-        this.walljump = 0;
-        this.walljumpcheck = false;
-        
-        
-        this.lastdirection = 1;
-        this.cachedata = [];
-        this.lastactwalljump = false;
+
     }
 }
 

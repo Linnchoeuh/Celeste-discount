@@ -1,4 +1,4 @@
-import {Tools, MapData, Mouse, Keyboard, Fps} from "../../main.js";
+import {GV, Tools, MapData, Mouse, Keyboard, Fps} from "../../main.js";
 
 var canvasfullscreen = false;
 
@@ -103,8 +103,8 @@ class Canvas_Resolution_Asset
                 this.ablefullscreen = "Disable";
             }
         }else{
-            canvas.width = 1200;
-            canvas.height = 675;
+            canvas.width = GV.canvas_width;
+            canvas.height = GV.canvas_height;
             this.ablefullscreen = "Enable";
         }
         Mouse.canvasfullscreen = 

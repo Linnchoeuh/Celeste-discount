@@ -61,7 +61,7 @@ class Animatic_
         return false;
     }
 
-    text_type2(text, posX, posY, width, height, textX, textY, textscale, color = "rgb(255,255,255)", line_width = 2)
+    text_type2(text, posX, posY, width, height, textX, textY, textscale, color = GV.ColorPalette_.white, line_width = 2)
     {
         ctx.font = "Bold "+Tools.resolutionScaler(textscale)+'px arial';
         ctx.fillText(text, Tools.resolutionScaler(textX), Tools.resolutionScaler(textY));
@@ -137,7 +137,7 @@ class Animatic_
         return false;
     }
 
-    texture_type1(texture, posX, posY, width, height, textureX, textureY, texturescale1, texturescale2, texturescale3, texturescale4, offsetX = 0, offsetY = 0, text_show = "", textX = 0, textY = 0, textscale = 10, text_color = "rgb(255,255,255)")
+    texture_type1(texture, posX, posY, width, height, textureX, textureY, texturescale1, texturescale2, texturescale3, texturescale4, offsetX = 0, offsetY = 0, text_show = "", textX = 0, textY = 0, textscale = 10, text_color = GV.ColorPalette_.white)
     {
         if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
         {
@@ -194,66 +194,62 @@ class Animatic_
 
     texture_type2(posX, posY, texture, text, reverse = false, texture_offsetX = 5, texture_offsetY = 5, texture_scaleX = 20, texture_scaleY = 20) //Map editor button
     {
-        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30))
-        {
+        if(Mouse.invisibleMouseCollider(posX, posY, 30, 30)){
             ctx.fillStyle = "rgba(100,100,100,0.4)";
-            ctx.strokeStyle = "rgb(255,255,255)";
-        }
-        else
-        {
+        }else{
             ctx.fillStyle = "rgba(0,0,0,0.4)";
-            ctx.strokeStyle = "rgb(255,255,255)";
-        }
+        };
+        ctx.strokeStyle = GV.ColorPalette_.white;
             
         ctx.beginPath();
-        ctx.moveTo(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY+5));
-        ctx.lineTo(Tools.resolutionScaler(posX+5),Tools.resolutionScaler(posY));
+        ctx.moveTo(Tools.resolutionScaler(posX),    Tools.resolutionScaler(posY+5));
+        ctx.lineTo(Tools.resolutionScaler(posX+5),  Tools.resolutionScaler(posY));
         ctx.lineTo(Tools.resolutionScaler(posX+25), Tools.resolutionScaler(posY));
         ctx.lineTo(Tools.resolutionScaler(posX+30), Tools.resolutionScaler(posY+5));
         ctx.lineTo(Tools.resolutionScaler(posX+30), Tools.resolutionScaler(posY+25));
         ctx.lineTo(Tools.resolutionScaler(posX+25), Tools.resolutionScaler(posY+30));
-        ctx.lineTo(Tools.resolutionScaler(posX+5), Tools.resolutionScaler(posY+30));
-        ctx.lineTo(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY+25));
+        ctx.lineTo(Tools.resolutionScaler(posX+5),  Tools.resolutionScaler(posY+30));
+        ctx.lineTo(Tools.resolutionScaler(posX),    Tools.resolutionScaler(posY+25));
         ctx.closePath();
         ctx.fill();
-        ctx.lineWidth=Tools.resolutionScaler(2);
+        ctx.lineWidth = Tools.resolutionScaler(2);
         ctx.stroke();
-        ctx.lineWidth=1;
+        ctx.lineWidth = 1;
         ctx.drawImage(texture, Tools.resolutionScaler(posX+texture_offsetX), Tools.resolutionScaler(posY+texture_offsetY), Tools.resolutionScaler(texture_scaleX), Tools.resolutionScaler(texture_scaleY));
         
         if(Mouse.invisibleMouseCollider(posX, posY, 30, 30))
         {
-            ctx.fillStyle = "rgb(0,0,0)";
+            ctx.fillStyle = GV.ColorPalette_.white;
             ctx.beginPath();
             if(reverse)
             {
-                ctx.moveTo(GV.mouseX+Tools.resolutionScaler(10), GV.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15),GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.moveTo(GV.mouseX+Tools.resolutionScaler(10),               GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15),               GV.mouseY+Tools.resolutionScaler(-15));
                 ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(-15));
                 ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+20), GV.mouseY+Tools.resolutionScaler(-10));
                 ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+20), GV.mouseY+Tools.resolutionScaler(2));
                 ctx.lineTo(GV.mouseX+Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15), GV.mouseY+Tools.resolutionScaler(7));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(10), GV.mouseY+Tools.resolutionScaler(2));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(15),               GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(10),               GV.mouseY+Tools.resolutionScaler(2));
             }
             else
             {
                 ctx.moveTo(GV.mouseX-Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+10),GV.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10), GV.mouseY+Tools.resolutionScaler(-15));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5), GV.mouseY+Tools.resolutionScaler(-10));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5), GV.mouseY+Tools.resolutionScaler(2));
-                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10), GV.mouseY+Tools.resolutionScaler(7));
+                ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+10), GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10),              GV.mouseY+Tools.resolutionScaler(-15));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5),               GV.mouseY+Tools.resolutionScaler(-10));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-5),               GV.mouseY+Tools.resolutionScaler(2));
+                ctx.lineTo(GV.mouseX+Tools.resolutionScaler(-10),              GV.mouseY+Tools.resolutionScaler(7));
                 ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+10), GV.mouseY+Tools.resolutionScaler(7));
                 ctx.lineTo(GV.mouseX-Tools.resolutionScaler(text.length*9+15), GV.mouseY+Tools.resolutionScaler(2));
             }
             
             ctx.closePath();
             ctx.fill();
-            ctx.lineWidth=Tools.resolutionScaler(2);
+            ctx.lineWidth = Tools.resolutionScaler(2);
             ctx.stroke();
             ctx.lineWidth = 1;
-            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillStyle = GV.ColorPalette_.white;
             ctx.font = Tools.resolutionScaler(15)+'px Lucida Console';
             if(reverse)
             {

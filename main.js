@@ -32,16 +32,18 @@
 //Classes    : Two_Words et objets
 //    Dans une variable : TwoWords
 //Méthodes   : twoWords
+//Objets     : TwoWords_
 
 import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
     constructor(){
-        this.canvas_witdh = 1200;
+        this.canvas_width = 1200; //(4/3) = 900px | (18/9) = 1350 | (21/9) = 1575
         this.canvas_height = 675;
         this.devmode = true;
         this.godmode = true;
-        this.camsmootherenable = true;
+        this.camsmootherenable = false;
+        this.stroking_text = true;
         this.menu = 2;
         this.last_menu = -1;
         this.start = true;
@@ -49,9 +51,41 @@ class Globals_Variable
         this.levelid = 1;
         this.editedlevelid = 0;
 
-        this.keys_input = [0,0,0,0,0,0,0,0,0,0];
-        this.keypressed = false;
+        // this.keys_input = [0,0,0,0,0,0,0,0,0,0];
+        // this.keypressed = false;
 
+        //Colors
+        this.ColorPalette_ = {
+            white         : "#ffffff",
+            light_gray    : "#e1e1e1", // (225,225,225)
+            gray          : "#969696", // (150,150,150)
+            average_gray  : "#646464", // (100,100,100)
+            dark_gray     : "#4b4b4b", // (75 ,75 ,75 )
+            black         : "#000000",
+
+            red           : "#ff0000",
+            average_red   : "#ff324b", // (255,50 ,75  )
+            dark_red      : "#640000", // (100,0  ,0  )
+
+            green         : "#00ff00",
+            average_green : "#64c832", // (100,200,50 )
+            dark_green    : "#006400", // (0  ,100,0  )
+
+            blue          : "#0000ff",
+            dark_blue     : "#000064", // (0  ,0  ,100)
+
+            yellow        : "#ffff00",
+            dark_yellow   : "#646400", // (100,100,0  )
+
+            cyan          : "#00ffff",
+            dark_cyan     : "#006464", // (0  ,100,100)
+
+            purple        : "#ff00ff",
+            dark_purple   : "#640064", // (100,0  ,100)
+        }
+        
+
+        //Images
         this.return_arrow = new Image();
         this.return_arrow.src = "graphics/ui/return_arrow.png";
     }
@@ -60,11 +94,8 @@ const GV = new Globals_Variable()
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d", {alpha : false});
-canvas.width  = GV.canvas_witdh;
+canvas.width  = GV.canvas_width;
 canvas.height = GV.canvas_height;
-
-
-
 
 const Menus_ = {
     Main : 1,
@@ -136,6 +167,7 @@ const MainMenu = new Main_Menu();
 
 import{Game_Menu} from "./includes/menus/game_menu/game_menu.js";
 const GameMenu = new Game_Menu();
+export{GameMenu}
 
 import{Setting_Menu} from "./includes/menus/setting_menu/setting_menu.js";
 const SettingMenu = new Setting_Menu();
@@ -155,64 +187,10 @@ const Command = new Command_();
 import{Log_Display} from "./includes/log_display.js";
 const LogDisplay = new Log_Display();
 
-
-
-
-
-
-
-
-
-
-var key_press = "N/A"; //ui and interactivity
-var keynb = "N/A";
-
-var MapDatamousetranslationX = Mouse.x;
-var MapDatamousetranslationY = Mouse.y;
-var previousmouseX = Mouse.x;
-var previousmouseY = Mouse.y;
-
-var mousepressed = false;
-
-
-
-var stock = [0, 0];
-
-
-
-//MapEditor
-var MapData_move_speed = 20;
-var edition_mode = 0;
-var sub_edition_mode = 0;
-var spawnmodifier = false;
-var spawnmodifpossible = true;
-
-
-// MapData editor
-
-// console.log(MapData_pack.MapDatas[0].Blocks[0].Collisions.Top)
-var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[],[]]]]; //[MapDataCertifcate, number of MapData, name of the MapData pack,
-                                                                                                 //    [MapDatas
-                                                                                                 //        [Nom, MapDatalimitx, MapDatalimity, playerspawnx, playerspawny],
-                                                                                                 //        [Blocks[snap_x, snap_y, [category,sub category], collisions]]
-                                                                                                 //            category:
-                                                                                                 //                -testblock
-                                                                                                 //                -block
-                                                                                                 //                -damage block
-                                                                                                 //            collision:
-                                                                                                 //                -[up,down,left,right]
-                                                                                                 //        [Water[snap_x, snap_y, type]]
-                                                                                                 //        [Interactive object[snap_x, snap_y, content, type]]
-                                                                                                 //        [Enemies[snap_x, snap_y, type]] (0.7)
-                                                                                                 //        [Decorations[x,y]]
-                                                                                                 //    ]
-                                                                                                 //]
-
-
 function main(){
     requestAnimationFrame(main);
 
-    if(Fps.Graphic_Cap(Fps.cap30fps)){
+    if(Fps.Graphic_Cap(60)){
         MainLoop.startTime();
         MainLoopWithLog.startTime();
         ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
@@ -266,7 +244,7 @@ function main(){
         LogDisplay.displayLog();
         Fps.display();
         
-        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillStyle = GV.ColorPalette_.white;
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));
         MainLoopWithLog.endLogTime();
@@ -276,3 +254,47 @@ function main(){
 };
 
 main();
+
+var key_press = "N/A"; //ui and interactivity
+var keynb = "N/A";
+
+var MapDatamousetranslationX = Mouse.x;
+var MapDatamousetranslationY = Mouse.y;
+var previousmouseX = Mouse.x;
+var previousmouseY = Mouse.y;
+
+var mousepressed = false;
+
+
+
+var stock = [0, 0];
+
+
+
+//MapEditor
+var MapData_move_speed = 20;
+var edition_mode = 0;
+var sub_edition_mode = 0;
+var spawnmodifier = false;
+var spawnmodifpossible = true;
+
+
+// MapData editor
+
+// console.log(MapData_pack.MapDatas[0].Blocks[0].Collisions.Top)
+var MapData_pack = ["CelesteDiscountMapDataApprovedCerticate", 1, "", [[["",50,50,0,0],[],[],[],[],[]]]]; //[MapDataCertifcate, number of MapData, name of the MapData pack,
+                                                                                                 //    [MapDatas
+                                                                                                 //        [Nom, MapDatalimitx, MapDatalimity, playerspawnx, playerspawny],
+                                                                                                 //        [Blocks[snap_x, snap_y, [category,sub category], collisions]]
+                                                                                                 //            category:
+                                                                                                 //                -testblock
+                                                                                                 //                -block
+                                                                                                 //                -damage block
+                                                                                                 //            collision:
+                                                                                                 //                -[up,down,left,right]
+                                                                                                 //        [Water[snap_x, snap_y, type]]
+                                                                                                 //        [Interactive object[snap_x, snap_y, content, type]]
+                                                                                                 //        [Enemies[snap_x, snap_y, type]] (0.7)
+                                                                                                 //        [Decorations[x,y]]
+                                                                                                 //    ]
+                                                                                                 //]

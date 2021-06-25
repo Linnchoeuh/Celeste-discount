@@ -1,4 +1,4 @@
-import {ctx} from "../main.js";
+import {ctx, GV} from "../main.js";
 
 class Tool_Kit
 {
@@ -6,9 +6,7 @@ class Tool_Kit
     {
         this.canvasfullscreen = false;   
 
-        this.ratio = 1
-        this.cache_fill_color = "rgb(255,255,255)"
-        this.cache_stroke_color = "rgb(0,0,0)"
+        this.ratio = 1;
     }
 
     requiredDisplayVariableUpdater()
@@ -43,26 +41,20 @@ class Tool_Kit
         return Math.round(initial_scale);
     }
 
-    logText(text, posX, posY, fill_color = "rgb(255,255,255)", stroke_color = "rgb(0,0,0)")
+    logText(text, posX, posY, fill_color = GV.ColorPalette_.white, stroke_color = GV.ColorPalette_.black)
     {
-        if(fill_color !== this.cache_fill_color)
+        ctx.fillStyle           = fill_color;
+        ctx.strokeStyle         = stroke_color;
+        ctx.fillText(  text, 
+                       this.resolutionScaler(posX), 
+                       this.resolutionScaler(posY));
+
+        if(GV.stroking_text)
         {
-            this.cache_fill_color =
-            ctx.fillStyle         = fill_color;
-        };
-        // ctx.fillStyle         = fill_color;
-        ctx.fillText(     text, 
-                          this.resolutionScaler(posX), 
-                          this.resolutionScaler(posY));
-        if(fill_color !== this.cache_stroke_color)
-        {
-            this.cache_stroke_color =
-            ctx.strokeStyle         = stroke_color;
-        };
-        // ctx.strokeStyle         = stroke_color;
-        ctx.strokeText(   text, 
-                          this.resolutionScaler(posX), 
-                          this.resolutionScaler(posY));
+            ctx.strokeText(text, 
+                           this.resolutionScaler(posX), 
+                           this.resolutionScaler(posY));
+        }
     }
 
     textureLoader(path)

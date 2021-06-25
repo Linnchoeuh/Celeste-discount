@@ -14,12 +14,12 @@ class Map_Editor_Create_Or_Load_Menu
         if(GV.last_menu != 5){
             GV.last_menu = 5;
         }
-        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillStyle = GV.ColorPalette_.white;
         ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
         ctx.fillText("MapData editor", Tools.resolutionScaler(345), Tools.resolutionScaler(75));
 
         if(Button1.texture_type1(GV.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) | Transition.transition_state === "finish" & Transition.selectedaction === "menu1"){
-            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillStyle = GV.ColorPalette_.white;
             GV.menu = Transition.Switcher(GV.menu, 1)[0];
         }
 

@@ -11,7 +11,7 @@ class Log_Display
         if(GV.devmode){
             ctx.font = Tools.resolutionScaler(20)+'px arial';
             ctx.lineWidth = Tools.resolutionScaler(0.5);
-            ctx.fillStyle = "rgb(255,255,255)";
+            // ctx.fillStyle = GV.ColorPalette_.white;
 
             Tools.logText("x : "+Mouse.x, 1125, 25); //mouse pos
             Tools.logText("y : "+Mouse.y, 1125, 50)
@@ -27,41 +27,39 @@ class Log_Display
             Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 800, 150); //input
 
             if(GV.menu === 2 || GV.menu === 9 || 1){
-                ctx.fillStyle = "rgb(255,255,255)";
 
                 Tools.logText("Collisions : "+Object.values(MapData.collisions), 900, 175); //collisions
 
-                Tools.logText("PX : "+Math.round(Player.x), 985, 200); //px
-                Tools.logText("|", 1080, 200);
-                Tools.logText("PosX : "+Player.positionning_x, 1092, 200);
+                Tools.logText("PX : "+Math.round(Player.x), 950, 200); //px
+                Tools.logText("|", 1060, 200);
+                Tools.logText("PosX : "+Player.positionning_x, 1070, 200);
                 
-                Tools.logText("PY : "+Math.round(Player.y), 985, 225); //py
-                Tools.logText("|", 1080, 225);
-                Tools.logText("PosY : "+Player.positionning_y, 1092, 225);
+                Tools.logText("PY : "+Math.round(Player.y), 950, 225); //py
+                Tools.logText("|", 1060, 225);
+                Tools.logText("PosY : "+Player.positionning_y, 1070, 225);
                 
-                Tools.logText("VX : "+Math.round(Player.vector_X), 985, 250); //vect
-                Tools.logText("|", 1080, 250);
-                Tools.logText("VY : "+Math.round(Player.vector_Y), 1092, 250);
+                Tools.logText("VX : "+Math.round(Player.vector_X), 950, 250); //vect
+                Tools.logText("|", 1060, 250);
+                Tools.logText("VY : "+Math.round(Player.vector_Y), 1070, 250);
                 
-                Tools.logText("OX : "+Math.round(MapData.offset_x), 985, 275); //offset
-                Tools.logText("|", 1080, 275);
-                Tools.logText("OY : "+Math.round(MapData.offset_y), 1092, 275);
+                Tools.logText("OX : "+Math.round(MapData.offset_x), 950, 275); //offset
+                Tools.logText("|", 1060, 275);
+                Tools.logText("OY : "+Math.round(MapData.offset_y), 1070, 275);
 
-                Tools.logText("[x: ("+MapData.start_square_collisions_test_area[0]+", "+MapData.end_square_collisions_test_area[0]+") | y: ("
-                                     +MapData.start_square_collisions_test_area[1]+", "+MapData.end_square_collisions_test_area[1]+")]", 985, 300);
+                Tools.logText("SX : "+Math.round(MapData.camsmoother_x), 950, 300); //Smoothed offset
+                Tools.logText("|", 1060, 300);
+                Tools.logText("SY : "+Math.round(MapData.camsmoother_y), 1070, 300);
 
-                Tools.logText("x: "+MapData.camsmoother_x+" | y: "+MapData.camsmoother_y, 985, 325);
-                Tools.logText("x: "+Number.parseFloat(MapData.interpoled_offset_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.interpoled_offset_y).toPrecision(3), 985, 350)
-                Tools.logText("x: "+Number.parseFloat(MapData.interpoled_offset_x-MapData.interpoled_camsmoother_x).toPrecision(3)+" | y: "+Number.parseFloat(MapData.interpoled_offset_y-MapData.interpoled_camsmoother_y).toPrecision(3), 985, 375);
-                // Tools.logText("smooth x : "+Math.round(MapData.offset_x)+" : "+Math.round((MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +
-                //     MapData.previousoffset[4][0] + MapData.previousoffset[5][0] + MapData.previousoffset[6][0] + MapData.previousoffset[7][0] )/8)+" : "+
-                //     Math.round(MapData.offset_x-(MapData.previousoffset[0][0] + MapData.previousoffset[1][0] + MapData.previousoffset[2][0] + MapData.previousoffset[3][0] +
-                //         MapData.previousoffset[4][0] + MapData.previousoffset[5][0] + MapData.previousoffset[6][0] + MapData.previousoffset[7][0] )/8), 985, 350)
+                Tools.logText("DX : "+Math.round(MapData.interpoled_difference_smoother_offset_x), 950, 325); //Difference between the offset and the smoothed offset (interpoled)
+                Tools.logText("|", 1060, 325);
+                Tools.logText("DY : "+Math.round(MapData.interpoled_difference_smoother_offset_y), 1070, 325);
 
-                // Tools.logText("Start zone : ["+MapData.start_square_collisions_test_area[0]+"]px ; ["+MapData.start_square_collisions_test_area[1]+"]py", 970, 300);
+                Tools.logText("X: (S : "+MapData.start_square_collisions_test_area[0]+", E : "+MapData.end_square_collisions_test_area[0]+")", 950, 350);
+                Tools.logText("Y: (S : "+MapData.start_square_collisions_test_area[1]+", E : "+MapData.end_square_collisions_test_area[1]+")", 950, 375);
+
+                Tools.logText("Executon loop : "+-Fps.fps/Fps.pfpslog, 950, 400); //offset
                 
-                
-                Tools.logText(Fps.nbofframewithoutphysics , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(MapData.count , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }
             if(GV.menu === 7){
                 

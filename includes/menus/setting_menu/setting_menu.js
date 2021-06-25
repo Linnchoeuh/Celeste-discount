@@ -40,11 +40,11 @@ class Setting_Menu
         }
         if(Fps.showfps)
         {
-            ctx.fillStyle = "rgb(100,200,50)";
+            ctx.fillStyle = GV.ColorPalette_.average_green;
         }
         else
         {
-            ctx.fillStyle = "rgb(255,50,75)";
+            ctx.fillStyle = GV.ColorPalette_.average_red;
         }
         if(Button2.text_type1("Show FPS", 0, 130, 320, 60, 20, 175, 40, 45, 50, 55, 3.6, 0.4)) //show Fps.fps button
         {
@@ -59,11 +59,11 @@ class Setting_Menu
         }
         if(Fullscreen.canvasfullscreen)
         {
-            ctx.fillStyle = "rgb(100,200,50)";
+            ctx.fillStyle = GV.ColorPalette_.average_green;
         }
         else
         {
-            ctx.fillStyle = "rgb(255,50,75)";
+            ctx.fillStyle = GV.ColorPalette_.average_red;
         }
         if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
         {
@@ -73,9 +73,9 @@ class Setting_Menu
         if(Fullscreen.fullscreenupscale)
         {
             ctx.font = "Bold "+Tools.resolutionScaler(40)+'px arial';
-            ctx.fillStyle = "rgb(100,100,100)";
+            ctx.fillStyle = GV.ColorPalette_.average_gray;
             ctx.fillText("Fullscreen downscale", Tools.resolutionScaler(120), Tools.resolutionScaler(435));
-            ctx.fillStyle = "rgb(100,200,50)";
+            ctx.fillStyle = GV.ColorPalette_.average_green;
             Fullscreen.fullscreendownscale = false;
             Fullscreen.fullscreendownscalefactor = 5;
         }
@@ -83,7 +83,7 @@ class Setting_Menu
         {
             if(Fullscreen.fullscreendownscale)
             {
-                ctx.fillStyle = "rgb(255,255,255)";
+                ctx.fillStyle = GV.ColorPalette_.white;
                 ctx.font = "Bold "+Tools.resolutionScaler(40)+'px arial';
                 ctx.fillText(Fullscreen.fullscreendownscalefactor*20+"%", Tools.resolutionScaler(900), Tools.resolutionScaler(435));
                 if(Fullscreen.fullscreendownscalefactor > 1)
@@ -111,11 +111,11 @@ class Setting_Menu
                         Fullscreen.firstclick = false;
                     }
                 }
-                ctx.fillStyle = "rgb(100,200,50)";
+                ctx.fillStyle = GV.ColorPalette_.average_green;
             }
             else
             {
-                ctx.fillStyle = "rgb(255,50,75)";
+                ctx.fillStyle = GV.ColorPalette_.average_red;
             }
             if(Button6.text_type1("Fullscreen downscale", 100, 391, 660, 60, 120, 435, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen
             {
@@ -133,7 +133,7 @@ class Setting_Menu
                 }
                 Fullscreen.screenScaler();
             }
-            ctx.fillStyle = "rgb(255,50,75)";
+            ctx.fillStyle = GV.ColorPalette_.average_red;
         }
         if(Button7.text_type1("Fullscreen Upscale", 0, 330, 560, 60, 20, 375, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen upscale button
         {
@@ -153,11 +153,11 @@ class Setting_Menu
         }
         if(Fps.cap30fps === 30)
         {
-            ctx.fillStyle = "rgb(100,200,50)";
+            ctx.fillStyle = GV.ColorPalette_.average_green;
         }
         else
         {
-            ctx.fillStyle = "rgb(255,50,75)";
+            ctx.fillStyle = GV.ColorPalette_.average_red;
         }
         if(Button8.text_type1("Cap the game at 30fps", 0, 490, 650, 60, 20, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
         {

@@ -7,7 +7,7 @@ class Main_Menu
         {
             GV.last_menu = 1;
         }
-        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillStyle = GV.ColorPalette_.white;
         if(Button1.text_type1("--Play--", 410, 375, 385, 60, 520, 420, 48, 54, 58, 60) | Transition.transition_state === "finish" & Transition.selectedaction === "menu2") //play
         {
             GV.menu = Transition.Switcher(GV.menu, 2)[0];

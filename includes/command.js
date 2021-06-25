@@ -7,6 +7,7 @@ class Command_
         this.command = "false";
         this.command_word_list = [];
         this.command_word = "";
+        
     };
 
     commandTrigger(){
@@ -151,7 +152,39 @@ class Command_
                                     default:
                                         alert("Syntax error, you must write : \n    -camera lock\n    -camera smoother");
                                         break;
-                                }  
+                                }
+                                break;
+                            case "log_text":
+                                switch(this.command_word_list[1]){
+                                    case "":
+                                        if(GV.stroking_text){
+                                            GV.stroking_text = false;
+                                            break;
+                                        }
+                                        GV.stroking_text = true;
+                                        break;
+                                    case "normal":
+                                        GV.stroking_text = true;
+                                        break;
+                                    case "fast":
+                                        GV.stroking_text = false;
+                                        break;
+                                    case "state":
+                                        if(GV.stroking_text){
+                                            alert("log text display mode = Normal");
+                                            break;
+                                        }
+                                        alert("log text display mode = Fast");
+                                        break;
+                                        
+                                    case "help":
+                                        alert("Command possible state :\n    -normal\n    -fast\nThe command hide the stroke of text to improve performance.");
+                                        break;
+                                    default:
+                                        alert("Syntax error, you must write : \n    -log_text\n    -log_text normal\n    -log_text fast\n    -log_text state : (give you the state of the command)");
+                                        break;
+                                }    
+                                break;
                             case "reset":
                         
                                 break;
