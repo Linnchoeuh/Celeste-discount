@@ -33,21 +33,31 @@ class Player_Data
         this.jumpavaiblelity = true;
         this.releasejump = false;
         this.jumpcount = 0;
-        this.left = true;
-        this.right = true;
         this.walljump = 0;
         this.walljumpcheck = false;
 
-        this.hit_box_scaler = 0
-        this.horizontal_hit_box = 10;
-        this.horizontal_hit_box_offset = 7;
-        this.vertical_hit_box = 24;
-        this.vertical_hit_box_offset = 0;
+        this.HitBox_ = {
+            scaler                   : 0,
+            horizontal               : 10,
+            horizontal_offset        : 7,
+            vertical                 : 24,
+            vertical_offset          : 0,
 
-        this.adapted_horizontal_hit_box = 0;
-        this.adapted_horizontal_hit_box_offset = 0;
-        this.adapted_vertical_hit_box = 0;
-        this.adapted_vertical_hit_box_offset = 0;
+            top_side                 : 0,
+            down_side                : 0,
+            left_side                : 0,
+            right_side               : 0,
+        
+            scaled_horizontal        : 0,
+            scaled_horizontal_offset : 0,
+            scaled_vertical          : 0,
+            scaled_vertical_offset   : 0,
+            
+            scaled_top_side          : 0,
+            scaled_down_side         : 0,
+            scaled_left_side         : 0,
+            scaled_right_side        : 0
+        };
         this.pre_player_scaling = 70;
         
         
@@ -155,18 +165,26 @@ class Player_Data
     // }
 
     modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0){
-        this.hit_box_scaler = ratio
-        this.adapted_horizontal_hit_box        = x_hitbox*this.hit_box_scaler;
-        this.adapted_horizontal_hit_box_offset = x_offset*this.hit_box_scaler;
-        this.adapted_vertical_hit_box          = y_hitbox*this.hit_box_scaler;
-        this.adapted_vertical_hit_box_offset   = y_offset*this.hit_box_scaler;
+        this.HitBox_.scaler = ratio
+        this.HitBox_.scaled_horizontal        = x_hitbox*this.HitBox_.scaler;
+        this.HitBox_.scaled_horizontal_offset = x_offset*this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical          = y_hitbox*this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical_offset   = y_offset*this.HitBox_.scaler;
+        this.HitBox_.top_side                 = y_offset;
+        this.HitBox_.down_side                = y_hitbox+y_offset;
+        this.HitBox_.left_side                = x_offset;
+        this.HitBox_.right_side               = x_hitbox+x_offset;
+        this.HitBox_.scaled_top_side          = this.HitBox_.top_side  *this.HitBox_.scaler
+        this.HitBox_.scaled_down_side         = this.HitBox_.down_side *this.HitBox_.scaler
+        this.HitBox_.scaled_left_side         = this.HitBox_.left_side *this.HitBox_.scaler
+        this.HitBox_.scaled_right_side        = this.HitBox_.right_side*this.HitBox_.scaler
     }
 
     playerPositionner(pos, offset){
         return pos - offset
     }
 
-    velocity(collisions, offsetX_on, offsetY_on, distanceground){
+    velocity(collisions, distanceground){
         this.PhysicsLoop.startTime()
         // this.x = Math.round(this.x)
         // this.y = Math.round(this.y)
@@ -261,7 +279,7 @@ class Player_Data
                     {
                         this.lastdirection = -1;
                     }
-                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && collisions.Right === false && this.vector_X < this.maxcurrentvelocity) //moving right
+                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && this.vector_X < this.maxcurrentvelocity) //moving right
                     {
                         this.speed = this.vector_X += this.currentacceleration;
                         if(this.vector_X > this.maxcurrentvelocity)
@@ -270,7 +288,7 @@ class Player_Data
                         }
 
                     }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && collisions.Left === false && this.vector_X > -this.maxcurrentvelocity) //moving left
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
                     {
                         this.speed = this.vector_X -= this.currentacceleration;
                         if(this.vector_X < -this.maxcurrentvelocity)
@@ -298,21 +316,31 @@ class Player_Data
                 {
                     this.walljumpcheck = true;
                 }
-                if(collisions.Bottom === false && this.vector_Y >= 0 || this.lastactwalljump === true) //walljump
+                if(collisions.Bottom === false && this.vector_Y >= 0 || this.lastactwalljump === true) //walljump------------------------------------------------------------
                 {
-                    if(collisions.Left && distanceground > 71 || collisions.Left && distanceground === false) //left
+                    if(collisions.Left && distanceground === false) //left
                     {
-                        this.walljump = -1;
+                        this.vector_X =
+                        this.lastdirection = -1
+                        // this.walljump = -1;
+                        this.dashcooldown = this.dashcooldownmax;
                     }
-                    else if(collisions.Right && distanceground > 71 || collisions.Right && distanceground === false) //right
+                    else if(collisions.Right && distanceground === false) //right
                     {
-                        this.walljump = 1;
-                        this.vector_X = 1
+                        this.vector_X =
+                        this.lastdirection = 1
+                        // this.walljump = 1;
+                        this.dashcooldown = this.dashcooldownmax;
                     }
                     else //nothing
                     {
+                        // if(this.walljump !== 0){
+                        //     this.vector_X = 0;
+                        // }
                         this.walljump = 0;
                         this.wallleave = this.wallleavemax;
+                        this.dashcooldown = 0;
+                        
                     }
                     if(this.walljump !== 0)
                     {

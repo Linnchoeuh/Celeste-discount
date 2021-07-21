@@ -34,8 +34,8 @@ class Game_Menu
                 Player.previous_y = Player.y;
                 
                 
-                Player.velocity(MapData.collisions, MapData.offset_x_on, MapData.offset_y_on, MapData.bestdown[4], Pause.pause);
-                MapData.collider(Pause.pause);
+                Player.velocity(MapData.collisions, MapData.bestdown[4]);
+                MapData.collider();
                 MapData.fcamsmoother(Pause.pause);
                 
                 

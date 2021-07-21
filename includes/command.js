@@ -188,6 +188,9 @@ class Command_
                             case "reset":
                         
                                 break;
+                            case "rick":
+                                window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", '_blank');
+                                break;
                             case "help":
                                 alert("All avaible command : \n(To have more information about a command put the name of the command and help after)\n(Example : devmode help)\n    -devmode\n    -godmode\n    -reset\n");
                                 break;

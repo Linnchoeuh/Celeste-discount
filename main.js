@@ -190,7 +190,7 @@ const LogDisplay = new Log_Display();
 function main(){
     requestAnimationFrame(main);
 
-    if(Fps.Graphic_Cap(60)){
+    if(Fps.Graphic_Cap(Fps.cap30fps)){
         MainLoop.startTime();
         MainLoopWithLog.startTime();
         ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
