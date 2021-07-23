@@ -166,18 +166,21 @@ class Player_Data
 
     modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0){
         this.HitBox_.scaler = ratio
-        this.HitBox_.scaled_horizontal        = x_hitbox*this.HitBox_.scaler;
-        this.HitBox_.scaled_horizontal_offset = x_offset*this.HitBox_.scaler;
-        this.HitBox_.scaled_vertical          = y_hitbox*this.HitBox_.scaler;
-        this.HitBox_.scaled_vertical_offset   = y_offset*this.HitBox_.scaler;
+
         this.HitBox_.top_side                 = y_offset;
-        this.HitBox_.down_side                = y_hitbox+y_offset;
         this.HitBox_.left_side                = x_offset;
+        this.HitBox_.down_side                = y_hitbox+y_offset;
         this.HitBox_.right_side               = x_hitbox+x_offset;
-        this.HitBox_.scaled_top_side          = this.HitBox_.top_side  *this.HitBox_.scaler
-        this.HitBox_.scaled_down_side         = this.HitBox_.down_side *this.HitBox_.scaler
-        this.HitBox_.scaled_left_side         = this.HitBox_.left_side *this.HitBox_.scaler
-        this.HitBox_.scaled_right_side        = this.HitBox_.right_side*this.HitBox_.scaler
+
+        this.HitBox_.scaled_horizontal        = x_hitbox               *this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical          = y_hitbox               *this.HitBox_.scaler;
+        this.HitBox_.scaled_horizontal_offset = x_offset               *this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical_offset   = y_offset               *this.HitBox_.scaler;
+
+        this.HitBox_.scaled_top_side          = this.HitBox_.top_side  *this.HitBox_.scaler;
+        this.HitBox_.scaled_down_side         = this.HitBox_.down_side *this.HitBox_.scaler;
+        this.HitBox_.scaled_left_side         = this.HitBox_.left_side *this.HitBox_.scaler;
+        this.HitBox_.scaled_right_side        = this.HitBox_.right_side*this.HitBox_.scaler;
     }
 
     playerPositionner(pos, offset){

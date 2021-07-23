@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Keyboard, Fps, Mouse, MapData, Fullscreen, Player, Transition} from "../main.js";
+import {ctx, GV, Tools, Keyboard, Fps, Mouse, MapData, Fullscreen, Player, Transition, canvas} from "../main.js";
 
 class Log_Display
 {
@@ -57,7 +57,10 @@ class Log_Display
                 Tools.logText("X: (S : "+MapData.start_square_collisions_test_area[0]+", E : "+MapData.end_square_collisions_test_area[0]+")", 950, 350);
                 Tools.logText("Y: (S : "+MapData.start_square_collisions_test_area[1]+", E : "+MapData.end_square_collisions_test_area[1]+")", 950, 375);
 
-                Tools.logText("Executon loop : "+-Fps.fps/Fps.pfpslog, 950, 400); //offset
+                Tools.logText("Execution loop : "+Fps.executionloop, 950, 400); 
+                Tools.logText("Generated frame : "+1/Fps.interpolation_value, 950, 425); 
+                Tools.logText("width : "+GV.canvas_width+" height : "+GV.canvas_height, 950, 450)
+                // Tools.logText(MapData.pre_block_scaling, 950,450)
                 
                 Tools.logText(MapData.count , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             }

@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Player, canvas, Fps, GameMenu, Pause} from "../../../main.js";
+import {ctx, GV, Tools, Player, canvas, Fps, GameMenu, Pause, Fullscreen} from "../../../main.js";
 import {Timer_Log} from "../../tools.js";
 // import {Game_Menu} from "./game_menu.js";
 
@@ -72,9 +72,10 @@ class Map_Data
         this.pre_block_scaling_unround = this.original_block_scale;
         this.pre_snap_offset_smooth_X = 0;
         this.pre_snap_offset_smooth_Y = 0;
-        this.pre_snap_offset_smooth_X_minus_05 = 0;
-        // this.pre_snap_offset_smooth_Y_minus_05 = 0;
+        this.pre_snap_offset_smooth_X_floor = 0;
         this.pre_vertical_position_line_block_displayed = 0;
+        this.selected_horizontal_block_index_array = [];
+        this.selected_horizontal_block_map_type_texture_array = [];
 
         this.stock = [];
         this.collisions_calculation_divider = 0;
@@ -104,9 +105,17 @@ class Map_Data
         this.pre_part_calculed_vertical_end_square_collisions_test_area     = 0;
         this.start_square_collisions_test_area = [0, 0];
         this.end_square_collisions_test_area   = [0, 0];
+        this.start_collision_test = 0;
+        this.end_collision_test = 0;
         this.block_in_test_collision_area_count = 0;
         this.nearest_vertical_collision   = 0;
         this.nearest_horizontal_collision = 0;
+        
+        this.y_direction = 0;
+        this.collisions_face_test = 0;
+        this.collision_map_test = 0;
+
+        this.anti_lock = 0;
     }
 
 
@@ -123,22 +132,10 @@ class Map_Data
         Player.x = this.spawn.x*this.original_block_scale;
         Player.y = this.spawn.y*this.original_block_scale;
         this.all_block_map_count = file.MapDatas[editedlevelid].Blocks.length;
-        console.log(Player.HitBox_.horizontal, Player.HitBox_.horizontal_offset, Player.HitBox_.vertical, Player.HitBox_.vertical_offset)
+
         Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, Player.HitBox_.horizontal, Player.HitBox_.horizontal_offset, Player.HitBox_.vertical, Player.HitBox_.vertical_offset)
-        console.log(Player.HitBox_.scaled_horizontal, Player.HitBox_.scaled_horizontal_offset, Player.HitBox_.scaled_vertical, Player.HitBox_.scaled_vertical_offset)
-        console.log(Player.HitBox_.scaled_left_side, Player.HitBox_.scaled_right_side, Player.HitBox_.scaled_top_side, Player.HitBox_.scaled_down_side)
-        // Player.positionning_x = Tools.resolutionScaler(Player.playerPositionner(Player.x, this.offset_x));
-        // Player.positionning_y = Tools.resolutionScaler(Player.playerPositionner(Player.y, this.offset_y));
-        // this.previousoffset = [[Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y],
-        //                        [Player.positionning_x, Player.positionning_y], [Player.positionning_x, Player.positionning_y]];
+
         
-        // console.log(file.MapDatas[editedlevelid])
 
         // Préparation des collisions de la map
         for(let i = 0; i < this.map_limit.y+1; i++){
@@ -161,7 +158,7 @@ class Map_Data
             this.right_collisions_map [file.MapDatas[editedlevelid].Blocks[i].y][file.MapDatas[editedlevelid].Blocks[i].x] = file.MapDatas[editedlevelid].Blocks[i].Collisions.Right;
         }
     
-        console.log(this.bottom_collisions_map);
+        console.log(this.bottom_collisions_map)
         
 
         
@@ -205,9 +202,9 @@ class Map_Data
         }
         
         // console.log(this.block_map)
-        // console.log(this.block_map_snap_position)
+        console.log(this.block_map_snap_position)
         // console.log(this.block_index)
-        // console.log(this.block_map_type_texture)
+        console.log(this.block_map_type_texture)
         this.requiredDisplayVariableUpdater();
 
         this.previousoffset = [[this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
@@ -215,10 +212,7 @@ class Map_Data
                                [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y],
                                [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y], [this.offset_x, this.offset_y]];
     }
-    horizontal_collision_func(x, vx, vy, cx, cy){
-        if(vx === 0){return -1;};
-        return x*vy/vx+vy/vx*cx+cy-cx
-    };
+
     collider()
     {
         this.CollisionsLoop.startTime();
@@ -249,10 +243,10 @@ class Map_Data
                 this.pre_part_calculed_vertical_start_square_collisions_test_area -= Player.vector_Y;
             };
             
-            this.start_square_collisions_test_area = [Math.trunc(this.pre_part_calculed_horizontal_start_square_collisions_test_area/this.original_block_scale), 
-                                                      Math.trunc(this.pre_part_calculed_vertical_start_square_collisions_test_area  /this.original_block_scale)];
-            this.end_square_collisions_test_area   = [Math.trunc(this.pre_part_calculed_horizontal_end_square_collisions_test_area  /this.original_block_scale), 
-                                                      Math.trunc(this.pre_part_calculed_vertical_end_square_collisions_test_area    /this.original_block_scale)];
+            this.start_square_collisions_test_area = [Math.floor(this.pre_part_calculed_horizontal_start_square_collisions_test_area/this.original_block_scale), 
+                                                      Math.floor(this.pre_part_calculed_vertical_start_square_collisions_test_area  /this.original_block_scale)];
+            this.end_square_collisions_test_area   = [Math.floor(this.pre_part_calculed_horizontal_end_square_collisions_test_area  /this.original_block_scale), 
+                                                      Math.floor(this.pre_part_calculed_vertical_end_square_collisions_test_area    /this.original_block_scale)];
             
             this.count = 0;
             this.up_block_collision_coord_y = -1;
@@ -263,16 +257,43 @@ class Map_Data
             if(this.end_square_collisions_test_area[0] >= this.map_limit.x){this.end_square_collisions_test_area[0] = this.map_limit.x;};
             if(this.start_square_collisions_test_area[0] < 0){this.start_square_collisions_test_area[0] = 0;};
             
-
-            if(Player.vector_X !== 0 && Player.vector_Y !== 0)
-            {
-                console.log(2)
-            }else if(Player.vector_X !== 0)
-            {
-                console.log(1)
-            }else if(Player.vector_Y !== 0){
-                console.log(0)
-            };
+            // this.y_direction = Math.abs(Player.vector_Y)/Player.vector_Y
+            // this.y_direction = 1
+            // if(Player.vector_X !== 0 && Player.vector_Y !== 0)
+            // {
+            //     // console.log(2)
+            // }else if(Player.vector_X !== 0)
+            // {
+            //     // console.log(1)
+            // }else if(Player.vector_Y !== 0){
+                
+            //     if(Player.vector_Y > 0){
+            //         this.end_collision_test   = this.end_square_collisions_test_area[1];
+            //         this.start_collision_test = this.start_square_collisions_test_area[1];
+            //         this.collisions_face_test = Player.HitBox_.scaled_down_side;
+            //         this.collision_map_test   = this.bottom_collisions_map;
+            //     }else{
+            //         this.start_collision_test = this.end_square_collisions_test_area[1];
+            //         this.end_collision_test   = this.start_square_collisions_test_area[1];
+            //         this.collisions_face_test = Player.HitBox_.scaled_top_side;
+            //         this.collision_map_test   = this.top_collisions_map;
+            //     }
+            //     // console.log(this.start_collision_test, this.end_collision_test+"-----------------")
+            //     for(let i = this.start_collision_test; i*this.y_direction <= this.y_direction*this.end_collision_test; i += this.y_direction) //Affichage des textures
+            //     {
+            //         for(let k = this.start_square_collisions_test_area[0]; k <= this.end_square_collisions_test_area[0]; k++) //Affichage des textures
+            //         {
+            //             if(this.collision_map_test[i][k] === true && Player.y-Player.vector_Y <= k*this.original_block_scale && Player.y > k*this.original_block_scale)
+            //             {
+            //                 Player.y = k*this.original_block_scale
+            //                 Player.vector_Y = 0;
+            //                 console.log(i)
+            //                 break;
+            //             }
+            //         }
+            //         if(Player.vector_Y === 0){break;};
+            //     }
+            // };
 
 
             if(Player.x+Player.HitBox_.scaled_left_side <= 0)
@@ -314,8 +335,12 @@ class Map_Data
         if(this.offset_x < 0){this.offset_x = 0;}
         else if(this.offset_x         > this.map_limit.x*this.original_block_scale-GV.canvas_width+this.original_block_scale)
         {this.offset_x                = this.map_limit.x*this.original_block_scale-GV.canvas_width+this.original_block_scale;};
-        this.interpoled_offset_x      = this.offset_x+this.offset_interpo_x*Fps.nbofframewithoutphysics;
-        this.interpoled_camsmoother_x = this.camsmoother_x+this.smooth_interpo_x*Fps.nbofframewithoutphysics;
+
+        this.interpoled_camsmoother_x =
+        this.interpoled_offset_x      = this.offset_x     +this.offset_interpo_x*Fps.nbofframewithoutphysics;
+        if(GV.camsmootherenable)
+        {this.interpoled_camsmoother_x = this.camsmoother_x+this.smooth_interpo_x*Fps.nbofframewithoutphysics;}
+        
         this.interpoled_difference_smoother_offset_x = this.interpoled_offset_x-this.interpoled_camsmoother_x;
 
         
@@ -324,36 +349,45 @@ class Map_Data
         if(this.offset_y < 0){this.offset_y = 0;}
         else if(this.offset_y         > this.map_limit.y*this.original_block_scale-GV.canvas_height+this.original_block_scale)
         {this.offset_y                = this.map_limit.y*this.original_block_scale-GV.canvas_height+this.original_block_scale;};
-        this.interpoled_offset_y      = this.offset_y+this.offset_interpo_y*Fps.nbofframewithoutphysics;
-        this.interpoled_camsmoother_y = this.camsmoother_y+this.smooth_interpo_y*Fps.nbofframewithoutphysics;
+        
+        this.interpoled_camsmoother_y =
+        this.interpoled_offset_y      = this.offset_y     +this.offset_interpo_y*Fps.nbofframewithoutphysics;
+        if(GV.camsmootherenable)
+        {this.interpoled_camsmoother_y = this.camsmoother_y+this.smooth_interpo_y*Fps.nbofframewithoutphysics;}
+        
         this.interpoled_difference_smoother_offset_y = this.interpoled_offset_y-this.interpoled_camsmoother_y;
 
 
         
         this.offsetsmoothX                     = Math.round(Tools.resolutionScaler(this.interpoled_camsmoother_x));
         this.offsetsmoothY                     = Math.round(Tools.resolutionScaler(this.interpoled_camsmoother_y));
-        this.pre_snap_offset_smooth_X          = Math.round(this.offsetsmoothX/this.pre_block_scaling);
-        this.pre_snap_offset_smooth_Y          = Math.round(this.offsetsmoothY/this.pre_block_scaling);
-        this.pre_snap_offset_smooth_X_minus_05 = Math.round(this.offsetsmoothX/this.pre_block_scaling-0.5);
-        // this.pre_snap_offset_smooth_Y_minus_05 = Math.round(this.pre_snap_offset_smooth_Y-0.5);
+        this.pre_snap_offset_smooth_X          = this.offsetsmoothX/this.pre_block_scaling_unround;
+        this.pre_snap_offset_smooth_Y          = this.offsetsmoothY/this.pre_block_scaling_unround;
+        this.pre_snap_offset_smooth_X_floor    = Math.floor(this.offsetsmoothX/this.pre_block_scaling_unround);
         
         if(GV.devmode){
-            ctx.lineWidth = Tools.resolutionScaler(0.5*(this.original_block_scale/71));
-            ctx.font      = Tools.resolutionScaler(15 *(this.original_block_scale/71))+'px arial';
+            ctx.lineWidth = Tools.resolutionScaler(0.5*(this.original_block_scale/71)); //a corriger
+            ctx.font      = Tools.resolutionScaler(15 *(this.original_block_scale/71))+'px arial'; //a corriger
         }
         this.operation_count = 0;
         if(this.interpoled_camsmoother_y < 0){this.interpoled_camsmoother_y = 0;};
+        if(this.pre_snap_offset_smooth_X_floor < 0){this.pre_snap_offset_smooth_X_floor = 0;};
+        // ctx.drawImage(this.bg, -this.offset_x/4.05, -this.offset_y/(canvas.height*1.2-canvas.height), canvas.width*1.2, canvas.height*1.2);
         ctx.drawImage(this.bg, 0, 0, canvas.width, canvas.height);
-        for(let i = Math.round(Math.round(this.interpoled_camsmoother_y)/this.original_block_scale-0.5); i-1 < this.pre_snap_offset_smooth_Y+GV.canvas_height/this.original_block_scale; i++) //Affichage des textures
+        for(let i = Math.floor(this.interpoled_camsmoother_y/this.original_block_scale); i < this.pre_snap_offset_smooth_Y+GV.canvas_height/this.original_block_scale; i++) //Affichage des textures
         {
             if(i > this.map_limit.y){break;};
             this.pre_vertical_position_line_block_displayed = Math.round(i*this.pre_block_scaling_unround-this.offsetsmoothY);
-            this.index_value                                = this.block_index[i][this.pre_snap_offset_smooth_X_minus_05];
+            this.index_value                                = this.block_index[i][this.pre_snap_offset_smooth_X_floor];
 
-            for (let k = this.index_value; k < this.index_value+GV.canvas_width/this.original_block_scale+1; k++)
+            this.selected_horizontal_block_index_array = this.block_map_snap_position[i];
+            
+            this.selected_horizontal_block_map_type_texture_array = this.block_map_type_texture[i];
+
+            for (let k = this.index_value; k-1 <= this.index_value+canvas.width/this.pre_block_scaling_unround; k++) //remodifier par canvas.width
             {
-                if(this.block_map_snap_position[i][k] >   this.pre_snap_offset_smooth_X+(GV.canvas_width/this.original_block_scale) 
-                || this.block_map_snap_position[i][k] === this.block_map_snap_position[i][-1])
+                if(this.selected_horizontal_block_index_array[k] >   this.pre_snap_offset_smooth_X+canvas.width/this.pre_block_scaling_unround //remodifier par canvas.width
+                || this.selected_horizontal_block_index_array[k] === this.selected_horizontal_block_index_array[-1])
                 {
                     if(GV.devmode){
                         ctx.fillStyle = "rgba(0,0,255,0.25)";
@@ -362,7 +396,7 @@ class Map_Data
                     };
                     break;
                 };
-                switch(this.block_map_type_texture[i][k][0]) // selection des textures
+                switch(this.selected_horizontal_block_map_type_texture_array[k][0]) // selection des textures
                 {
                     case 0:
                         ctx.drawImage(this.testblock, 
@@ -371,10 +405,12 @@ class Map_Data
                         break
                     case 1:
                         ctx.drawImage(this.grass_blocks, 
-                                    ((this.block_map_type_texture[i][k][1]+4)%4)*this.pre_block_scale, Math.floor(this.block_map_type_texture[i][k][1]/4)*this.pre_block_scale, 
-                                      this.pre_block_scale,                                            this.pre_block_scale,
-                                      this.block_map[i][k]-this.offsetsmoothX,                         this.pre_vertical_position_line_block_displayed, 
-                                      this.pre_block_scaling+1,                                        this.pre_block_scaling+1);
+                                    ((this.selected_horizontal_block_map_type_texture_array[k][1]+4)%4)*this.pre_block_scale, 
+                           Math.floor(this.selected_horizontal_block_map_type_texture_array[k][1]/4)   *this.pre_block_scale,
+
+                                      this.pre_block_scale,                                             this.pre_block_scale,
+                                      this.block_map[i][k]-this.offsetsmoothX,                          this.pre_vertical_position_line_block_displayed, 
+                                      this.pre_block_scaling+1,                                         this.pre_block_scaling+1);
                         break;
                 }
                 if(GV.devmode) //Affichage position de chaque block
@@ -416,7 +452,7 @@ class Map_Data
 
             ctx.strokeStyle = GV.ColorPalette_.gray;
             ctx.strokeRect(Tools.resolutionScaler(Player.HitBox_.scaled_left_side)+Player.positionning_x, Tools.resolutionScaler(Player.HitBox_.scaled_top_side)+Player.positionning_y, 
-                           Tools.resolutionScaler(Player.HitBox_.scaled_horizontal),                     Tools.resolutionScaler(Player.HitBox_.scaled_vertical));
+                           Tools.resolutionScaler(Player.HitBox_.scaled_horizontal),                      Tools.resolutionScaler(Player.HitBox_.scaled_vertical));
             
             ctx.lineWidth   = Tools.resolutionScaler(4);
             ctx.strokeStyle = GV.ColorPalette_.yellow;
@@ -439,11 +475,12 @@ class Map_Data
 
     requiredDisplayVariableUpdater()
     {
-        // this.pre_block_scale = 24;
         this.pre_block_scaling_unround = Tools.resolutionScalerUnround(this.original_block_scale);
         this.pre_block_scaling         = Tools.resolutionScaler       (this.original_block_scale);
         this.block_map                 = [];
-        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, Player.HitBox_.horizontal, Player.HitBox_.horizontal_offset, Player.HitBox_.vertical, Player.HitBox_.vertical_offset)
+        Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, 
+                            Player.HitBox_.horizontal, Player.HitBox_.horizontal_offset, 
+                            Player.HitBox_.vertical,   Player.HitBox_.vertical_offset)
         if(this.pre_block_scale === 24)
         {
             this.grass_blocks = Tools.textureLoader("graphics/map_content/harmonic_grass.png");
@@ -464,10 +501,10 @@ class Map_Data
         }
     }
 
-    fcamsmoother(pause)
+    fcamsmoother()
     {
         this.CamSmootherLoop.startTime()
-        if(pause === false)    
+        if(Pause.pause === false)    
         {
             this.previous_camsmoother_x = this.camsmoother_x;
             this.previous_camsmoother_y = this.camsmoother_y;
@@ -482,10 +519,17 @@ class Map_Data
                                                          this.previousoffset[4][1] + this.previousoffset[5][1] + this.previousoffset[6][1] + this.previousoffset[7][1] +
                                                          this.previousoffset[8][1] + this.previousoffset[9][1] + this.previousoffset[10][1]+ this.previousoffset[11][1]+
                                                          this.previousoffset[12][1]+ this.previousoffset[13][1]+ this.previousoffset[14][1]+ this.previousoffset[15][1])/16);
-            }else{
-                this.camsmoother_x         = this.interpoled_offset_x;
-                this.camsmoother_y         = this.interpoled_offset_y;
             }
+        }
+        if(GV.camsmootherenable || Fullscreen.fullscreen_change) //smooth the camera
+        {
+            this.camsmoother_x         = Math.round((this.previousoffset[0][0] + this.previousoffset[1][0] + this.previousoffset[2][0] + this.previousoffset[3][0] +
+                                                     this.previousoffset[4][0] + this.previousoffset[5][0] + this.previousoffset[6][0] + this.previousoffset[7][0] )/8);
+                                                     
+            this.camsmoother_y         = Math.round((this.previousoffset[0][1] + this.previousoffset[1][1] + this.previousoffset[2][1] + this.previousoffset[3][1] +
+                                                     this.previousoffset[4][1] + this.previousoffset[5][1] + this.previousoffset[6][1] + this.previousoffset[7][1] +
+                                                     this.previousoffset[8][1] + this.previousoffset[9][1] + this.previousoffset[10][1]+ this.previousoffset[11][1]+
+                                                     this.previousoffset[12][1]+ this.previousoffset[13][1]+ this.previousoffset[14][1]+ this.previousoffset[15][1])/16);
         }
         this.cam_smoother_loop_log         = this.CamSmootherLoop.endLogTime()
     }

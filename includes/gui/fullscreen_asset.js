@@ -24,6 +24,9 @@ class Canvas_Resolution_Asset
         this.ablefullscreen = "Enable";
         this.fullscreendownscale = false;
         this.double_click_toggle = true;
+
+        this.screen_ratio = 0;
+        this.fullscreen_change = false;
     }
 
     varUpdater()
@@ -32,9 +35,11 @@ class Canvas_Resolution_Asset
     }
 
     fullscreenChecker(){
+        this.fullscreen_change = false;
         if(this.canvasfullscreen !== this.last_canvas_fullscreen){
             this.screenScaler();
             this.last_canvas_fullscreen = this.canvasfullscreen;
+            this.fullscreen_change = true;
         }
     }
 
@@ -90,26 +95,27 @@ class Canvas_Resolution_Asset
     }
 
     screenScaler(){
-        if(this.canvasfullscreen && canvas.width !== screen.width                       && canvas.height !== screen.height                      && this.fullscreenupscale
-        || this.canvasfullscreen && canvas.width !== 240*this.fullscreendownscalefactor && canvas.height !== 135*this.fullscreendownscalefactor && this.fullscreendownscale){
-            if(this.canvasfullscreen){
+        if(this.canvasfullscreen){
                 if(this.fullscreenupscale){    
                     canvas.width  = screen.width;
                     canvas.height = screen.height;
+                    GV.canvas_width = screen.width/(screen.height/GV.initial_canvas_height);
+                    GV.canvas_height = screen.height/(screen.height/GV.initial_canvas_height);
                 }else{
-                    canvas.width  = 240*this.fullscreendownscalefactor;
-                    canvas.height = 135*this.fullscreendownscalefactor;
+                    
+                    canvas.width  = GV.scaled_screen_width /5*this.fullscreendownscalefactor;
+                    canvas.height = GV.scaled_screen_height/5*this.fullscreendownscalefactor;
                 }
                 this.ablefullscreen = "Disable";
-            }
         }else{
-            canvas.width = GV.canvas_width;
-            canvas.height = GV.canvas_height;
+            canvas.width  = GV.canvas_width  = GV.initial_canvas_width;
+            canvas.height = GV.canvas_height = GV.initial_canvas_height;
             this.ablefullscreen = "Enable";
         }
         Mouse.canvasfullscreen = 
         Tools.canvasfullscreen = 
         this.canvasfullscreen;
+        
         Tools.requiredDisplayVariableUpdater()
         MapData.requiredDisplayVariableUpdater()
         Mouse.resolutionAdapter();

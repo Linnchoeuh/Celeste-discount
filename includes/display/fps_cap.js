@@ -25,6 +25,9 @@ class Fps_
         this.pfpsframetiming = this.previouspfpsframetiming = Date.now();
         this.pfpsintervaltiming = 0;
         this.nbofframewithoutphysics = 0;
+
+        this.interpolation_signal = true;
+        this.interpolation_value = 0;
     };
 
     display(){
@@ -52,7 +55,6 @@ class Fps_
             this.date = this.date_now;
             this.fps = this.frameaverageaccumulation;
             this.dt = this.fps/60;
-            
             this.frameaverageaccumulation = 0;
         };
     };
@@ -82,33 +84,69 @@ class Fps_
                 this.gfpsintervaltiming -= framerate;
                 return true;
             };
+            
             return false;
         };
     };
 
     Physics_Refresh_Cap(frequency = -1){
-        if(frequency === -1){
-            return true;};
+        if(frequency === -1)
+        {
+            frequency = this.fps;
+        };
         frequency = 1000/frequency;
         this.previouspfpsframetiming = this.pfpsframetiming;
         this.pfpsframetiming = Date.now();
         this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
+        this.interpolation_signal = false;
         
-        if(frequency <= this.pfpsintervaltiming){
-            // this.nbofframewithoutphysics = -this.fps/this.pfpslog;
+        if(frequency <= this.pfpsintervaltiming)
+        {
             this.nbofframewithoutphysics = 0;
-            if(1 < this.fps/this.pfpslog)
-            {
-                this.nbofframewithoutphysics = -this.fps/this.pfpslog;
-            };
-                
             
-            this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
-            this.pfpsintervaltiming -= Math.floor(this.executionloop)*frequency;
+            if(this.pfps < this.fps)
+            {
+                this.interpolation_value = this.executionloop = 1;
+            }
+            else
+            {
+                this.interpolation_value = this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
+            };
+            this.pfpsintervaltiming -= this.executionloop*frequency;
+
+            if(frequency > this.pfpsintervaltiming+(1000/this.fps) && GV.interpolation_toggle && this.executionloop === 1)
+            {
+                this.interpolation_value = 1/Math.ceil((frequency-this.pfpsintervaltiming)/(1000/this.fps));
+                this.interpolation_signal = true;
+            };
             return true;
         };
-        return false;
-    };
+        
+        return false;};
+
+    // Physics_Refresh_Cap(frequency = -1){
+    //     if(frequency === -1){
+    //         return true;};
+    //     frequency = 1000/frequency;
+    //     this.previouspfpsframetiming = this.pfpsframetiming;
+    //     this.pfpsframetiming = Date.now();
+    //     this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
+        
+    //     if(frequency <= this.pfpsintervaltiming){
+    //         // this.nbofframewithoutphysics = -this.fps/this.pfpslog;
+    //         this.nbofframewithoutphysics = 0;
+    //         if(1 < this.fps/this.pfpslog)
+    //         {
+    //             this.nbofframewithoutphysics = -this.fps/this.pfpslog;
+    //         };
+                
+            
+    //         this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
+    //         this.pfpsintervaltiming -= Math.floor(this.executionloop)*frequency;
+    //         return true;
+    //     };
+    //     return false;
+    // };
 }
 
 export{Fps_};

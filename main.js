@@ -3,6 +3,7 @@
 //add New MapData assets
 //Rework collisions
 //add Particles
+//wall jump
 
 //DID:
 //  New features :
@@ -38,8 +39,14 @@ import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
     constructor(){
-        this.canvas_width = 1200; //(4/3) = 900px | (18/9) = 1350 | (21/9) = 1575
-        this.canvas_height = 675;
+        this.initial_canvas_width  = 1200; //(4/3) = 900px | (18/9) = 1350 | (21/9) = 1575 | (32/9) = 2400
+        this.initial_canvas_height = 675;
+        this.canvas_width  = this.initial_canvas_width; 
+        this.canvas_height = this.initial_canvas_height;
+        this.scaled_screen_width = screen.width/(screen.height/this.initial_canvas_height);
+        this.scaled_screen_height = screen.height/(screen.height/this.initial_canvas_height);
+        
+        this.interpolation_toggle = true;
         this.devmode = true;
         this.godmode = true;
         this.camsmootherenable = false;
@@ -103,7 +110,6 @@ const Menus_ = {
     Game_From_Map_Editor : 9
 
 };
-
 
 export{ctx, canvas, GV, Menus_};
 
@@ -243,7 +249,7 @@ function main(){
 
         LogDisplay.displayLog();
         Fps.display();
-        
+
         ctx.fillStyle = GV.ColorPalette_.white;
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));
