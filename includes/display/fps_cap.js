@@ -120,10 +120,10 @@ class Fps_
             this.nbofframewithoutphysics = 0;
             
             this.interpolation_value = this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
-            if(this.pfps < this.fps && this.executionloop > 1)
-            {
-                this.interpolation_value = this.executionloop = 1;
-            }
+            // if(this.pfps < this.fps && this.executionloop > 1)
+            // {
+            //     this.interpolation_value = this.executionloop = 1;
+            // }
 
             this.pfpsintervaltiming -= this.executionloop*frequency;
 

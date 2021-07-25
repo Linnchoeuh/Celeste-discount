@@ -6,7 +6,7 @@ class Game_Menu
     {
         this.stock = [0, 0];
 
-        this.physics_speed  = 70;
+        this.physics_speed  = 60;
     }
     displayMenu()
     {
