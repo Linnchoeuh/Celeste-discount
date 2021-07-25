@@ -6,7 +6,7 @@ class Game_Menu
     {
         this.stock = [0, 0];
 
-        this.physics_speed  = 60;
+        this.physics_speed  = 70;
     }
     displayMenu()
     {
@@ -122,7 +122,7 @@ class Game_Menu
         {
             ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
             ctx.fillStyle = "rgba(255,255,255,0.7)";
-            ctx.fillText("Press P to pause the game", Tools.resolutionScaler(875), Tools.resolutionScaler(665)); //mouse pos
+            ctx.fillText("Press P to pause the game", Tools.resolutionScaler(Tools.placeFromRight(325)), Tools.resolutionScaler(Tools.placeFromBottom(10))); //mouse pos
         }
         if(Fps.interpolation_signal && GV.devmode){
             ctx.fillStyle = "#ff0000";

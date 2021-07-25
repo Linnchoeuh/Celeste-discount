@@ -337,9 +337,9 @@ class Map_Data
         {this.offset_x                = this.map_limit.x*this.original_block_scale-GV.canvas_width+this.original_block_scale;};
 
         this.interpoled_camsmoother_x =
-        this.interpoled_offset_x      = this.offset_x     +this.offset_interpo_x*Fps.nbofframewithoutphysics;
+        this.interpoled_offset_x       = this.previous_offset_x     +this.offset_interpo_x*Fps.nbofframewithoutphysics;
         if(GV.camsmootherenable)
-        {this.interpoled_camsmoother_x = this.camsmoother_x+this.smooth_interpo_x*Fps.nbofframewithoutphysics;}
+        {this.interpoled_camsmoother_x = this.previous_camsmoother_x+this.smooth_interpo_x*Fps.nbofframewithoutphysics;}
         
         this.interpoled_difference_smoother_offset_x = this.interpoled_offset_x-this.interpoled_camsmoother_x;
 
@@ -351,9 +351,9 @@ class Map_Data
         {this.offset_y                = this.map_limit.y*this.original_block_scale-GV.canvas_height+this.original_block_scale;};
         
         this.interpoled_camsmoother_y =
-        this.interpoled_offset_y      = this.offset_y     +this.offset_interpo_y*Fps.nbofframewithoutphysics;
+        this.interpoled_offset_y       = this.previous_offset_y     +this.offset_interpo_y*Fps.nbofframewithoutphysics;
         if(GV.camsmootherenable)
-        {this.interpoled_camsmoother_y = this.camsmoother_y+this.smooth_interpo_y*Fps.nbofframewithoutphysics;}
+        {this.interpoled_camsmoother_y = this.previous_camsmoother_y+this.smooth_interpo_y*Fps.nbofframewithoutphysics;}
         
         this.interpoled_difference_smoother_offset_y = this.interpoled_offset_y-this.interpoled_camsmoother_y;
 

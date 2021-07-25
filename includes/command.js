@@ -11,17 +11,22 @@ class Command_
     };
 
     commandTrigger(){
-        if(Keyboard.keys_input.c | this.command === "true"){ //To enter some usefull commands ingame
+        if(Keyboard.keys_input.c | this.command === "true") //To enter some usefull commands ingame
+        {
             this.push++;
-            if(this.push > 60*Fps.dt | GV.devmode){
-                if(Keyboard.keys_input.c){
+            if(this.push > 60*Fps.dt | GV.devmode)
+            {
+                if(Keyboard.keys_input.c)
+                {
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
                     ctx.fillRect(0,0,canvas.width,canvas.height);
                     ctx.fillStyle = "rgb(255,255,255)";
                     ctx.font = "Bold "+Tools.resolutionScaler(100)+'px arial';
                     ctx.fillText("Release C", Tools.resolutionScaler(385), Tools.resolutionScaler(350));
                     this.command = "true";
-                }else{
+                }
+                else
+                {
                     this.command = prompt("Enter a command:");
                     if(this.command !== null || this.command !== "")
                     {
@@ -43,7 +48,8 @@ class Command_
                             case "devmode":
                                 switch(this.command_word_list[1]){
                                     case "":
-                                        if(GV.devmode){
+                                        if(GV.devmode)
+                                        {
                                             GV.devmode = false;
                                             break;
                                         }
@@ -97,7 +103,8 @@ class Command_
                                     case "smoother":
                                         switch(this.command_word_list[2]){
                                             case "":
-                                                if(GV.camsmootherenable){
+                                                if(GV.camsmootherenable)
+                                                {
                                                     GV.camsmootherenable = false;
                                                     break;
                                                 }

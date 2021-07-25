@@ -39,8 +39,8 @@ import * as levels from "./includes/menus/game_menu/levels.js";
 class Globals_Variable
 {
     constructor(){
-        this.initial_canvas_width  = 1200; //(4/3) = 900px | (18/9) = 1350 | (21/9) = 1575 | (32/9) = 2400
-        this.initial_canvas_height = 675;
+        this.initial_canvas_width  = 1200; //(4/3) = 900px | (18/9) = 1350 | (21/9) = 1575 | (32/9) = 2400 //default 1200
+        this.initial_canvas_height = 675; //default 675
         this.canvas_width  = this.initial_canvas_width; 
         this.canvas_height = this.initial_canvas_height;
         this.scaled_screen_width = screen.width/(screen.height/this.initial_canvas_height);
@@ -193,6 +193,14 @@ const Command = new Command_();
 import{Log_Display} from "./includes/log_display.js";
 const LogDisplay = new Log_Display();
 
+// document.addEventListener("visibilitychange", event => {
+//     if (document.visibilityState == "visible") {
+//         Fps.varUpdater()
+//     } else {
+//     //   console.log("tab is inactive")
+//     }
+//   })
+
 function main(){
     requestAnimationFrame(main);
 
@@ -252,7 +260,7 @@ function main(){
 
         ctx.fillStyle = GV.ColorPalette_.white;
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
-        ctx.fillText("pre 0.6", Tools.resolutionScaler(565), Tools.resolutionScaler(660));
+        ctx.fillText("pre 0.6", Tools.resolutionScaler(Tools.placeFromHorizontalCenter(40)), Tools.resolutionScaler(Tools.placeFromBottom(10)));
         MainLoopWithLog.endLogTime();
     };
 

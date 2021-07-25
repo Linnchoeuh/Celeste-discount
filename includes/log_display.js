@@ -2,19 +2,15 @@ import {ctx, GV, Tools, Keyboard, Fps, Mouse, MapData, Fullscreen, Player, Trans
 
 class Log_Display
 {
-    constructor(){
-        this.push = 0;
-        this.command = "false";
-    };
-
-    displayLog(){
-        if(GV.devmode){
+    displayLog()
+    {
+        if(GV.devmode)
+        {
             ctx.font = Tools.resolutionScaler(20)+'px arial';
             ctx.lineWidth = Tools.resolutionScaler(0.5);
-            // ctx.fillStyle = GV.ColorPalette_.white;
 
             Tools.logText("x : "+Mouse.x, 1125, 25); //mouse pos
-            Tools.logText("y : "+Mouse.y, 1125, 50)
+            Tools.logText("y : "+Mouse.y, 1125, 50);
 
             Tools.logText(Keyboard.key_input, 1100, 75); //key pressed
             Tools.logText("|", 1141, 75);
@@ -26,8 +22,8 @@ class Log_Display
 
             Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 800, 150); //input
 
-            if(GV.menu === 2 || GV.menu === 9 || 1){
-
+            if(GV.menu === 2 || GV.menu === 9 || 1)
+            {
                 Tools.logText("Collisions : "+Object.values(MapData.collisions), 900, 175); //collisions
 
                 Tools.logText("PX : "+Math.round(Player.x), 950, 200); //px
@@ -59,11 +55,11 @@ class Log_Display
 
                 Tools.logText("Execution loop : "+Fps.executionloop, 950, 400); 
                 Tools.logText("Generated frame : "+1/Fps.interpolation_value, 950, 425); 
-                Tools.logText("width : "+GV.canvas_width+" height : "+GV.canvas_height, 950, 450)
+                Tools.logText("width : "+GV.canvas_width+" height : "+GV.canvas_height, 950, 450);
                 // Tools.logText(MapData.pre_block_scaling, 950,450)
                 
                 Tools.logText(MapData.count , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
-            }
+            };
             if(GV.menu === 7){
                 
                 Tools.logText("OX : "+Math.round(MapEditor.offsetX), 985, 275); //offset
@@ -71,9 +67,9 @@ class Log_Display
                 Tools.logText("OY : "+MapEditor.offsetY, 1092, 275);
 
                 Tools.logText(Transition.currentfadestate+"    " , 1000, 500); //-------------------------------------------------------test var-----------------------------------------------
-            }
-        }
+            };
+        };
     };
-}
+};
 
 export{Log_Display};

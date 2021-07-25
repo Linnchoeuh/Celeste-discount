@@ -1,4 +1,4 @@
-import {ctx, GV} from "../main.js";
+import {canvas, ctx, GV} from "../main.js";
 
 class Tool_Kit
 {
@@ -32,13 +32,24 @@ class Tool_Kit
         return initial_scale;
     }
 
-    resolutionScalerAddOne(initial_scale)
+    placeFromBottom(y = 0)
     {
-        if(this.canvasfullscreen)
-        {
-            return Math.round(initial_scale*this.ratio+1);
-        }
-        return Math.round(initial_scale);
+        return GV.canvas_height - y;
+    }
+
+    placeFromRight(x = 0)
+    {
+        return GV.canvas_width - x;
+    }
+
+    placeFromHorizontalCenter(x = 0)
+    {
+        return GV.canvas_width/2 - x;
+    }
+
+    placeFromVerticalCenter(y = 0)
+    {
+        return GV.canvas_height/2 - y;
     }
 
     logText(text, posX, posY, fill_color = GV.ColorPalette_.white, stroke_color = GV.ColorPalette_.black)

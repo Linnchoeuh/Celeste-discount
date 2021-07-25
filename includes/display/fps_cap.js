@@ -1,7 +1,8 @@
 import{ctx, GV, Tools, Player, MapData, MainLoop, MainLoopWithLog} from "../../main.js"
 class Fps_
 {
-    constructor(){
+    constructor()
+    {
         this.fps = 1;
         this.frameaverageaccumulation = 0;
         this.frametime = 0;
@@ -30,7 +31,8 @@ class Fps_
         this.interpolation_value = 0;
     };
 
-    display(){
+    display()
+    {
         if(this.showfps){    
             ctx.font = Tools.resolutionScaler(20)+'px arial';
             Tools.logText(this.fps+" GFPS "    +Number.parseFloat(this.dt).toPrecision(3)+" DT",                       20, 25,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //GFPS = Frame d'affichage
@@ -45,108 +47,95 @@ class Fps_
         };
     };
 
-    varUpdater(){
+    varUpdater()
+    {
         this.date_now = Date.now();
     };
 
-    Log(){
+    Log()
+    {
         this.frameaverageaccumulation++;
-        if(this.date+1000 <= this.date_now){
-            this.date = this.date_now;
-            this.fps = this.frameaverageaccumulation;
-            this.dt = this.fps/60;
+        if(this.date+1000 <= this.date_now)
+        {
+            this.date                     = this.date_now;
+            this.fps                      = this.frameaverageaccumulation;
+            this.dt                       = this.fps/60;
             this.frameaverageaccumulation = 0;
         };
     };
 
-    Physic_log(refresh_rate = 1){
+    Physic_log(refresh_rate = 1)
+    {
         this.pfps++;
-        if(this.dateseconds+(1000*refresh_rate) <= this.date_now){
-            this.dateseconds = this.date_now;
-            this.pfpslog = this.pfps/refresh_rate;
-            this.speed_percentage = this.pfpslog/60*100
-            this.pfps = 0;
+        
+        if(this.dateseconds+(1000*refresh_rate) <= this.date_now)
+        {
+            this.dateseconds      = this.date_now;
+            this.pfpslog          = this.pfps/refresh_rate;
+            this.speed_percentage = this.pfpslog/60*100;
+            this.pfps             = 0;
         };
     };
 
-    Graphic_Cap(framerate = -1){
+    Graphic_Cap(framerate = -1)
+    {
         if(framerate === -1){
             return true;
         };
         framerate = 1000/framerate;
-        if(this.gfpsintervaltiming > framerate+100){
+
+        if(this.gfpsintervaltiming > framerate+100)
+        {
             this.gfpsintervaltiming = 0;
-        }else{
-            this.gfpsframetiming = Date.now();
-            this.gfpsintervaltiming += this.gfpsframetiming-this.previousgfpsframetiming;
+        }
+        else
+        {
+            this.gfpsframetiming         = Date.now();
+            this.gfpsintervaltiming     += this.gfpsframetiming-this.previousgfpsframetiming;
             this.previousgfpsframetiming = this.gfpsframetiming;
-            if(this.gfpsintervaltiming > framerate){
+
+            if(this.gfpsintervaltiming > framerate)
+            {
                 this.gfpsintervaltiming -= framerate;
                 return true;
             };
-            
             return false;
         };
     };
 
-    Physics_Refresh_Cap(frequency = -1){
+    Physics_Refresh_Cap(frequency = -1)
+    {
         if(frequency === -1)
         {
             frequency = this.fps;
         };
-        frequency = 1000/frequency;
+        frequency                    = 1000/frequency;
         this.previouspfpsframetiming = this.pfpsframetiming;
-        this.pfpsframetiming = Date.now();
-        this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
-        this.interpolation_signal = false;
+        this.pfpsframetiming         = Date.now();
+        this.pfpsintervaltiming     += this.pfpsframetiming - this.previouspfpsframetiming;
+        this.interpolation_signal    = false;
         
         if(frequency <= this.pfpsintervaltiming)
         {
             this.nbofframewithoutphysics = 0;
             
-            if(this.pfps < this.fps)
+            this.interpolation_value = this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
+            if(this.pfps < this.fps && this.executionloop > 1)
             {
                 this.interpolation_value = this.executionloop = 1;
             }
-            else
-            {
-                this.interpolation_value = this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
-            };
+
             this.pfpsintervaltiming -= this.executionloop*frequency;
 
             if(frequency > this.pfpsintervaltiming+(1000/this.fps) && GV.interpolation_toggle && this.executionloop === 1)
             {
-                this.interpolation_value = 1/Math.ceil((frequency-this.pfpsintervaltiming)/(1000/this.fps));
+                this.interpolation_value  = 1/Math.ceil((frequency-this.pfpsintervaltiming)/(1000/this.fps));
                 this.interpolation_signal = true;
             };
             return true;
         };
-        
-        return false;};
-
-    // Physics_Refresh_Cap(frequency = -1){
-    //     if(frequency === -1){
-    //         return true;};
-    //     frequency = 1000/frequency;
-    //     this.previouspfpsframetiming = this.pfpsframetiming;
-    //     this.pfpsframetiming = Date.now();
-    //     this.pfpsintervaltiming += this.pfpsframetiming - this.previouspfpsframetiming;
-        
-    //     if(frequency <= this.pfpsintervaltiming){
-    //         // this.nbofframewithoutphysics = -this.fps/this.pfpslog;
-    //         this.nbofframewithoutphysics = 0;
-    //         if(1 < this.fps/this.pfpslog)
-    //         {
-    //             this.nbofframewithoutphysics = -this.fps/this.pfpslog;
-    //         };
-                
-            
-    //         this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
-    //         this.pfpsintervaltiming -= Math.floor(this.executionloop)*frequency;
-    //         return true;
-    //     };
-    //     return false;
-    // };
-}
+        return false;
+    };
+};
 
 export{Fps_};

@@ -504,8 +504,8 @@ class Player_Data
     display(offset_x, offset_y, difference_x, difference_y)
     {
         this.DisplayLoop.startTime();
-        this.interpoled_x           = this.x+this.interpo_x*Fps.nbofframewithoutphysics;
-        this.interpoled_y           = this.y+this.interpo_y*Fps.nbofframewithoutphysics;
+        this.interpoled_x           = this.previous_x+this.interpo_x*Fps.nbofframewithoutphysics;
+        this.interpoled_y           = this.previous_y+this.interpo_y*Fps.nbofframewithoutphysics;
         if(GV.camsmootherenable)
         {
             this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_x, offset_x));
