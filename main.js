@@ -51,7 +51,7 @@ class Globals_Variable
         this.godmode = true;
         this.camsmootherenable = false;
         this.stroking_text = true;
-        this.menu = 2;
+        this.menu = 1;
         this.last_menu = -1;
         this.start = true;
         this.level = ["testlevel", levels.leveltest1]; 
