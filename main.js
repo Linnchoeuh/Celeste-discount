@@ -208,7 +208,7 @@ window.mobileCheck = function() {
   };
 
 window.addEventListener('touchstart', function() {
-    Mouse.click = true;
+    Mouse.smartphone_touch_to_click = true;
 });
 
 console.log("change applied"+window.mobileCheck())

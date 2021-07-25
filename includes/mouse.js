@@ -10,6 +10,7 @@ canvas.addEventListener('mousemove', function(event){
     mouse_x = event.clientX - canvas.offsetLeft;
     mouse_y = event.clientY - canvas.offsetTop;
 });
+
 canvas.addEventListener('mousedown', function(event){
     mouse_click = true;
     switch(event.button){
@@ -47,6 +48,8 @@ class Mouse_Data
         this.animatic_mouse_value = [0,0];
         this.screen_ratio = canvas.width/screen.width;
         this.ratio = screen.height/675;
+
+        this.smartphone_touch_to_click = false;
     };
 
     varUpdater(){        
@@ -54,7 +57,15 @@ class Mouse_Data
         this.previous_y = this.y;
         this.x = mouse_x;
         this.y = mouse_y;
-        this.click = mouse_click;
+        if(this.smartphone_touch_to_click)
+        {
+            this.click = this.smartphone_touch_to_click;
+        }
+        else
+        {
+            this.click = mouse_click;
+        }
+        
         this.click_left = mouse_click_left;
         this.click_middle = mouse_click_middle;
     };
