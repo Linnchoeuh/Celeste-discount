@@ -60,6 +60,7 @@ class Mouse_Data
         if(this.smartphone_touch_to_click)
         {
             this.click = this.smartphone_touch_to_click;
+            this.smartphone_touch_to_click = false;
         }
         else
         {

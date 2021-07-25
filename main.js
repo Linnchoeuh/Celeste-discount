@@ -273,6 +273,12 @@ function main(){
         ctx.fillStyle = GV.ColorPalette_.white;
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(Tools.placeFromHorizontalCenter(40)), Tools.resolutionScaler(Tools.placeFromBottom(10)));
+
+        if(Mouse.click)
+        {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(Mouse.x-10,Mouse.y-10,Tools.resolutionScaler(20),Tools.resolutionScaler(20));
+        }
         MainLoopWithLog.endLogTime();
     };
 
