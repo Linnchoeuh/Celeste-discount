@@ -211,7 +211,7 @@ window.addEventListener('touchstart', function() {
     Mouse.smartphone_touch_to_click = true;
 });
 
-console.log("change applied"+window.mobileCheck())
+console.log("change applied "+window.mobileCheck())
 
 function main(){
     requestAnimationFrame(main);
