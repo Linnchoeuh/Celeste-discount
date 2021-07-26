@@ -1,4 +1,4 @@
-import {ctx, GV, Tools, Mouse} from "../../main.js";
+import {ctx, GV, Tools, Mouse, Fps, Fullscreen} from "../../main.js";
 
 
 class Animatic_
@@ -9,12 +9,23 @@ class Animatic_
 
         this.defauloffset_text_type1 = [1.5, 0];
         this.defauloffset_texture_type1 = [0.5, -0.5];
+
+        this.gradient;
+
+        this.cache_color = "#ffffff";
+        this.cache_text_scale = 0;
+        this.cache_value = 0;
+        this.translation = 0;
+        this.direction = 1;
+        this.in_area = false;
     }
 
     text_type1(text, posX, posY, width, height, textX, textY, textscale1, textscale2, textscale3, textscale4, offsetX = 0, offsetY = 0)
     {
+        if(this.animation_state > 2){this.animation_state = 2;};
         if(Mouse.invisibleMouseCollider(posX, posY, width, height)) //play
         {
+            Fullscreen.firstclick = false;
             switch(this.animation_state)
             {
                 case 0:
@@ -63,39 +74,29 @@ class Animatic_
 
     text_type2(text, posX, posY, width, height, textX, textY, textscale, color = GV.ColorPalette_.white, line_width = 2)
     {
-        ctx.font = "Bold "+Tools.resolutionScaler(textscale)+'px arial';
+        if(this.cache_text_scale !== textscale)
+        {
+            ctx.font = "Bold "+Tools.resolutionScaler(textscale)+'px arial';
+        }
         ctx.fillText(text, Tools.resolutionScaler(textX), Tools.resolutionScaler(textY));
+        
+        this.gradient = ctx.createLinearGradient(Tools.resolutionScaler(posX+width/2-(width/16*this.animation_state)), 0, 
+                                                 Tools.resolutionScaler(posX+width/2+(width/16*this.animation_state)), 0);
+        
+        this.gradient.addColorStop(0, "transparent");
+        this.gradient.addColorStop(0.5, color);
+        this.gradient.addColorStop(1, "transparent");
+        ctx.fillStyle = this.gradient;
+        ctx.fillRect(Tools.resolutionScaler(posX+width/2-(width/16*this.animation_state)), Tools.resolutionScaler(posY+height-line_width),  
+                     Tools.resolutionScaler(           2*(width/16*this.animation_state)), Tools.resolutionScaler(line_width));
+
         if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
         {
-            switch(this.animation_state)
-            {
-                case 0:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX+(width/2)-(width/4)), 0, Tools.resolutionScaler(posX+(width/2)+(width/4)), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX+(width/2)-(width/4)), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width/2), Tools.resolutionScaler(line_width));
-                    this.animation_state++;
-                    break;
-                case 1:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX+(width/2)-(width*0.375)), 0, Tools.resolutionScaler(posX+(width/2)+(width*0.375)), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX+(width/2)-(width*0.375)), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width), Tools.resolutionScaler(line_width));
-                    this.animation_state++;
-                    break;
-                case 2:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX), 0, Tools.resolutionScaler(posX+width), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width), Tools.resolutionScaler(line_width));
-                    break;
-            }
+            Fullscreen.firstclick = false;
+            this.animation_state += 1/1;
+
+            if(this.animation_state > 8){this.animation_state = 8;};
+
             if(Mouse.click_left & Mouse.pressed === false)
             {
                 this.animation_state = 0;
@@ -104,35 +105,47 @@ class Animatic_
         }
         else
         {
-            switch(this.animation_state)
+            this.animation_state -= 1/1;
+
+            if(this.animation_state < 1){this.animation_state = 1;};
+        }
+        return false;
+    }
+
+    text_type3(text, posX, posY, width, height, textX, textY, textscale, color = GV.ColorPalette_.white, line_width = 2)
+    {
+        if(this.cache_text_scale !== textscale)
+        {
+            ctx.font = "Bold "+Tools.resolutionScaler(textscale)+"px arial";
+        }
+        ctx.fillText(text, Tools.resolutionScaler(textX), Tools.resolutionScaler(textY));
+        
+        var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX), 0, Tools.resolutionScaler(posX+width*((this.animation_state)/8)), 0);
+        grd.addColorStop(0, color);
+        grd.addColorStop(1, "transparent");
+        ctx.fillStyle = grd;
+        ctx.fillRect(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY+height-line_width),  Tools.resolutionScaler(width*((this.animation_state)/8)), Tools.resolutionScaler(line_width));
+
+        // console.log(this.animation_state)
+
+        if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
+        {
+            Fullscreen.firstclick = false;
+            this.animation_state += 1/Fps.dt;
+
+            if(this.animation_state > 8){this.animation_state = 8;};
+
+            if(Mouse.click_left & Mouse.pressed === false)
             {
-                case 2:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX+(width/2)-(width*0.375)), 0, Tools.resolutionScaler(posX+(width/2)+(width*0.375)), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX+(width/2)-(width*0.375)), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width), Tools.resolutionScaler(line_width));
-                    this.animation_state--;
-                    break;
-                case 1:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX+(width/2)-(width/4)), 0, Tools.resolutionScaler(posX+(width/2)+(width/4)), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX+(width/2)-(width/4)), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width/2), Tools.resolutionScaler(line_width));
-                    this.animation_state--;
-                    break;
-                case 0:
-                    var grd = ctx.createLinearGradient(Tools.resolutionScaler(posX+(width/2)-(width/8)), 0, Tools.resolutionScaler(posX+(width/2)+(width/8)), 0);
-                    grd.addColorStop(0, "transparent");
-                    grd.addColorStop(0.5, color);
-                    grd.addColorStop(1, "transparent");
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(Tools.resolutionScaler(posX+(width/2)-(width/8)), Tools.resolutionScaler(posY+height-line_width), Tools.resolutionScaler(width/4), Tools.resolutionScaler(line_width));
-                    break;
+                this.animation_state = 0;
+                return true;
             }
+        }
+        else
+        {
+            this.animation_state -= 1/Fps.dt;
+
+            if(this.animation_state < 1){this.animation_state = 1;};
         }
         return false;
     }
@@ -141,6 +154,7 @@ class Animatic_
     {
         if(Mouse.invisibleMouseCollider(posX, posY, width, height) == true) //set fullscren
         {
+            Fullscreen.firstclick = false;
             switch(this.animation_state)
             {
                 case 0:
@@ -219,6 +233,7 @@ class Animatic_
         
         if(Mouse.invisibleMouseCollider(posX, posY, 30, 30))
         {
+            Fullscreen.firstclick = false;
             ctx.fillStyle = GV.ColorPalette_.white;
             ctx.beginPath();
             if(reverse)
@@ -266,6 +281,112 @@ class Animatic_
                 return true;
             }
         }
+        return false;
+    }
+
+    specialButton1(posX, posY, width = 100, height = 500, thickness = 50, movement = 50, orientation = 0, color = "#ffffff")
+    {
+        orientation = orientation%4
+        ctx.fillStyle = color;
+        switch(orientation)
+        {
+            case 0:
+                this.in_area = Mouse.invisibleMouseCollider(posX, posY, width+thickness+movement, height);
+                this.direction = 1;
+                break;
+            case 1:
+                this.in_area = Mouse.invisibleMouseCollider(posX, posY, height, width+thickness+movement)
+                this.direction = 1;
+                break;
+            case 2:
+                this.in_area = Mouse.invisibleMouseCollider(posX-movement+width, posY, width+thickness+movement, height)
+                posX += thickness + width + width;
+                thickness = -thickness;
+                width = -width;
+                this.direction = -1;
+                break;
+            case 3:
+                this.in_area = Mouse.invisibleMouseCollider(posX, posY-movement+width, height, width+thickness+movement)
+                posY += thickness + width + width;
+                thickness = -thickness;
+                width = -width;
+                this.direction = -1;
+                break;
+                
+        }
+
+        if(this.in_area){Fullscreen.firstclick = false;};
+
+        if(this.in_area && Mouse.click_left && Mouse.pressed === false)
+        {
+            this.translation = 0;
+            return true;
+        };
+
+        if(this.direction === 1)
+        { 
+            if(this.in_area && this.translation < movement)
+            {
+                this.translation += movement/5/Fps.dt;
+            }
+            else if(this.translation > 0 && this.in_area === false)
+            {
+                this.translation -= movement/5/Fps.dt;
+            };
+            if(this.translation > movement)
+            {
+                this.translation = movement;
+            }
+            else if(this.translation < 0)
+            {
+                this.translation = 0
+            };
+        }
+        else
+        {
+            if(this.in_area && this.translation > movement*this.direction)
+            {
+                this.translation -= movement/5/Fps.dt;
+            }
+            else if(this.translation < 0 && this.in_area === false)
+            {
+                this.translation += movement/5/Fps.dt;
+            };
+            if(this.translation < movement*this.direction)
+            {
+                this.translation = movement*this.direction;
+            }
+            else if(this.translation > 0)
+            {
+                this.translation = 0
+            };
+        }
+
+        ctx.beginPath();
+        
+
+        if(orientation === 0 || orientation === 2)
+        {
+            ctx.moveTo(Tools.resolutionScaler(this.translation+posX), Tools.resolutionScaler(posY));
+            ctx.lineTo(Tools.resolutionScaler(this.translation+posX+thickness),       Tools.resolutionScaler(posY));
+            ctx.lineTo(Tools.resolutionScaler(this.translation+posX+width+thickness), Tools.resolutionScaler(posY+height/2));
+            ctx.lineTo(Tools.resolutionScaler(this.translation+posX+thickness),       Tools.resolutionScaler(posY+height));
+            ctx.lineTo(Tools.resolutionScaler(this.translation+posX),                 Tools.resolutionScaler(posY+height));
+            ctx.lineTo(Tools.resolutionScaler(this.translation+posX+width),           Tools.resolutionScaler(posY+height/2));
+        }
+        else if(orientation === 1 || orientation === 3)
+        {
+            ctx.moveTo(Tools.resolutionScaler(posX),                 Tools.resolutionScaler(this.translation+posY));
+            ctx.lineTo(Tools.resolutionScaler(posX+height/2),        Tools.resolutionScaler(this.translation+posY+width));
+            ctx.lineTo(Tools.resolutionScaler(posX+height),          Tools.resolutionScaler(this.translation+posY));
+            ctx.lineTo(Tools.resolutionScaler(posX+height),          Tools.resolutionScaler(this.translation+posY+thickness));
+            ctx.lineTo(Tools.resolutionScaler(posX+height/2),        Tools.resolutionScaler(this.translation+posY+width+thickness));
+            ctx.lineTo(Tools.resolutionScaler(posX),                 Tools.resolutionScaler(this.translation+posY+thickness));
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.lineWidth = 0;
+        ctx.stroke();
         return false;
     }
 }

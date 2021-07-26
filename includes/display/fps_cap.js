@@ -11,7 +11,7 @@ class Fps_
         this.date_now = Date.now();
         this.previousdate = this.date;
 
-        this.showfps = true;
+        this.showfps = false;
         this.cap30fps = -1;
         this.gfpsintervaltiming = 0;
         this.previousgfpsframetiming = 0;
@@ -34,16 +34,17 @@ class Fps_
     display()
     {
         if(this.showfps){    
-            ctx.font = Tools.resolutionScaler(20)+'px arial';
-            Tools.logText(this.fps+" GFPS "    +Number.parseFloat(this.dt).toPrecision(3)+" DT",                       20, 25,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //GFPS = Frame d'affichage
-            Tools.logText(this.pfpslog+" PFPS | Game speed : "+Number.parseFloat(this.speed_percentage).toPrecision(5)+" %",                                                                       20, 50,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); // PFPS = frame de physique
-            Tools.logText("Main : "            +Number.parseFloat(MainLoop.log).toPrecision(3)+                 " ms"+
-                          " | Main with log : "+Number.parseFloat(MainLoopWithLog.log).toPrecision(3)+          " ms", 20, 75,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //Temps de latence entre le début et la fin de la frame
-            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log).toPrecision(3)+      " ms", 40, 100, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
-            Tools.logText("-Collisions : "     +Number.parseFloat(MapData.collisions_loop_log).toPrecision(3)+  " ms", 40, 125, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
-            Tools.logText("-Camsmoother : "    +Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
-            Tools.logText("-Map display : "    +Number.parseFloat(MapData.graphics_loop_log).toPrecision(3)+    " ms", 40, 175, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
-            Tools.logText("-Player display : " +Number.parseFloat(Player.display_loop_log).toPrecision(3)+      " ms", 40, 200, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            ctx.font = Tools.resolutionScaler(20)+"px arial";
+            Tools.logText(this.fps+" GFPS "    +Number.parseFloat(this.dt).toPrecision(3)+" DT",                       20, 25,  true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //GFPS = Frame d'affichage
+            Tools.logText(this.pfpslog+" PFPS | Game speed : "
+                                               +Number.parseFloat(this.speed_percentage)         .toPrecision(5)+" %", 20, 50,  true,  GV.ColorPalette_.green, GV.ColorPalette_.dark_green); // PFPS = frame de physique
+            Tools.logText("Main : "            +Number.parseFloat(MainLoop.log)                 .toPrecision(3)+" ms"+
+                          " | Main with log : "+Number.parseFloat(MainLoopWithLog.log).          toPrecision(3)+" ms", 20, 75,  true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green); //Temps de latence entre le début et la fin de la frame
+            Tools.logText("-Player velocity : "+Number.parseFloat(Player.physics_loop_log)      .toPrecision(3)+" ms", 40, 100, true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Collisions : "     +Number.parseFloat(MapData.collisions_loop_log)  .toPrecision(3)+" ms", 40, 125, true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Camsmoother : "    +Number.parseFloat(MapData.cam_smoother_loop_log).toPrecision(3)+" ms", 40, 150, true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Map display : "    +Number.parseFloat(MapData.graphics_loop_log)    .toPrecision(3)+" ms", 40, 175, true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
+            Tools.logText("-Player display : " +Number.parseFloat(Player.display_loop_log)      .toPrecision(3)+" ms", 40, 200, true, GV.ColorPalette_.green, GV.ColorPalette_.dark_green);
         };
     };
 
@@ -114,8 +115,6 @@ class Fps_
         this.pfpsframetiming         = Date.now();
         this.pfpsintervaltiming     += this.pfpsframetiming - this.previouspfpsframetiming;
         this.interpolation_signal    = false;
-        
-        console.log("------")
 
         if(frequency <= this.pfpsintervaltiming)
         {
@@ -125,11 +124,10 @@ class Fps_
             this.interpolation_value = 1;
 
             this.pfpsintervaltiming -= this.executionloop*frequency;
-            console.log(this.executionloop)
+
             if(frequency > this.pfpsintervaltiming+(1000/this.fps) && GV.interpolation_toggle && this.executionloop === 1)
             {
                 this.interpolation_value  = 1/Math.ceil((frequency-this.pfpsintervaltiming)/(1000/this.fps));
-                console.log(this.interpolation_value)
                 this.interpolation_signal = true;
             };
             return true;

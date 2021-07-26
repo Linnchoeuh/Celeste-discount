@@ -1,17 +1,110 @@
-import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Transition, Fps, Fullscreen, Keyboard, MapData} from "../../../main.js";
+import {ctx, GV, Tools, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11, Transition, Fps, Fullscreen, Keyboard, MapData, canvas} from "../../../main.js";
+import {General_Settings} from "./pages/general.js";
+import {Display_Settings} from "./pages/display.js";
+import {Audio_Settings}   from "./pages/audio.js";
+import {Debug_Settings}   from "./pages/debug.js";
+
+
 
 class Setting_Menu
 {
     constructor()
     {
-        this.plus         = Tools.textureLoader("graphics/ui/plus.png");
-        this.minus        = Tools.textureLoader("graphics/ui/minus.png");
+        this.General = new General_Settings();
+        this.Display = new Display_Settings();
+        this.Audio   = new Audio_Settings();
+        this.Debug   = new Debug_Settings();
+
+
+        
+
+
+        this.horizontal_swipe = 0;
+        this.vertical_swipe = 0;
+        this.setting_category = 0;
+        this.setting_category_list = ["General", "Display", "Audio", "Debug"]
+        this.horizontal_arrow_place = 
+        {
+            "x" : 0,
+            "y" : 0
+        }
+        this.title_category_offset = 0;
     }
+
+    menuTitleDisplayer()
+    {
+        
+        for(let i = 0; i < this.setting_category_list.length; i++)
+        {
+            ctx.font = "Bold "+Tools.resolutionScaler(15)+'px Lucida Console';
+            if(i < this.setting_category)
+            {
+                this.title_category_offset = this.setting_category_list[i].length/2*13.5;
+                for(let k = this.setting_category; k > i; k--)
+                {
+                    this.title_category_offset += 20+this.setting_category_list[k].length*8;
+                }
+                Tools.logText(this.setting_category_list[i], Tools.placeFromHorizontalCenter(this.title_category_offset), 97, false, GV.ColorPalette_.gray);
+            }
+            else if(i > this.setting_category)
+            {
+                this.title_category_offset = -this.setting_category_list[this.setting_category].length/2*13.5-20;
+                for(let k = this.setting_category+1; k < i; k++)
+                {
+                    this.title_category_offset -= 20+this.setting_category_list[k].length*8;
+                }
+                Tools.logText(this.setting_category_list[i], Tools.placeFromHorizontalCenter(this.title_category_offset), 97, false, GV.ColorPalette_.gray);
+            }
+            else
+            {
+                ctx.font = "Bold "+Tools.resolutionScaler(25)+'px Lucida Console';
+                Tools.logText(this.setting_category_list[this.setting_category], Tools.placeFromHorizontalCenter(this.setting_category_list[this.setting_category].length/2*13.5), 100, false);
+            }
+        }
+        
+    }
+
     displayMenu(){
         if(GV.last_menu != 3)
         {
             GV.last_menu = 3;
+            this.setting_category = 0;
         }
+
+        if(this.setting_category > this.setting_category_list.length-1)
+        {
+            this.setting_category = this.setting_category_list.length-1;
+        }
+
+        ctx.font = "Bold "+Tools.resolutionScaler(65)+"px arial";
+        Tools.logText("Settings", Tools.placeFromHorizontalCenter(126), 60, false)
+
+        this.menuTitleDisplayer()
+
+        ctx.strokeStyle = ctx.fillStyle = GV.ColorPalette_.white;
+        ctx.lineWidth = Tools.resolutionScaler(2);
+        ctx.beginPath();
+        ctx.moveTo(0,    Tools.resolutionScaler(110));
+        ctx.lineTo(canvas.width,  Tools.resolutionScaler(110));
+        ctx.stroke();
+
+        
+        if(this.setting_category < this.setting_category_list.length-1)
+        {
+            if(Button2.specialButton1(Tools.placeFromRight(110), 192, 50, 400, 50, 10, 0))
+            {
+                this.setting_category++;
+            }
+        }
+        if(this.setting_category > 0)
+        {
+            if(Button3.specialButton1(-40, 192, 50, 400, 50, 10, 2))
+            {
+                this.setting_category--;
+            }
+        }
+        
+
         if(Button1.texture_type1(GV.return_arrow, 0, 0, 120, 80, 20, 10, [48,48], 55, 65, 70, 0, 0, "Back", 50, 70, 25) || Transition.transition_state === "finish" & Transition.selectedaction === "menu3.2" || Keyboard.keys_input.back && Keyboard.keys_pressed.back === false)
         {
             switch(Transition.transition_state)
@@ -38,151 +131,25 @@ class Setting_Menu
                     break;
             }   
         }
-        if(Fps.showfps)
+
+        switch(this.setting_category)
         {
-            ctx.fillStyle = GV.ColorPalette_.average_green;
-        }
-        else
-        {
-            ctx.fillStyle = GV.ColorPalette_.average_red;
-        }
-        if(Button2.text_type1("Show FPS", 0, 130, 320, 60, 20, 175, 40, 45, 50, 55, 3.6, 0.4)) //show Fps.fps button
-        {
-            if(Fps.showfps)
-            {
-                Fps.showfps = false;
-            }
-            else
-            {
-                Fps.showfps = true;
-            }
-        }
-        if(Fullscreen.canvasfullscreen)
-        {
-            ctx.fillStyle = GV.ColorPalette_.average_green;
-        }
-        else
-        {
-            ctx.fillStyle = GV.ColorPalette_.average_red;
-        }
-        if(Button3.text_type1(Fullscreen.ablefullscreen+" fullscreen", 0, 230, 535, 60, 20, 275, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen button
-        {
-            Fullscreen.first_game_frame = true;
-            Fullscreen.toggle(canvas);
-        }
-        if(Fullscreen.fullscreenupscale)
-        {
-            ctx.font = "Bold "+Tools.resolutionScaler(40)+'px arial';
-            ctx.fillStyle = GV.ColorPalette_.average_gray;
-            ctx.fillText("Fullscreen downscale", Tools.resolutionScaler(120), Tools.resolutionScaler(435));
-            ctx.fillStyle = GV.ColorPalette_.average_green;
-            Fullscreen.fullscreendownscale = false;
-            Fullscreen.fullscreendownscalefactor = 5;
-        }
-        else
-        {
-            if(Fullscreen.fullscreendownscale)
-            {
-                ctx.fillStyle = GV.ColorPalette_.white;
-                ctx.font = "Bold "+Tools.resolutionScaler(40)+'px arial';
-                ctx.fillText(Fullscreen.fullscreendownscalefactor*20+"%", Tools.resolutionScaler(900), Tools.resolutionScaler(435));
-                if(Fullscreen.fullscreendownscalefactor > 1)
-                {
-                    if(Button4.texture_type1(this.minus, 800, 391, 60, 60, 805, 396, [48,48], 55, 65, 70, 0, -0.5))
-                    {
-                        Fullscreen.fullscreendownscalefactor--;
-                        Fullscreen.screenScaler();
-                    }
-                    Fullscreen.firstclick = false;
-                }
-                if(Fullscreen.fullscreendownscalefactor < 5)
-                {
-                    if(Button5.texture_type1(this.plus, 1000, 391, 60, 60, 1005, 396, [48,48], 55, 65, 70, 0, -0.5))
-                    {
-                        if(Fullscreen.fullscreendownscalefactor >= 4)
-                        {
-                            Fullscreen.fullscreendownscale = false;
-                        }
-                        else
-                        {
-                            Fullscreen.fullscreendownscalefactor++;
-                        }
-                        Fullscreen.screenScaler();
-                        Fullscreen.firstclick = false;
-                    }
-                }
-                ctx.fillStyle = GV.ColorPalette_.average_green;
-            }
-            else
-            {
-                ctx.fillStyle = GV.ColorPalette_.average_red;
-            }
-            if(Button6.text_type1("Fullscreen downscale", 100, 391, 660, 60, 120, 435, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen
-            {
-                if(Fullscreen.fullscreendownscale)
-                {
-                    Fullscreen.fullscreendownscale = false;
-                    Fullscreen.fullscreendownscalefactor = 5;
-                }
-                else
-                {
-                    Fullscreen.fullscreendownscale = true;
-                    Fullscreen.fullscreendownscalefactor = 4;
-                    document.getElementById("canvas").style.imageRendering = "crisp-edges";
-                    document.getElementById("canvas").style.imageRendering = "pixelated";
-                }
-                Fullscreen.screenScaler();
-            }
-            ctx.fillStyle = GV.ColorPalette_.average_red;
-        }
-        if(Button7.text_type1("Fullscreen Upscale", 0, 330, 560, 60, 20, 375, 40, 45, 50, 55, 4.5, 0.4)) //fullscreen upscale button
-        {
-            if(Fullscreen.fullscreenupscale)
-            {
-                Fullscreen.fullscreenupscale = false;
-            }
-            else
-            {
-                Fullscreen.fullscreenupscale = true;
-            }
-            Fullscreen.screenScaler();
-        }
-        if(Fullscreen.fullscreendownscale === false)
-        {
-            document.getElementById("canvas").style.imageRendering = "auto";
-        }
-        if(Fps.cap30fps === 30)
-        {
-            ctx.fillStyle = GV.ColorPalette_.average_green;
-        }
-        else
-        {
-            ctx.fillStyle = GV.ColorPalette_.average_red;
-        }
-        if(Button8.text_type1("Cap the game at 30fps", 0, 490, 650, 60, 20, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
-        {
-            if(Fps.cap30fps === 30)
-            {
-                Fps.cap30fps = -1;
-            }
-            else
-            {
-                Fps.cap30fps = 30;
-            }
-            Fps.gfpsintervaltiming = 0;
-        }
-        if(Button9.text_type1("Res modify", 790, 490, 650, 60, 800, 535, 40, 45, 50, 55, 4.5, 0.4)) //lock the framerate at 30fps
-        {
-            if(MapData.pre_block_scale === 24)
-            {
-                MapData.pre_block_scale = 12;
-            }
-            else
-            {
-                MapData.pre_block_scale = 24;
-            }
-            MapData.requiredDisplayVariableUpdater()
-        }
+            case 0:
+                this.General.display();
+                break;
+            case 1:
+                this.Display.display();
+                break;
+            case 2:
+                this.Audio.display();
+                break;
+            case 3:
+                this.Debug.display();
+                break;
+        };
+        
+        
+        
     }
 }
 export{Setting_Menu};

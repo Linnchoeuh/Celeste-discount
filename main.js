@@ -45,9 +45,11 @@ class Globals_Variable
         this.canvas_height = this.initial_canvas_height;
         this.scaled_screen_width = screen.width/(screen.height/this.initial_canvas_height);
         this.scaled_screen_height = screen.height/(screen.height/this.initial_canvas_height);
+
+        this.previous_setting_category = -1;
         
         this.interpolation_toggle = true;
-        this.devmode = false;
+        this.devmode = true;
         this.godmode = true;
         this.camsmootherenable = false;
         this.stroking_text = true;
@@ -221,9 +223,9 @@ function main(){
         MainLoopWithLog.startTime();
         ctx.webkitImageSmoothingEnabled = ctx.imageSmoothingEnabled = ctx.msImageSmoothingEnabled = false;
     
-        Mouse.canvasfullscreen = 
-        Tools.canvasfullscreen = 
-        Fullscreen.canvasfullscreen;
+        Mouse.canvas_fullscreen = 
+        Tools.canvas_fullscreen = 
+        Fullscreen.canvas_fullscreen;
         Player.pre_player_scaling = MapData.pre_block_scaling;
         
         Keyboard.varUpdater();
@@ -274,11 +276,11 @@ function main(){
         ctx.font = "Bold "+Tools.resolutionScaler(25)+'px arial';
         ctx.fillText("pre 0.6", Tools.resolutionScaler(Tools.placeFromHorizontalCenter(40)), Tools.resolutionScaler(Tools.placeFromBottom(10)));
 
-        if(Mouse.click)
-        {
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(Mouse.x-10,Mouse.y-10,Tools.resolutionScaler(20),Tools.resolutionScaler(20));
-        }
+        // if(Mouse.click)
+        // {
+        //     ctx.fillStyle = "#ffffff";
+        //     ctx.fillRect(Mouse.x-10,Mouse.y-10,Tools.resolutionScaler(20),Tools.resolutionScaler(20));
+        // }
         MainLoopWithLog.endLogTime();
     };
 

@@ -33,7 +33,7 @@ canvas.addEventListener('mouseup', function(event){
 class Mouse_Data
 {
     constructor(){
-        this.canvasfullscreen = false;
+        this.canvas_fullscreen = false;
         this.double_click_fullscreen_mouse_pressed = false;
         
         this.x = 0;
@@ -88,7 +88,7 @@ class Mouse_Data
             ctx.strokeRect(Tools.resolutionScaler(posX), Tools.resolutionScaler(posY),
                            Tools.resolutionScaler(width),Tools.resolutionScaler(height));
         };
-        if(this.canvasfullscreen){
+        if(this.canvas_fullscreen){
             posX   *= this.ratio;
             posY   *= this.ratio;
             width  *= this.ratio;
@@ -103,7 +103,7 @@ class Mouse_Data
 
     resolutionAdapter(){
         this.animatic_mouse_value = [this.x, this.y];
-        if(this.canvasfullscreen){
+        if(this.canvas_fullscreen){
             this.animatic_mouse_value = [this.x*this.screen_ratio, this.y*this.screen_ratio];
         };
     };

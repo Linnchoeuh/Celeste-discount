@@ -4,7 +4,7 @@ class Tool_Kit
 {
     constructor()
     {
-        this.canvasfullscreen = false;   
+        this.canvas_fullscreen = false;   
 
         this.ratio = 1;
     }
@@ -16,7 +16,7 @@ class Tool_Kit
 
     resolutionScaler(initial_scale)
     {
-        if(this.canvasfullscreen)
+        if(this.canvas_fullscreen)
         {
             return Math.round(initial_scale*this.ratio);
         }
@@ -25,7 +25,7 @@ class Tool_Kit
 
     resolutionScalerUnround(initial_scale)
     {
-        if(this.canvasfullscreen)
+        if(this.canvas_fullscreen)
         {
             return initial_scale*this.ratio;
         }
@@ -52,7 +52,7 @@ class Tool_Kit
         return GV.canvas_height/2 - y;
     }
 
-    logText(text, posX, posY, fill_color = GV.ColorPalette_.white, stroke_color = GV.ColorPalette_.black)
+    logText(text, posX, posY, stroking_text = GV.stroking_text, fill_color = GV.ColorPalette_.white, stroke_color = GV.ColorPalette_.black)
     {
         ctx.fillStyle           = fill_color;
         ctx.strokeStyle         = stroke_color;
@@ -60,7 +60,7 @@ class Tool_Kit
                        this.resolutionScaler(posX), 
                        this.resolutionScaler(posY));
 
-        if(GV.stroking_text)
+        if(stroking_text)
         {
             ctx.strokeText(text, 
                            this.resolutionScaler(posX), 

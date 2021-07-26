@@ -18,7 +18,7 @@ class Log_Display
 
             Tools.logText("Click : "+Mouse.click_left, 1091, 100); //Mouse.click_left
 
-            Tools.logText("Fullscreen : "+Fullscreen.canvasfullscreen, 1043, 125); //fullscreen
+            Tools.logText("Fullscreen : "+Fullscreen.canvas_fullscreen, 1043, 125); //fullscreen
 
             Tools.logText("Inputs : "+Object.values(Keyboard.keys_input), 800, 150); //input
 

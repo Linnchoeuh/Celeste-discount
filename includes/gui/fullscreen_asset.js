@@ -1,13 +1,13 @@
 import {GV, Tools, MapData, Mouse, Keyboard, Fps} from "../../main.js";
 
-var canvasfullscreen = false;
+var canvas_fullscreen = false;
 
 document.addEventListener("fullscreenchange", function ()
 {
-    canvasfullscreen = (document.fullscreen)? true : false;
+    canvas_fullscreen = (document.fullscreen)? true : false;
 }, false);
 document.addEventListener("webkitfullscreenchange", function () {
-    canvasfullscreen = (document.webkitIsFullScreen) ? true : false;
+    canvas_fullscreen = (document.webkitIsFullScreen) ? true : false;
 }, false);
 
 
@@ -15,7 +15,7 @@ class Canvas_Resolution_Asset
 {
     constructor()
     {
-        this.canvasfullscreen = false;
+        this.canvas_fullscreen = false;
         this.last_canvas_fullscreen = false;
         this.doubleclicktiming = 0;
         this.firstclick = false;
@@ -31,14 +31,14 @@ class Canvas_Resolution_Asset
 
     varUpdater()
     {
-        this.canvasfullscreen = canvasfullscreen;
+        this.canvas_fullscreen = canvas_fullscreen;
     }
 
     fullscreenChecker(){
         this.fullscreen_change = false;
-        if(this.canvasfullscreen !== this.last_canvas_fullscreen){
+        if(this.canvas_fullscreen !== this.last_canvas_fullscreen){
             this.screenScaler();
-            this.last_canvas_fullscreen = this.canvasfullscreen;
+            this.last_canvas_fullscreen = this.canvas_fullscreen;
             this.fullscreen_change = true;
         }
     }
@@ -95,7 +95,7 @@ class Canvas_Resolution_Asset
     }
 
     screenScaler(){
-        if(this.canvasfullscreen){
+        if(this.canvas_fullscreen){
                 if(this.fullscreenupscale){    
                     canvas.width  = screen.width;
                     canvas.height = screen.height;
@@ -112,9 +112,9 @@ class Canvas_Resolution_Asset
             canvas.height = GV.canvas_height = GV.initial_canvas_height;
             this.ablefullscreen = "Enable";
         }
-        Mouse.canvasfullscreen = 
-        Tools.canvasfullscreen = 
-        this.canvasfullscreen;
+        Mouse.canvas_fullscreen = 
+        Tools.canvas_fullscreen = 
+        this.canvas_fullscreen;
         
         Tools.requiredDisplayVariableUpdater()
         MapData.requiredDisplayVariableUpdater()
