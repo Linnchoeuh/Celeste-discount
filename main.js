@@ -47,11 +47,11 @@ class Globals_Variable
         this.scaled_screen_height = screen.height/(screen.height/this.initial_canvas_height);
         
         this.interpolation_toggle = true;
-        this.devmode = true;
+        this.devmode = false;
         this.godmode = true;
         this.camsmootherenable = false;
         this.stroking_text = true;
-        this.menu = 1;
+        this.menu = 2;
         this.last_menu = -1;
         this.start = true;
         this.level = ["testlevel", levels.leveltest1]; 

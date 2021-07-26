@@ -115,21 +115,21 @@ class Fps_
         this.pfpsintervaltiming     += this.pfpsframetiming - this.previouspfpsframetiming;
         this.interpolation_signal    = false;
         
+        console.log("------")
+
         if(frequency <= this.pfpsintervaltiming)
         {
             this.nbofframewithoutphysics = 0;
             
-            this.interpolation_value = this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
-            // if(this.pfps < this.fps && this.executionloop > 1)
-            // {
-            //     this.interpolation_value = this.executionloop = 1;
-            // }
+            this.executionloop = Math.floor(this.pfpsintervaltiming/frequency);
+            this.interpolation_value = 1;
 
             this.pfpsintervaltiming -= this.executionloop*frequency;
-
+            console.log(this.executionloop)
             if(frequency > this.pfpsintervaltiming+(1000/this.fps) && GV.interpolation_toggle && this.executionloop === 1)
             {
                 this.interpolation_value  = 1/Math.ceil((frequency-this.pfpsintervaltiming)/(1000/this.fps));
+                console.log(this.interpolation_value)
                 this.interpolation_signal = true;
             };
             return true;
