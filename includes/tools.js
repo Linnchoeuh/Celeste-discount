@@ -79,6 +79,27 @@ class Tool_Kit
     {
         return n*time;
     }
+
+    antiPositiveValue(num)
+    {
+        if(num >= 0)
+            {return 0;};
+        return num;
+    };
+
+    antiOverValue(num, target)
+    {
+        if(num >= target)
+            {return target;};
+        return num;
+    };
+
+    antiNegativeValue(num)
+    {
+        if(num <= 0)
+            {return 0;};
+        return num;
+    };
 }
 
 class Timer_Log

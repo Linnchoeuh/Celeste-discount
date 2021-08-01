@@ -1,7 +1,6 @@
 //TO DO:
-//add MapData editor
-//add New MapData assets
-//Rework collisions
+//add Map editor
+//add New Map assets
 //add Particles
 //wall jump
 
@@ -10,27 +9,30 @@
 //-Cap the at 30fps is now avaible in the setting
 //-Double click for fullscreen
 //-New animated button type
+//-Support of variable screen ratio
 
 //  Fix :
 //-Adapting speed of the GUI animation for variable framerate (pause animation, transition animation)
 
 //  Improvement :
-//-MapData displaying up to 90% faster
+//-Map displaying up to 10times faster
 //-Physic clock more stable
 //-Interpolation accuracy improved
+//-Collisions are more accurate, can handle faster speed and are up to 80time faster
 
 //  Rework :
 //-Player physics
 //  -Player jump
 //  -Player acceleration
 //  -Player dash
-//-MapData background
+//-Map background
+//-Setting UI
 
 //SYNTAXE :
 //Variables  : two_words
 //Constantes : TWO_WORDS
 //Fonctions  : Two_words
-//Classes    : Two_Words et objets
+//Classes    : Two_Words
 //    Dans une variable : TwoWords
 //Méthodes   : twoWords
 //Objets     : TwoWords_
@@ -48,12 +50,12 @@ class Globals_Variable
 
         this.previous_setting_category = -1;
         
-        this.interpolation_toggle = false;
+        this.interpolation_toggle = true;
         this.devmode = false;
         this.godmode = false;
         this.camsmootherenable = true;
         this.stroking_text = true;
-        this.menu = 2;
+        this.menu = 1;
         this.last_menu = -1;
         this.start = true;
         this.level = ["testlevel", levels.leveltest1]; 
@@ -215,8 +217,8 @@ window.addEventListener('touchstart', function() {
 
 console.log("change applied "+window.mobileCheck())
 
-function main(){
-    requestAnimationFrame(main);
+function Main(){
+    requestAnimationFrame(Main);
 
     if(Fps.Graphic_Cap(Fps.cap30fps)){
         MainLoop.startTime();
@@ -287,7 +289,7 @@ function main(){
     
 };
 
-main();
+Main();
 
 var key_press = "N/A"; //ui and interactivity
 var keynb = "N/A";

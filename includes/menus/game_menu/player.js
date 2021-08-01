@@ -59,8 +59,8 @@ class Player_Data
  
             width                     : 10,
             horizontal_offset         : 7,
-            height                    : 24,
-            vertical_offset           : 0,
+            height                    : 22,
+            vertical_offset           : 2,
  
             top_side                  : 0,
             down_side                 : 0,
@@ -115,7 +115,7 @@ class Player_Data
         
 
         this.jumpforce = 30; //Puissance du saut (valeures admises ]0;+inf[)
-        this.jumptolerance = -10; //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
+        this.jumptolerance = 10; //Permet de sauter un peu après ne plus avoir touché le block (valeures admises ]-inf;0])
         this.jumpattenuation = 1.5; // Vitesse a laquelle le joueur ralenti dans ca monté lorsque la touche saut est relaché avant son apogé 
                                     // (valeures admises [1;+inf[) plus la valeure est vers l'inf plus le ralentissement sera prononcé
         
@@ -129,10 +129,10 @@ class Player_Data
                                 //(valeures admises [0;+inf[) 0 équivaut a pas déplacment en l'air
         
         this.wallleavemax = 5; //Nombre de frame requise pour quitter un mur lorsque qu'on est en position pour faire un walljump (valeures admises ]0;+inf[)
-        this.wallleave = this.wallleavemax+1; //(Ne pas toucher)
+        this.wall_contact = 5; //(Ne pas toucher)
         this.walljumpx = 15; //(valeures admises [0;70]) 0 équivaut a pas déplacment horizontal
         this.walljumpy = 25; //(valeures admises [0;70]) 0 équivaut a pas déplacment vertical
-        this.walljumpslide = 4; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
+        this.walljumpslide = 2; //Vitesse de chute lorsque que le personnage est en position pour walljump (valeures admises [0;70]) 0 équivaut a pas de chute
 
         this.groundfriction = 0.8; //Ralentissement de la vitesse joueur lorsqu'il est au sol (valeures admises ]0;+inf[)
         this.airfriction = 0.2; //Ralentissement de la vitesse joueur lorsqu'il est en l'air (valeures admises ]0;+inf[)
@@ -182,7 +182,7 @@ class Player_Data
     //     this.Position_.y = coords[1]-1;
     // }
 
-    modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0, resized = 70){
+    modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 23, y_offset = 0, resized = 70){
         this.HitBox_.scaler = ratio;
         this.HitBox_.resizer = resized;
 
@@ -237,112 +237,108 @@ class Player_Data
             this.jump_animation_postion = 0;
             if(GV.godmode === false)
             {
-                if(this.wallleave >= this.wallleavemax) //moving
-                {   
-                    if(Keyboard.keys_input.q !== Keyboard.keys_input.d)
+  
+                if(Keyboard.keys_input.q !== Keyboard.keys_input.d)
+                {
+                    this.animationmoving = true;
+                    switch(collisions.Bottom)
                     {
-                        this.animationmoving = true;
+                        case false:
+                            this.maxcurrentvelocity = this.maxaerialvelocity;
+                            this.currentacceleration = this.aerialacceleration;
+                            break
+                        case true:
+                            this.maxcurrentvelocity = this.maxgroundvelocity;
+                            this.currentacceleration = this.groundacceleration;
+                            break
+                    }
+                }
+                else
+                {
+                    this.maxcurrentvelocity = 0;
+                    this.animationmoving = false;
+                }
+                
+                if(this.dashcount === 0) //no move
+                {
+                    
+                    if(this.Vector_.x > 0 || collisions.Right) //Ralenti si le perso allait a droite
+                    {
                         switch(collisions.Bottom)
                         {
-                            case false:
-                                this.maxcurrentvelocity = this.maxaerialvelocity;
-                                this.currentacceleration = this.aerialacceleration;
-                                break
                             case true:
-                                this.maxcurrentvelocity = this.maxgroundvelocity;
-                                this.currentacceleration = this.groundacceleration;
-                                break
+                                this.Vector_.x -= this.groundfriction;
+                                
+                                if(Keyboard.keys_input.q && collisions.Right === false)
+                                {
+                                    this.ground_slideposition = -1;
+                                }
+                                break;
+                            case false:
+                                this.Vector_.x -= this.airfriction;
+                                if(Keyboard.keys_input.q)
+                                {
+                                    this.Vector_.x -= this.aerialmoving;
+                                }
+                                break;
+                        }
+                        if(this.Vector_.x < 0 || collisions.Right)
+                        {
+                            this.Vector_.x = 0;
                         }
                     }
-                    else
+                    else if(this.Vector_.x < 0 || collisions.Left) //Ralenti si le perso allait a gauche
                     {
-                        this.maxcurrentvelocity = 0;
-                        this.animationmoving = false;
-                    }
-                    
-                    if(this.dashcount === 0) //no move
-                    {
-                        
-                        if(this.Vector_.x > 0 || collisions.Right) //Ralenti si le perso allait a droite
+                        switch(collisions.Bottom)
                         {
-                            switch(collisions.Bottom)
-                            {
-                                case true:
-                                    this.Vector_.x -= this.groundfriction;
-                                    
-                                    if(Keyboard.keys_input.q && collisions.Right === false)
-                                    {
-                                        this.ground_slideposition = -1;
-                                    }
-                                    break;
-                                case false:
-                                    this.Vector_.x -= this.airfriction;
-                                    if(Keyboard.keys_input.q)
-                                    {
-                                        this.Vector_.x -= this.aerialmoving;
-                                    }
-                                    break;
-                            }
-                            if(this.Vector_.x < 0 || collisions.Right)
-                            {
-                                this.Vector_.x = 0;
-                            }
+                            case true:
+                                this.Vector_.x += this.groundfriction;
+                                if(Keyboard.keys_input.d && collisions.Left === false)
+                                {
+                                    this.ground_slideposition = 1;
+                                }
+                                break;
+                            case false:
+                                this.Vector_.x += this.airfriction;
+                                if(Keyboard.keys_input.d)
+                                {
+                                    this.Vector_.x += this.aerialmoving;
+                                }
+                                break;
                         }
-                        else if(this.Vector_.x < 0 || collisions.Left) //Ralenti si le perso allait a gauche
+                        if(this.Vector_.x > 0 || collisions.Left)
                         {
-                            switch(collisions.Bottom)
-                            {
-                                case true:
-                                    this.Vector_.x += this.groundfriction;
-                                    if(Keyboard.keys_input.d && collisions.Left === false)
-                                    {
-                                        this.ground_slideposition = 1;
-                                    }
-                                    break;
-                                case false:
-                                    this.Vector_.x += this.airfriction;
-                                    if(Keyboard.keys_input.d)
-                                    {
-                                        this.Vector_.x += this.aerialmoving;
-                                    }
-                                    break;
-                            }
-                            if(this.Vector_.x > 0 || collisions.Left)
-                            {
-                                this.Vector_.x = 0;
-                            }
-                        }
-                    }
-
-                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions.Bottom || this.Vector_.x > 0 && collisions.Bottom === false) //moving right
-                    {
-                        this.lastdirection = 1;
-                    }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions.Bottom || this.Vector_.x < 0 && collisions.Bottom === false)
-                    {
-                        this.lastdirection = -1;
-                    }
-                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.Vector_.x >= 0 && this.Vector_.x < this.maxcurrentvelocity) //moving right
-                    {
-                        this.speed = this.Vector_.x += this.currentacceleration;
-                        if(this.Vector_.x > this.maxcurrentvelocity)
-                        {
-                            this.speed = this.Vector_.x = this.maxcurrentvelocity;
-                        }
-
-                    }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.Vector_.x <= 0 && this.Vector_.x > -this.maxcurrentvelocity) //moving left
-                    {
-                        this.speed = this.Vector_.x -= this.currentacceleration;
-                        if(this.Vector_.x < -this.maxcurrentvelocity)
-                        {
-                            this.speed = this.Vector_.x = -this.maxcurrentvelocity;
+                            this.Vector_.x = 0;
                         }
                     }
                 }
+                if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions.Bottom || this.Vector_.x > 0 && collisions.Bottom === false) //moving right
+                {
+                    this.lastdirection = 1;
+                }
+                else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions.Bottom || this.Vector_.x < 0 && collisions.Bottom === false)
+                {
+                    this.lastdirection = -1;
+                }
+                if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.Vector_.x >= 0 && this.Vector_.x < this.maxcurrentvelocity) //moving right
+                {
+                    this.speed = this.Vector_.x += this.currentacceleration;
+                    if(this.Vector_.x > this.maxcurrentvelocity)
+                    {
+                        this.speed = this.Vector_.x = this.maxcurrentvelocity;
+                    }
+                }
+                else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.Vector_.x <= 0 && this.Vector_.x > -this.maxcurrentvelocity) //moving left
+                {
+                    this.speed = this.Vector_.x -= this.currentacceleration;
+                    if(this.Vector_.x < -this.maxcurrentvelocity)
+                    {
+                        this.speed = this.Vector_.x = -this.maxcurrentvelocity;
+                    }
+                }
                 
-                if(Keyboard.keys_input.space && collisions.Top === false && this.walljump === 0 && this.releasejump === true && this.jump === true || 
-                    this.Vector_.y <= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
+                if(Keyboard.keys_input.space && collisions.Top === false && this.walljump === 0 && this.releasejump && this.jump || 
+                    this.Vector_.y <= this.jumptolerance && this.releasejump && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity) //jump
                 {
                     this.Vector_.y = -this.jumpforce;
                     this.releasejump = false;
@@ -355,35 +351,26 @@ class Player_Data
                     this.jump_animation_postion = 2;
                 }
 
+                
                 if(Keyboard.keys_input.space === false && this.walljumpcheck === false) //block the walljump if the spacebar was not released when the player touch the wall
                 {
                     this.walljumpcheck = true;
                 }
                 if(collisions.Bottom === false && this.Vector_.y >= 0 || this.lastactwalljump === true) //walljump------------------------------------------------------------
                 {
-                    if(collisions.Left && distanceground === false) //left
+                    if(this.walljump === -1 && distanceground === false) //left
                     {
-                        this.Vector_.x =
                         this.lastdirection = -1
-                        // this.walljump = -1;
                         this.dashcooldown = this.dashcooldownmax;
                     }
-                    else if(collisions.Right && distanceground === false) //right
+                    else if(this.walljump === 1 && distanceground === false) //right
                     {
-                        this.Vector_.x =
                         this.lastdirection = 1
-                        // this.walljump = 1;
                         this.dashcooldown = this.dashcooldownmax;
                     }
                     else //nothing
                     {
-                        // if(this.walljump !== 0){
-                        //     this.Vector_.x = 0;
-                        // }
-                        this.walljump = 0;
-                        this.wallleave = this.wallleavemax;
                         this.dashcooldown = 0;
-                        
                     }
                     if(this.walljump !== 0)
                     {
@@ -391,22 +378,6 @@ class Player_Data
                         {
                             this.Vector_.y = this.walljumpslide;
                             this.jump = false;
-                        }
-                        if(Keyboard.keys_input.q || Keyboard.keys_input.d)
-                        {
-                            this.wallleave += 1;
-                            if(Keyboard.keys_input.d)
-                            {
-                                this.lastdirection = 1;
-                            }
-                            else if(Keyboard.keys_input.q)
-                            {
-                                this.lastdirection = -1;
-                            }
-                        }
-                        else
-                        {
-                            this.wallleave = 0;
                         }
                         
                         if(this.walljumpcheck === true && collisions.Bottom === false && collisions.Top === false && Keyboard.keys_input.space)
@@ -418,14 +389,12 @@ class Player_Data
                             this.jump = false;
                             this.walljump = 0;
                             this.walljumpcheck = false;
-                            this.wallleave = this.wallleavemax;
                             this.dashcooldown = this.dashcooldownmax;
                             this.lastactwalljump = true;
                         }
                     }
-                    else if(this.walljump !== 1 && this.walljump !== -1)
+                    else if(this.walljump === 0)
                     {
-                        this.wallleave = this.wallleavemax;
                         this.jump = false;
                     }
                 }
@@ -436,7 +405,7 @@ class Player_Data
                 }
                 if(this.dashcooldown === 0 && this.lastactwalljump === false)
                 {    
-                    if(Keyboard.keys_input.shift && this.dashbuttonrelease === true || this.dashcount !== 0)
+                    if(Keyboard.keys_input.shift && this.dashbuttonrelease === true && this.walljump === 0 || this.dashcount !== 0)
                     {
                         if(this.dashcount === 0)
                         {
@@ -457,13 +426,14 @@ class Player_Data
                         }    
                     }
                 }
-                if(this.dashcooldown > 0)
+                if(this.dashcooldown > 0 && this.lastactwalljump === false)
                 {
                     this.dashcooldown -= 1;
                 }
 
                 if(this.walljump === 0 && this.dashcount === 0) //gravity
                 {
+                    // console.log("non")
                     if(collisions.Top)
                     {
                         this.Vector_.y = 0;
@@ -554,8 +524,14 @@ class Player_Data
             this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.x-difference_x, offset_x));
             this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.y-difference_y, offset_y));
         };
-        ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
-
+        if(this.lastdirection === 1)
+        {
+            ctx.drawImage(this.initial_pose, 24, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
+        }
+        else
+        {
+            ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
+        }
         // switch(this.walljump)
         // {
         //     case 1:

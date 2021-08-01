@@ -3,7 +3,7 @@ class Fps_
 {
     constructor()
     {
-        this.showfps = true;
+        this.showfps = false;
         this.cap30fps = -1;
         
         this.fps = 1;

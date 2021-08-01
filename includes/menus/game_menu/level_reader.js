@@ -12,12 +12,32 @@ class Map_Data
     {
         //Collisions
 
-        this.Collisions_ = {Top : true, Bottom : true, Left : true, Right : true};
+        this.Collisions_ = {
+            Top    : true,
+            Bottom : true, 
+            Left   : true, 
+            Right  : true,
+        };
+        this.PreviousCollisions_ = {
+            Top    : true, 
+            Bottom : true, 
+            Left   : true, 
+            Right  : true
+        };
+
+        this.aPreviousCollisions_ = {
+            Top    : true, 
+            Bottom : true, 
+            Left   : true, 
+            Right  : true
+        };
+
         this.CS = new CollisionsSquare()
         this.top_collisions_map = [];
         this.bottom_collisions_map = [];
         this.left_collisions_map = [];
         this.right_collisions_map = [];
+        this.current_collision_map = [];
         this.distanceground = false;
         this.T_ = {
             x : 0,
@@ -53,7 +73,8 @@ class Map_Data
             x : 0,
             y : 0
         };
-        this.selected_collision_map = [];
+        this.proportional_coords = 0;
+        this.hitbox_collision_sizer_pre_calculed_part = 0;
         this.hitbox_test_checker = 0;
         this.RepositionnedCoords_ = {
             HorizontalCheck_ : {
@@ -66,7 +87,7 @@ class Map_Data
                 y : 0
             }
         };
-        this.search_cursor = 0;
+        
 
 
         //Load
@@ -159,6 +180,7 @@ class Map_Data
         this.CollisionsLoop = new Timer_Log();
         this.GraphicsLoop = new Timer_Log();
         this.CamSmootherLoop = new Timer_Log();
+        this.LoadTimingLog = new Timer_Log();
         this.collisions_loop_log = 0;
         this.graphics_loop_log = 0;
         this.cam_smoother_loop_log = 0;
@@ -173,6 +195,9 @@ class Map_Data
 
     start(file, editedlevelid)
     {
+        this.LoadTimingLog.startTime();
+
+
         this.Collisions_ = {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
         this.top_collisions_map = [];
         this.bottom_collisions_map = [];
@@ -183,6 +208,15 @@ class Map_Data
         Player.Position_.x = this.spawn.x*this.original_block_scale;
         Player.Position_.y = this.spawn.y*this.original_block_scale;
         this.all_block_map_count = file.MapDatas[editedlevelid].Blocks.length;
+        if(GV.devmode)
+        {
+            console.log("Map information : \n -Player spawned at coords : \n      x : "+this.spawn.x+" | y : "+this.spawn.y
+                                         +"\n -Map size : \n      x : "+this.map_limit.x+" | y : "+this.map_limit.y
+                                         +"\n -Total number of block : "+this.all_block_map_count
+                                         +"\n -Total number of water block : "+0
+                                         +"\n -Total number of enemies : "+0
+                                         +"\n -Total number of decorative element : "+0)
+        };
 
         Player.modifyHitBox(this.original_block_scale/this.pre_block_scale, 
             Player.HitBox_.width, Player.HitBox_.horizontal_offset, 
@@ -265,24 +299,45 @@ class Map_Data
                                [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y],
                                [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y],
                                [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y], [this.Offset_.x, this.Offset_.y]];
+
+        if(GV.devmode){console.log("Map loaded in "+this.LoadTimingLog.endLogTime(0)+" ms");};
     }
 
     hitboxCollisionSizer(side, k)
     {
         if(side === "horizontal")
         {
-            this.hitbox_test_checker = Math.floor(this.PlayerResizedCoords_.CenteredHitbox_.y+Player.HitBox_.resized_vertical_center);
+            if(this.VectorCoefficient_.y === 1)
+            {
+                this.current_collision_map = this.right_collisions_map;
+            }else{
+                this.current_collision_map = this.left_collisions_map;
+            }
+            if(this.PreviousCollisions_.Top === false && this.VectorCoefficient_.y === -1 || this.PreviousCollisions_.Bottom === false && this.VectorCoefficient_.y === 1)
+            {
+                this.T_.x = 1-(this.PlayerResizedCoords_.CenteredHitbox_.x+this.PlayerResizedVector_.x+(Player.HitBox_.resized_horizontal_center*this.VectorCoefficient_.x)-k+Tools.antiPositiveValue(this.VectorCoefficient_.x))/this.PlayerResizedVector_.x
+                if(this.T_.x < 0)
+                {
+                    this.T_.x = 0;
+                }else if(this.T_.x > 1){
+                    this.T_.x = 1;
+                };
+            }else{this.T_.x = 0;};
+
+            this.hitbox_collision_sizer_pre_calculed_part = this.PlayerResizedCoords_.CenteredHitbox_.y-Player.HitBox_.resized_vertical_center+this.PlayerResizedVector_.y*this.T_.x;
+            this.hitbox_test_checker = Math.floor(this.hitbox_collision_sizer_pre_calculed_part+Player.HitBox_.resized_height);
             if(this.hitbox_test_checker > this.map_limit.y)
             {
                 this.hitbox_test_checker = this.map_limit.y;
             };
+            
             for(let i = -1; i <= Player.HitBox_.resized_height-1 ;i++)
             {
-                if(Math.ceil(this.PlayerResizedCoords_.CenteredHitbox_.y-Player.HitBox_.resized_vertical_center+i) < this.map_limit.y
-                && Math.ceil(this.PlayerResizedCoords_.CenteredHitbox_.y-Player.HitBox_.resized_vertical_center+i) >= 0){
-                    if(this.right_collisions_map[Math.floor(this.PlayerResizedCoords_.CenteredHitbox_.y-Player.HitBox_.resized_vertical_center  )][k]
-                    || this.right_collisions_map[Math.ceil (this.PlayerResizedCoords_.CenteredHitbox_.y-Player.HitBox_.resized_vertical_center+i)][k]
-                    || this.right_collisions_map[this.hitbox_test_checker][k])
+                if(Math.ceil(this.hitbox_collision_sizer_pre_calculed_part+i) < this.map_limit.y
+                && Math.ceil(this.hitbox_collision_sizer_pre_calculed_part+Player.HitBox_.resized_top_side+i) >= 0){
+                    if(this.current_collision_map[         Math.floor(this.hitbox_collision_sizer_pre_calculed_part   )][k]
+                    || this.current_collision_map[Math.abs(Math.ceil (this.hitbox_collision_sizer_pre_calculed_part+i))][k]
+                    || this.current_collision_map[this.hitbox_test_checker][k])
                     {
                         return true;
                     };
@@ -291,18 +346,38 @@ class Map_Data
             };
             return false;
         };
-        this.hitbox_test_checker = Math.floor(this.PlayerResizedCoords_.CenteredHitbox_.x+Player.HitBox_.resized_horizontal_center);
+        if(this.VectorCoefficient_.y === 1)
+        {
+            this.current_collision_map = this.bottom_collisions_map;
+        }else{
+            this.current_collision_map = this.top_collisions_map;
+        }
+
+        if(this.PreviousCollisions_.Left === false && this.VectorCoefficient_.x === -1 || this.PreviousCollisions_.Right === false && this.VectorCoefficient_.x === 1)
+        {
+            this.T_.y = 1-(this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y+(Player.HitBox_.resized_vertical_center*this.VectorCoefficient_.y)-k+Tools.antiPositiveValue(this.VectorCoefficient_.y))/this.PlayerResizedVector_.y
+            if(this.T_.y < 0)
+            {
+                this.T_.y = 0;
+            }else if(this.T_.y > 1){
+                this.T_.y = 1;
+            };
+        }else{this.T_.y = 0;};
+
+        this.hitbox_collision_sizer_pre_calculed_part = this.PlayerResizedCoords_.CenteredHitbox_.x-Player.HitBox_.resized_horizontal_center+this.PlayerResizedVector_.x*this.T_.y;
+
+        this.hitbox_test_checker = Math.floor(this.hitbox_collision_sizer_pre_calculed_part+Player.HitBox_.resized_width);
         if(this.hitbox_test_checker > this.map_limit.x)
         {
             this.hitbox_test_checker = this.map_limit.x;
         };
         for(let i = -1; i <= Player.HitBox_.resized_width-1 ;i++)
         {
-            if(Math.ceil(this.PlayerResizedCoords_.CenteredHitbox_.x-Player.HitBox_.resized_horizontal_center+i) < this.map_limit.x
-            && Math.ceil(this.PlayerResizedCoords_.CenteredHitbox_.x-Player.HitBox_.resized_horizontal_center+i) >= 0){
-                if(this.bottom_collisions_map[k][Math.floor(this.PlayerResizedCoords_.CenteredHitbox_.x-Player.HitBox_.resized_horizontal_center  )]
-                || this.bottom_collisions_map[k][Math.ceil (this.PlayerResizedCoords_.CenteredHitbox_.x-Player.HitBox_.resized_horizontal_center+i)]
-                || this.bottom_collisions_map[k][this.hitbox_test_checker])
+            if(Math.ceil(this.hitbox_collision_sizer_pre_calculed_part+i) < this.map_limit.x+Player.HitBox_.right_side
+            && Math.ceil(this.PlayerResizedCoords_.CenteredHitbox_.x+i) >= 0){
+                if(this.current_collision_map[Tools.antiOverValue(k, this.map_limit.y)][Math.floor(this.hitbox_collision_sizer_pre_calculed_part)]
+                || this.current_collision_map[Tools.antiOverValue(k, this.map_limit.y)][Math.ceil (this.hitbox_collision_sizer_pre_calculed_part+i)]
+                || this.current_collision_map[Tools.antiOverValue(k, this.map_limit.y)][this.hitbox_test_checker])
                 {
                     return true;
                 };
@@ -311,11 +386,26 @@ class Map_Data
         return false;
     };
 
+    antiCornerThrough(k)
+    {
+        if((this.right_collisions_map[Tools.antiNegativeValue(Math.floor(this.PlayerResizedVector_.y+this.PlayerResizedCoords_.y+Player.HitBox_.resized_down_side))][Math.floor(this.PlayerResizedVector_.x+this.PlayerResizedCoords_.x+Player.HitBox_.resized_right_side)] 
+        || this.left_collisions_map  [Tools.antiNegativeValue(Math.floor(this.PlayerResizedVector_.y+this.PlayerResizedCoords_.y+Player.HitBox_.resized_down_side))][Math.floor(this.PlayerResizedVector_.x+this.PlayerResizedCoords_.x+Player.HitBox_.resized_left_side)])
+        && this.PlayerResizedCoords_.CenteredHitbox_.y                            <= k-Player.HitBox_.resized_vertical_center
+        && this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y > k-Player.HitBox_.resized_vertical_center
+        && Player.Vector_.x !== 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
     collider()
     {
         this.CollisionsLoop.startTime();
         if(Pause.pause === false)    
         {    
+            this.PreviousCollisions_ = this.aPreviousCollisions_;
+            this.aPreviousCollisions_ = this.Collisions_;
             this.Collisions_         = {"Top" : false, "Bottom" : false, "Left" : false, "Right" : false};
             this.distanceground = false;
 
@@ -336,23 +426,14 @@ class Map_Data
             this.VectorCoefficient_.y = 0;
             this.T_.x = 
             this.T_.y = 1
+            this.RepositionnedCoords_.VerticalCheck_.y =
+            this.RepositionnedCoords_.HorizontalCheck_.x = -1;
 
             if(Player.Vector_.x !== 0)
             {
-                this.VectorCoefficient_.x = Player.Vector_.x/Math.abs(Player.Vector_.x);
-
-                if(this.VectorCoefficient_.x === 1)
-                {
-                    this.T_.x = 1-((this.PlayerResizedCoords_.CenteredHitbox_.x+this.PlayerResizedVector_.x+Player.HitBox_.resized_horizontal_center-9)/this.PlayerResizedVector_.x);
-                }
-                else
-                {
-
-                };
-
+                this.VectorCoefficient_.x = Math.sign(Player.Vector_.x);
                 
                 
-                this.RepositionnedCoords_.HorizontalCheck_.x = -1;
                 if(this.VectorCoefficient_.x === 1) //right
                 {
                     for(let k = this.CS.CollisionSquareArea_.StartCoords_.x+1 ; k < this.CS.CollisionSquareArea_.EndCoords_.x+1 ; k++)
@@ -361,10 +442,12 @@ class Map_Data
                         && this.PlayerResizedCoords_.CenteredHitbox_.x                            <= k-Player.HitBox_.resized_horizontal_center
                         && this.PlayerResizedCoords_.CenteredHitbox_.x+this.PlayerResizedVector_.x > k-Player.HitBox_.resized_horizontal_center)
                         {
-                            this.RepositionnedCoords_.HorizontalCheck_.x = Player.Position_.x = (k-Player.HitBox_.resized_right_side)*this.original_block_scale-0.01;
+                            Player.Position_.x = (k-Player.HitBox_.resized_right_side)*this.original_block_scale-0.01;
                             this.Collisions_.Right = true;
+                            Player.Vector_.x = 0;
                             break;
                         };
+                        
                     };
                 }
                 else //left
@@ -375,37 +458,31 @@ class Map_Data
                         && this.PlayerResizedCoords_.CenteredHitbox_.x                            >= k+Player.HitBox_.resized_horizontal_center+1
                         && this.PlayerResizedCoords_.CenteredHitbox_.x+this.PlayerResizedVector_.x < k+Player.HitBox_.resized_horizontal_center+1)
                         {
-                            this.RepositionnedCoords_.HorizontalCheck_.x = Player.Position_.x = (k-Player.HitBox_.resized_left_side+1)*this.original_block_scale+0.01;
+                            Player.Position_.x = (k-Player.HitBox_.resized_left_side+1)*this.original_block_scale+0.01;
                             this.Collisions_.Left = true;
+                            Player.Vector_.x = 0;
                             break;
                         };
                     };
                 };
             };
+            
+            
             if(Player.Vector_.y !== 0)
             {
-                this.VectorCoefficient_.y = Player.Vector_.y/Math.abs(Player.Vector_.y);
-
-                if(this.VectorCoefficient_.y === 1)
-                {
-                    this.T_.x = 1-((this.PlayerResizedCoords_.CenteredHitbox_.x+this.PlayerResizedVector_.x+Player.HitBox_.resized_horizontal_center-9)/this.PlayerResizedVector_.x);
-                }
-                else
-                {
-                };
-
+                this.VectorCoefficient_.y = Math.sign(Player.Vector_.y);
                 
-                
-                this.RepositionnedCoords_.VerticalCheck_.y = -1;
                 if(this.VectorCoefficient_.y === 1) //bottom
                 {
                     for(let k = this.CS.CollisionSquareArea_.StartCoords_.y+1 ; k < this.CS.CollisionSquareArea_.EndCoords_.y+1 ; k++)
                     {     
+                        // console.log(Math.floor(this.PlayerResizedVector_.y+this.PlayerResizedCoords_.y+Player.HitBox_.resized_down_side), k)
                         if(this.hitboxCollisionSizer("vertical", k)
-                        && this.PlayerResizedCoords_.CenteredHitbox_.y-0.1                        <= k-Player.HitBox_.resized_vertical_center
-                        && this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y > k-Player.HitBox_.resized_vertical_center)
+                        && this.PlayerResizedCoords_.CenteredHitbox_.y                            <= k-Player.HitBox_.resized_vertical_center
+                        && this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y > k-Player.HitBox_.resized_vertical_center
+                        || this.antiCornerThrough(k))
                         {
-                            this.RepositionnedCoords_.VerticalCheck_.y = Player.Position_.y = (k-Player.HitBox_.resized_down_side)*this.original_block_scale-0.01;
+                            Player.Position_.y = (k-Player.HitBox_.resized_down_side)*this.original_block_scale-0.01;
                             Player.Vector_.y = 0;
                             this.Collisions_.Bottom = true;
                             break;
@@ -417,24 +494,29 @@ class Map_Data
                     for(let k = this.CS.CollisionSquareArea_.EndCoords_.y-1 ; k > this.CS.CollisionSquareArea_.StartCoords_.y-1 ; k--)
                     {
                         if(this.hitboxCollisionSizer("vertical", k)
-                        && this.PlayerResizedCoords_.CenteredHitbox_.y+0.1                        >= k+Player.HitBox_.resized_vertical_center+1
-                        && this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y < k+Player.HitBox_.resized_vertical_center+1)
+                        && this.PlayerResizedCoords_.CenteredHitbox_.y                            >= k+Player.HitBox_.resized_vertical_center+1
+                        && this.PlayerResizedCoords_.CenteredHitbox_.y+this.PlayerResizedVector_.y < k+Player.HitBox_.resized_vertical_center+1
+                        || this.antiCornerThrough(k))
                         {
-                            this.RepositionnedCoords_.VerticalCheck_.y = Player.Position_.y = (k-Player.HitBox_.resized_top_side+1)*this.original_block_scale+0.01;
+                            Player.Position_.y = (k-Player.HitBox_.resized_top_side+1)*this.original_block_scale+0.01;
                             Player.Vector_.y = 0;
                             this.Collisions_.Top = true;
                             break;
                         };
                     };
                 }
-            }
-            
-            
-            
+            };
 
-            
-            // Block the player when it goes further the map limit
+            this.distanceground = false;
+            for(let k = this.CS.CollisionSquareArea_.StartCoords_.y+1 ; k < this.CS.CollisionSquareArea_.EndCoords_.y+2 ; k++)
+            {
+                if(this.hitboxCollisionSizer("vertical", k))
+                {
+                    this.distanceground = true;
+                };
+            };
 
+            // Block the player when it goes further the map lim
             if(Player.Position_.x+Player.HitBox_.scaled_left_side <= 0)
             {
                 Player.Position_.x               = -Player.HitBox_.scaled_left_side;
@@ -459,6 +541,28 @@ class Map_Data
                 Player.Vector_.y        = 0;
                 this.Collisions_.Top    = true;
             }
+            
+            Player.walljump = 0;
+            if(this.Collisions_.Bottom === false && Player.Vector_.y >= 0 && this.distanceground === false)
+            {
+                if(this.right_collisions_map[Math.floor(this.PlayerResizedCoords_.y+Player.HitBox_.resized_down_side)][Math.ceil((Player.Position_.x+Player.HitBox_.scaled_right_side)/this.original_block_scale)]
+                && Math.ceil((Player.Position_.x+Player.HitBox_.scaled_right_side)/this.original_block_scale)*this.original_block_scale >= Player.Position_.x+Player.HitBox_.scaled_right_side
+                && Math.ceil((Player.Position_.x+Player.HitBox_.scaled_right_side)/this.original_block_scale)*this.original_block_scale-Player.wall_contact <=  Player.Position_.x+Player.HitBox_.scaled_right_side)
+                {
+                    Player.walljump = 1; //Right
+                }
+                else if(this.left_collisions_map[Math.floor(this.PlayerResizedCoords_.y+Player.HitBox_.resized_down_side)][Math.floor((Player.Position_.x+Player.HitBox_.scaled_left_side)/this.original_block_scale-1)]
+                &&    Math.floor((Player.Position_.x+Player.HitBox_.scaled_left_side)/this.original_block_scale)*this.original_block_scale <= Player.Position_.x+Player.HitBox_.scaled_left_side
+                &&      Math.floor((Player.Position_.x+Player.HitBox_.scaled_left_side)/this.original_block_scale)*this.original_block_scale+Player.wall_contact >=  Player.Position_.x+Player.HitBox_.scaled_left_side)
+                {
+                    Player.walljump = -1; //Left
+                };
+            };
+
+            
+
+            
+
 
 
         }

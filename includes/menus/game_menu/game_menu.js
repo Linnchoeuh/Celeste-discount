@@ -37,6 +37,7 @@ class Game_Menu
                 MapData.collider();
                 MapData.fcamsmoother();
                 
+                
                 MapData.Offset_.Previous_.x = MapData.Offset_.x;
                 MapData.Offset_.Previous_.y = MapData.Offset_.y;
                 
