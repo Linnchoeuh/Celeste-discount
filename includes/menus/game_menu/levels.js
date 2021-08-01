@@ -1108,7 +1108,34 @@ var leveltest1 = {"MapData_certificate" : "CelesteDiscountMapDataApprovedCertica
 }]
 }
 
-
+// var leveltest1 = {"MapData_certificate" : "CelesteDiscountMapDataApprovedCerticate",
+// "Map_count" : 1,
+// "Name" : "",
+// "MapDatas" : [{
+//   "Name" : "",
+//   "Map_limit" : {
+//     "x" : 17,
+//     "y" : 10
+//   },
+//   "Player_spawn" : {
+//       "x" : 9,
+//       "y" : 4
+//   },
+//   "Blocks" : [{"x" : 9, "y" : 5,
+//               "Type"       : {"Main" : 0, "Sub" : 3},
+//               "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+//               },
+//               // {"x" : 10, "y" : 5,
+//               // "Type"       : {"Main" : 0, "Sub" : 3},
+//               // "Collisions" : {"Top" : true, "Bottom" : true, "Left" : true, "Right" : true}
+//               // }
+//             ],
+//               "Water" : [],
+//               "Interactive_blocks" : [],
+//               "Ennemies" : [],
+//               "Decorations" : []
+//             }]
+//             }
 
 
 

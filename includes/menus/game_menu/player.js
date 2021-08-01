@@ -17,18 +17,35 @@ class Player_Data
         this.physics_loop_log = 0;
         this.display_loop_log = 0;
         
-        this.x = 0;
-        this.y = 0;
-        this.interpo_x = 0
-        this.interpo_y = 0
-        this.interpoled_x = 0
-        this.interpoled_y = 0
+        this.Position_ = {
+            x : 0,
+            y : 0,
+
+            Previous_ : {
+                x : 0,
+                y : 0
+            },
+
+            InterpolationValue_ : {
+                x : 0,
+                y : 0
+            },
+
+            InterpoledValue_ : {
+                x : 0,
+                y : 0
+            }
+        };
+
+        this.Vector_ = {
+            x : 0,
+            y : 0
+        };
         this.positionning_x = 0;
         this.positionning_y = 0;
-        this.vector_X = 0;
-        this.vector_Y = 0;
-        this.previous_x = 0;
-        this.previous_y = 0;
+        this.Vector_.x = 0;
+        this.Vector_.y = 0;
+        
         this.jump = false;
         this.jumpavaiblelity = true;
         this.releasejump = false;
@@ -37,26 +54,47 @@ class Player_Data
         this.walljumpcheck = false;
 
         this.HitBox_ = {
-            scaler                   : 0,
-            horizontal               : 10,
-            horizontal_offset        : 7,
-            vertical                 : 24,
-            vertical_offset          : 0,
+            scaler                    : 0,
+            resizer                   : 0,
+ 
+            width                     : 10,
+            horizontal_offset         : 7,
+            height                    : 24,
+            vertical_offset           : 0,
+ 
+            top_side                  : 0,
+            down_side                 : 0,
+            left_side                 : 0,
+            right_side                : 0,
 
-            top_side                 : 0,
-            down_side                : 0,
-            left_side                : 0,
-            right_side               : 0,
-        
-            scaled_horizontal        : 0,
-            scaled_horizontal_offset : 0,
-            scaled_vertical          : 0,
-            scaled_vertical_offset   : 0,
-            
-            scaled_top_side          : 0,
-            scaled_down_side         : 0,
-            scaled_left_side         : 0,
-            scaled_right_side        : 0
+            horizontal_center         : 0,
+            vertical_center           : 0,
+         
+            scaled_horizontal_offset  : 0,
+            scaled_vertical_offset    : 0,
+             
+            scaled_top_side           : 0,
+            scaled_down_side          : 0,
+            scaled_left_side          : 0,
+            scaled_right_side         : 0,
+ 
+            scaled_width              : 0,
+            scaled_height             : 0,
+            scaled_horizontal_center  : 0,
+            scaled_vertical_center    : 0,
+
+            resized_width             : 0,
+            resized_height            : 0,
+            resized_horizontal_offset : 0,
+            resized_vertical_offset   : 0,
+
+            resized_top_side          : 0,
+            resized_down_side         : 0,
+            resized_left_side         : 0,
+            resized_right_side        : 0,
+
+            resized_horizontal_center : 0,
+            resized_vertical_center   : 0
         };
         this.pre_player_scaling = 70;
         
@@ -136,61 +174,63 @@ class Player_Data
 
         this.dashaanimation = texture_loader("graphics/player/dash/dash.png");
 
-        // collisions.Bottom = en dessous
-        // collisions.Top = au dessus
-        // collisions.Left = a ca gauche
-        // collisions.Right = a ca droite
-        // collisions[4] = pré en dessous
-        // collisions[5] = pré au dessus
-        // collisions[6] = pré a ca gauche
-        // collisions[7] = pré a ca droite
-
-        // Keyboard.keys_input.z = z
-        // Keyboard.keys_input.q = q
-        // Keyboard.keys_input.s = s
-        // Keyboard.keys_input.d = d
-        // Keyboard.keys_input.space = space
-        // Keyboard.keys_input.shift = maj
-        // input[6] = p  (reservé)
-        // input[7] = c  (reservé)
-        // Keyboard.keys_input.return = enter
-        // input [9] = escape (reservé)
-
         this.godmode_speed_vector = 10;
     }
 
     // spawn(coords){
-    //     this.x = coords[0];
-    //     this.y = coords[1]-1;
+    //     this.Position_.x = coords[0];
+    //     this.Position_.y = coords[1]-1;
     // }
 
-    modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0){
-        this.HitBox_.scaler = ratio
+    modifyHitBox(ratio, x_hitbox = 24, x_offset = 0, y_hitbox = 24, y_offset = 0, resized = 70){
+        this.HitBox_.scaler = ratio;
+        this.HitBox_.resizer = resized;
 
-        this.HitBox_.top_side                 = y_offset;
-        this.HitBox_.left_side                = x_offset;
-        this.HitBox_.down_side                = y_hitbox+y_offset;
-        this.HitBox_.right_side               = x_hitbox+x_offset;
+        this.HitBox_.top_side                  = y_offset;
+        this.HitBox_.left_side                 = x_offset;
+        this.HitBox_.down_side                 = y_hitbox+y_offset;
+        this.HitBox_.right_side                = x_hitbox+x_offset;
+ 
+        this.HitBox_.width                     = x_hitbox;
+        this.HitBox_.height                    = y_hitbox;
+        this.HitBox_.horizontal_center         = this.HitBox_.width /2;
+        this.HitBox_.vertical_center           = this.HitBox_.height/2;
+ 
+        this.HitBox_.scaled_width              = this.HitBox_.width            *this.HitBox_.scaler
+        this.HitBox_.scaled_height             = this.HitBox_.height           *this.HitBox_.scaler
+        this.HitBox_.scaled_horizontal_offset  = x_offset                      *this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical_offset    = y_offset                      *this.HitBox_.scaler;
+ 
+        this.HitBox_.scaled_top_side           = this.HitBox_.top_side         *this.HitBox_.scaler;
+        this.HitBox_.scaled_down_side          = this.HitBox_.down_side        *this.HitBox_.scaler;
+        this.HitBox_.scaled_left_side          = this.HitBox_.left_side        *this.HitBox_.scaler;
+        this.HitBox_.scaled_right_side         = this.HitBox_.right_side       *this.HitBox_.scaler;
+ 
+        this.HitBox_.scaled_horizontal_center  = this.HitBox_.horizontal_center*this.HitBox_.scaler;
+        this.HitBox_.scaled_vertical_center    = this.HitBox_.vertical_center  *this.HitBox_.scaler;
 
-        this.HitBox_.scaled_horizontal        = x_hitbox               *this.HitBox_.scaler;
-        this.HitBox_.scaled_vertical          = y_hitbox               *this.HitBox_.scaler;
-        this.HitBox_.scaled_horizontal_offset = x_offset               *this.HitBox_.scaler;
-        this.HitBox_.scaled_vertical_offset   = y_offset               *this.HitBox_.scaler;
+        this.HitBox_.resized_width             = this.HitBox_.scaled_width            /this.HitBox_.resizer
+        this.HitBox_.resized_height            = this.HitBox_.scaled_height           /this.HitBox_.resizer
+        this.HitBox_.resized_horizontal_offset = this.HitBox_.scaled_horizontal_offset/this.HitBox_.resizer;
+        this.HitBox_.resized_vertical_offset   = this.HitBox_.scaled_vertical_offset  /this.HitBox_.resizer;
 
-        this.HitBox_.scaled_top_side          = this.HitBox_.top_side  *this.HitBox_.scaler;
-        this.HitBox_.scaled_down_side         = this.HitBox_.down_side *this.HitBox_.scaler;
-        this.HitBox_.scaled_left_side         = this.HitBox_.left_side *this.HitBox_.scaler;
-        this.HitBox_.scaled_right_side        = this.HitBox_.right_side*this.HitBox_.scaler;
-    }
+        this.HitBox_.resized_top_side          = this.HitBox_.scaled_top_side         /this.HitBox_.resizer;
+        this.HitBox_.resized_down_side         = this.HitBox_.scaled_down_side        /this.HitBox_.resizer;
+        this.HitBox_.resized_left_side         = this.HitBox_.scaled_left_side        /this.HitBox_.resizer;
+        this.HitBox_.resized_right_side        = this.HitBox_.scaled_right_side       /this.HitBox_.resizer;
+
+        this.HitBox_.resized_horizontal_center = this.HitBox_.scaled_horizontal_center/this.HitBox_.resizer;
+        this.HitBox_.resized_vertical_center   = this.HitBox_.scaled_vertical_center  /this.HitBox_.resizer;
+    };
 
     playerPositionner(pos, offset){
         return pos - offset
-    }
+    };
 
     velocity(collisions, distanceground){
         this.PhysicsLoop.startTime()
-        // this.x = Math.round(this.x)
-        // this.y = Math.round(this.y)
+        // this.Position_.x = Math.round(this.Position_.x)
+        // this.Position_.y = Math.round(this.Position_.y)
         if(Pause.pause === false)
         {     
             this.ground_slideposition = 0;
@@ -223,12 +263,12 @@ class Player_Data
                     if(this.dashcount === 0) //no move
                     {
                         
-                        if(this.vector_X > 0 || collisions.Right) //Ralenti si le perso allait a droite
+                        if(this.Vector_.x > 0 || collisions.Right) //Ralenti si le perso allait a droite
                         {
                             switch(collisions.Bottom)
                             {
                                 case true:
-                                    this.vector_X -= this.groundfriction;
+                                    this.Vector_.x -= this.groundfriction;
                                     
                                     if(Keyboard.keys_input.q && collisions.Right === false)
                                     {
@@ -236,81 +276,81 @@ class Player_Data
                                     }
                                     break;
                                 case false:
-                                    this.vector_X -= this.airfriction;
+                                    this.Vector_.x -= this.airfriction;
                                     if(Keyboard.keys_input.q)
                                     {
-                                        this.vector_X -= this.aerialmoving;
+                                        this.Vector_.x -= this.aerialmoving;
                                     }
                                     break;
                             }
-                            if(this.vector_X < 0 || collisions.Right)
+                            if(this.Vector_.x < 0 || collisions.Right)
                             {
-                                this.vector_X = 0;
+                                this.Vector_.x = 0;
                             }
                         }
-                        else if(this.vector_X < 0 || collisions.Left) //Ralenti si le perso allait a gauche
+                        else if(this.Vector_.x < 0 || collisions.Left) //Ralenti si le perso allait a gauche
                         {
                             switch(collisions.Bottom)
                             {
                                 case true:
-                                    this.vector_X += this.groundfriction;
+                                    this.Vector_.x += this.groundfriction;
                                     if(Keyboard.keys_input.d && collisions.Left === false)
                                     {
                                         this.ground_slideposition = 1;
                                     }
                                     break;
                                 case false:
-                                    this.vector_X += this.airfriction;
+                                    this.Vector_.x += this.airfriction;
                                     if(Keyboard.keys_input.d)
                                     {
-                                        this.vector_X += this.aerialmoving;
+                                        this.Vector_.x += this.aerialmoving;
                                     }
                                     break;
                             }
-                            if(this.vector_X > 0 || collisions.Left)
+                            if(this.Vector_.x > 0 || collisions.Left)
                             {
-                                this.vector_X = 0;
+                                this.Vector_.x = 0;
                             }
                         }
                     }
 
-                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions.Bottom || this.vector_X > 0 && collisions.Bottom === false) //moving right
+                    if(Keyboard.keys_input.d && Keyboard.keys_input.q === false && collisions.Bottom || this.Vector_.x > 0 && collisions.Bottom === false) //moving right
                     {
                         this.lastdirection = 1;
                     }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions.Bottom || this.vector_X < 0 && collisions.Bottom === false)
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && collisions.Bottom || this.Vector_.x < 0 && collisions.Bottom === false)
                     {
                         this.lastdirection = -1;
                     }
-                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.vector_X >= 0 && this.vector_X < this.maxcurrentvelocity) //moving right
+                    if     (Keyboard.keys_input.d && Keyboard.keys_input.q === false && this.Vector_.x >= 0 && this.Vector_.x < this.maxcurrentvelocity) //moving right
                     {
-                        this.speed = this.vector_X += this.currentacceleration;
-                        if(this.vector_X > this.maxcurrentvelocity)
+                        this.speed = this.Vector_.x += this.currentacceleration;
+                        if(this.Vector_.x > this.maxcurrentvelocity)
                         {
-                            this.speed = this.vector_X = this.maxcurrentvelocity;
+                            this.speed = this.Vector_.x = this.maxcurrentvelocity;
                         }
 
                     }
-                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.vector_X <= 0 && this.vector_X > -this.maxcurrentvelocity) //moving left
+                    else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false && this.Vector_.x <= 0 && this.Vector_.x > -this.maxcurrentvelocity) //moving left
                     {
-                        this.speed = this.vector_X -= this.currentacceleration;
-                        if(this.vector_X < -this.maxcurrentvelocity)
+                        this.speed = this.Vector_.x -= this.currentacceleration;
+                        if(this.Vector_.x < -this.maxcurrentvelocity)
                         {
-                            this.speed = this.vector_X = -this.maxcurrentvelocity;
+                            this.speed = this.Vector_.x = -this.maxcurrentvelocity;
                         }
                     }
                 }
                 
                 if(Keyboard.keys_input.space && collisions.Top === false && this.walljump === 0 && this.releasejump === true && this.jump === true || 
-                    this.vector_Y <= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
+                    this.Vector_.y <= this.jumptolerance && this.releasejump === true && Keyboard.keys_input.space && this.walljump === 0 && this.jumpavaiblelity === true) //jump
                 {
-                    this.vector_Y = -this.jumpforce;
+                    this.Vector_.y = -this.jumpforce;
                     this.releasejump = false;
                     this.jump_animation_postion = 1;
                     this.jumpavaiblelity = false
                     this.walljumpcheck = false;
                 }
-                else if(this.vector_Y < 0)
+                else if(this.Vector_.y < 0)
                 {
                     this.jump_animation_postion = 2;
                 }
@@ -319,18 +359,18 @@ class Player_Data
                 {
                     this.walljumpcheck = true;
                 }
-                if(collisions.Bottom === false && this.vector_Y >= 0 || this.lastactwalljump === true) //walljump------------------------------------------------------------
+                if(collisions.Bottom === false && this.Vector_.y >= 0 || this.lastactwalljump === true) //walljump------------------------------------------------------------
                 {
                     if(collisions.Left && distanceground === false) //left
                     {
-                        this.vector_X =
+                        this.Vector_.x =
                         this.lastdirection = -1
                         // this.walljump = -1;
                         this.dashcooldown = this.dashcooldownmax;
                     }
                     else if(collisions.Right && distanceground === false) //right
                     {
-                        this.vector_X =
+                        this.Vector_.x =
                         this.lastdirection = 1
                         // this.walljump = 1;
                         this.dashcooldown = this.dashcooldownmax;
@@ -338,7 +378,7 @@ class Player_Data
                     else //nothing
                     {
                         // if(this.walljump !== 0){
-                        //     this.vector_X = 0;
+                        //     this.Vector_.x = 0;
                         // }
                         this.walljump = 0;
                         this.wallleave = this.wallleavemax;
@@ -349,7 +389,7 @@ class Player_Data
                     {
                         if(this.walljump === 1 || this.walljump === -1)
                         {
-                            this.vector_Y = this.walljumpslide;
+                            this.Vector_.y = this.walljumpslide;
                             this.jump = false;
                         }
                         if(Keyboard.keys_input.q || Keyboard.keys_input.d)
@@ -371,8 +411,8 @@ class Player_Data
                         
                         if(this.walljumpcheck === true && collisions.Bottom === false && collisions.Top === false && Keyboard.keys_input.space)
                         {
-                            this.vector_X = -this.walljump*this.walljumpx;
-                            this.vector_Y = -this.walljumpy;
+                            this.Vector_.x = -this.walljump*this.walljumpx;
+                            this.Vector_.y = -this.walljumpy;
                             this.lastdirection = -this.walljump*1;
                             
                             this.jump = false;
@@ -403,17 +443,17 @@ class Player_Data
                             this.dashbuttonrelease = false;
                         }
                         this.dashcount += 1
-                        if(this.dashcount >= this.dashduration || collisions.Left && this.vector_X < 0 || collisions.Right && this.vector_X > 0)
+                        if(this.dashcount >= this.dashduration || collisions.Left && this.Vector_.x < 0 || collisions.Right && this.Vector_.x > 0)
                         {
-                            this.vector_X = this.dashend*this.lastdirection;
-                            this.vector_Y = 0;
+                            this.Vector_.x = this.dashend*this.lastdirection;
+                            this.Vector_.y = 0;
                             this.dashcooldown = this.dashcooldownmax;
                             this.dashcount = 0;
                         }
                         else
                         {
-                            this.vector_X = this.dashspeed*this.lastdirection;
-                            this.vector_Y = 0;
+                            this.Vector_.x = this.dashspeed*this.lastdirection;
+                            this.Vector_.y = 0;
                         }    
                     }
                 }
@@ -426,17 +466,17 @@ class Player_Data
                 {
                     if(collisions.Top)
                     {
-                        this.vector_Y = 0;
+                        this.Vector_.y = 0;
                         this.jump = false;
                     }
-                    if(Keyboard.keys_input.space === false && this.vector_Y < 0 && this.lastactwalljump === false)
+                    if(Keyboard.keys_input.space === false && this.Vector_.y < 0 && this.lastactwalljump === false)
                     {
-                        this.vector_Y /= this.jumpattenuation;
+                        this.Vector_.y /= this.jumpattenuation;
                         this.jump = false;
                     }
-                    if(this.maxgravityspeed > this.vector_Y)
+                    if(this.maxgravityspeed > this.Vector_.y)
                     {
-                        this.vector_Y += this.gravity;
+                        this.Vector_.y += this.gravity;
                     }
                 }
 
@@ -463,7 +503,7 @@ class Player_Data
                 }
                 else if(Keyboard.keys_input.shift)
                 {
-                    this.godmode_speed_vector = 120;
+                    this.godmode_speed_vector = 500;
                 }
                 else
                 {    
@@ -471,32 +511,32 @@ class Player_Data
                 }
                 if(Keyboard.keys_input.z && Keyboard.keys_input.s === false) //up
                 {
-                    this.vector_Y = -this.godmode_speed_vector;
+                    this.Vector_.y = -this.godmode_speed_vector;
                 }
                 else if(Keyboard.keys_input.s && Keyboard.keys_input.z === false) //down
                 {
-                    this.vector_Y = this.godmode_speed_vector;
+                    this.Vector_.y = this.godmode_speed_vector;
                 }
                 else //neutral y
                 {
-                    this.vector_Y = 0;
+                    this.Vector_.y = 0;
                 }
                 if(Keyboard.keys_input.d && Keyboard.keys_input.q === false) //right
                 {
-                    this.vector_X = this.godmode_speed_vector;
+                    this.Vector_.x = this.godmode_speed_vector;
                 }
                 else if(Keyboard.keys_input.q && Keyboard.keys_input.d === false) //left
                 {
-                    this.vector_X = -this.godmode_speed_vector;
+                    this.Vector_.x = -this.godmode_speed_vector;
                 }
                 else //neutral x
                 {
-                    this.vector_X = 0;
+                    this.Vector_.x = 0;
                 }
             }
             
-            this.x += this.vector_X;
-            this.y += this.vector_Y;
+            this.Position_.x += this.Vector_.x;
+            this.Position_.y += this.Vector_.y;
         }
         this.physics_loop_log = this.PhysicsLoop.endLogTime(300*(GameMenu.physics_speed/60));
     }
@@ -504,22 +544,22 @@ class Player_Data
     display(offset_x, offset_y, difference_x, difference_y)
     {
         this.DisplayLoop.startTime();
-        this.interpoled_x           = this.previous_x+this.interpo_x*Fps.nbofframewithoutphysics;
-        this.interpoled_y           = this.previous_y+this.interpo_y*Fps.nbofframewithoutphysics;
+        this.Position_.InterpoledValue_.x           = this.Position_.Previous_.x+this.Position_.InterpolationValue_.x*Fps.nbofframewithoutphysics;
+        this.Position_.InterpoledValue_.y           = this.Position_.Previous_.y+this.Position_.InterpolationValue_.y*Fps.nbofframewithoutphysics;
         if(GV.camsmootherenable)
         {
-            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_x, offset_x));
-            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_y, offset_y));
+            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.x, offset_x));
+            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.y, offset_y));
         }else{
-            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_x-difference_x, offset_x));
-            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.interpoled_y-difference_y, offset_y));
+            this.positionning_x         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.x-difference_x, offset_x));
+            this.positionning_y         = Tools.resolutionScaler(this.playerPositionner(this.Position_.InterpoledValue_.y-difference_y, offset_y));
         };
         ctx.drawImage(this.initial_pose, 0, 0, 24, 24, this.positionning_x, this.positionning_y, this.pre_player_scaling, this.pre_player_scaling);
 
         // switch(this.walljump)
         // {
         //     case 1:
-        //         ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(this.x), Tools.resolutionScaler(this.y), this.pre_player_scaling, this.pre_player_scaling);
+        //         ctx.drawImage(this.wall_slide, 0, 0, 24, 24, Tools.resolutionScaler(this.Position_.x), Tools.resolutionScaler(this.Position_.y), this.pre_player_scaling, this.pre_player_scaling);
         //         break;
         //     case -1:
         //         ctx.drawImage(this.wall_slide, 24, 0, 24, 24, Tools.resolutionScaler(px+camsmootherX), Tools.resolutionScaler(py+camsmootherY), this.pre_player_scaling, this.pre_player_scaling);
@@ -559,7 +599,7 @@ class Player_Data
         //                     {
         //                         if(this.verticaldirection === -1 && this.jump_animation_postion === 0)
         //                         {
-        //                             ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(this.x), Tools.resolutionScaler(this.y), this.pre_player_scaling, this.pre_player_scaling);
+        //                             ctx.drawImage(this.falling, this.fallingrightframetiminglist[Math.floor(this.fallingframe)]*24, 0, 24, 24, Tools.resolutionScaler(this.Position_.x), Tools.resolutionScaler(this.Position_.y), this.pre_player_scaling, this.pre_player_scaling);
         //                             if(Pause.pause === false)
         //                             {
         //                                 this.fallingframe += 1/dt;

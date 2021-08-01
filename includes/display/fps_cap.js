@@ -3,6 +3,9 @@ class Fps_
 {
     constructor()
     {
+        this.showfps = true;
+        this.cap30fps = -1;
+        
         this.fps = 1;
         this.frameaverageaccumulation = 0;
         this.frametime = 0;
@@ -11,8 +14,8 @@ class Fps_
         this.date_now = Date.now();
         this.previousdate = this.date;
 
-        this.showfps = false;
-        this.cap30fps = -1;
+        
+        
         this.gfpsintervaltiming = 0;
         this.previousgfpsframetiming = 0;
         this.gfpsframetiming = 0;

@@ -48,10 +48,10 @@ class Globals_Variable
 
         this.previous_setting_category = -1;
         
-        this.interpolation_toggle = true;
-        this.devmode = true;
-        this.godmode = true;
-        this.camsmootherenable = false;
+        this.interpolation_toggle = false;
+        this.devmode = false;
+        this.godmode = false;
+        this.camsmootherenable = true;
         this.stroking_text = true;
         this.menu = 2;
         this.last_menu = -1;
