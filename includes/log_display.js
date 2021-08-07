@@ -58,7 +58,7 @@ class Log_Display
                 Tools.logText("width : "+GV.canvas_width+" height : "+GV.canvas_height, 950, 450);
                 // Tools.logText(MapData.pre_block_scaling, 950,450)
                 
-                Tools.logText(MapData.distanceground , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
+                Tools.logText(Player.is_dash , 1000, 500); //-------------------------------------------------------test var------------------------------------------------
             };
             if(GV.menu === 7){
                 
