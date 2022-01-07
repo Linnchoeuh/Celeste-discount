@@ -285,8 +285,6 @@ function Main() {
         //     ctx.fillStyle = "#ffffff";
         //     ctx.fillRect(Mouse.x-10,Mouse.y-10,Tools.resolutionScaler(20),Tools.resolutionScaler(20));
         // }
-
-        //trop bien j'ai got sur vs code
         MainLoopWithLog.endLogTime();
     };
 
